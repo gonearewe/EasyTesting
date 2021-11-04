@@ -166,7 +166,7 @@ CREATE TABLE `mcq_answer`
     `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `mcq_id`          int(10)          NOT NULL COMMENT '连接 mcq',
     `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    char(7) DEFAULT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
+    `right_answer`    char(7) NOT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
     `student_answer`  char(7) DEFAULT NULL COMMENT '学生的答案',
     `score`           tinyint unsigned NOT NULL COMMENT '本题分值',
     FOREIGN KEY (`mcq_id`) REFERENCES mcq (`id`),
@@ -206,7 +206,7 @@ CREATE TABLE `bfq_answer`
     `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `bfq_id`           int(10)          NOT NULL COMMENT '连接 bfq',
     `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
-    `student_answer_1` text(20)         NOT NULL COMMENT '学生的答案',
+    `student_answer_1` text(20) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_2` text(20) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_3` text(20) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_4` text(20) DEFAULT NULL COMMENT '学生的答案',
@@ -218,7 +218,75 @@ CREATE TABLE `bfq_answer`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
--- 写代码题待定
+-- ----------------------------
+-- Table structure for true false question (tfq)
+-- ----------------------------
+
+DROP TABLE IF EXISTS `tfq`;
+CREATE TABLE `tfq`
+(
+    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id` smallint(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                 text(20)     NOT NULL COMMENT '题干',
+    `answer`               bit(1)   NOT NULL COMMENT '0：错，1：对',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+-- ----------------------------
+-- Table structure for students' answer of true false question (tfq)
+-- ----------------------------
+
+DROP TABLE IF EXISTS `tfq_answer`;
+CREATE TABLE `tfq_answer`
+(
+    `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `tfq_id`           int(10)          NOT NULL COMMENT '连接 tfq',
+    `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
+    `right_answer`    bit(1)  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
+    `student_answer` bit(1)         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
+    `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
+    FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`),
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+-- ----------------------------
+-- Table structure for coding question (cq)
+-- ----------------------------
+
+-- DROP TABLE IF EXISTS `cq`;
+-- CREATE TABLE `cq`
+-- (
+--     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+--     `publisher_teacher_id` smallint(10) NOT NULL COMMENT '创建本题的教师的工号',
+--     `stem`                 text(20)     NOT NULL COMMENT '题干',
+--     `answer`               text(30)   NOT NULL COMMENT '0：错，1：对',
+--     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
+--     PRIMARY KEY (`id`)
+-- ) ENGINE = InnoDB
+--   DEFAULT CHARSET = utf8mb4;
+
+-- ----------------------------
+-- Table structure for students' answer of true false question (tfq)
+-- ----------------------------
+
+-- DROP TABLE IF EXISTS `tfq_answer`;
+-- CREATE TABLE `tfq_answer`
+-- (
+--     `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+--     `tfq_id`           int(10)          NOT NULL COMMENT '连接 tfq',
+--     `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
+--     `right_answer`    bit(1)  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
+--     `student_answer` bit(1)         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
+--     `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
+--     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`),
+--     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
+--     PRIMARY KEY (`id`)
+-- ) ENGINE = InnoDB
+--   DEFAULT CHARSET = utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

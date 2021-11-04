@@ -8,6 +8,7 @@ pyqt5 = "5.15.5"
 qtmodern = "0.2.0"
 "pyqode.core" = "2.12.1"
 "pyqode.python" = "2.12.1"
+requests = "==2.26.0"
 
 [dev-packages]
 
