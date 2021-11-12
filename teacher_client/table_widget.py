@@ -129,7 +129,7 @@ class TableWidget(QWidget):
             self.next_page_btn.setDisabled(True)
 
     # data: [id, data for each column]
-    def setData(self, page_num: int, page_index: int, data, op_callback):
+    def setData(self, page_num: int, page_index: int, data: List[List], op_callback):
         self.page_num = page_num
         self.page_index = page_index
         self.table.clearContents()
