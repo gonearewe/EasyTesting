@@ -77,9 +77,9 @@ DROP TABLE IF EXISTS `student`;
 CREATE TABLE `student`
 (
     `id`         int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `student_id` smallint(10) UNIQUE NOT NULL COMMENT '学号',
+    `student_id` varchar(10)  UNIQUE NOT NULL COMMENT '学号',
     `name`       varchar(50)         NOT NULL COMMENT '姓名',
-    `class_id`   smallint(10)        NOT NULL COMMENT '班号',
+    `class_id`   varchar(10)        NOT NULL COMMENT '班号',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -91,9 +91,10 @@ DROP TABLE IF EXISTS `teacher`;
 CREATE TABLE `teacher`
 (
     `id`         int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `teacher_id` smallint(10) UNIQUE NOT NULL COMMENT '工号',
+    `teacher_id` varchar(10)  UNIQUE NOT NULL COMMENT '工号',
     `name`       varchar(50)         NOT NULL COMMENT '姓名',
-    `password`   varchar(200)        NOT NULL COMMENT '加盐后的密码',
+    `password`   varchar(100)        NOT NULL COMMENT '加盐后的密码',
+    `salt`       varchar(50)         NOT NULL COMMENT '盐',
     `is_admin`   bit(1)              NOT NULL DEFAULT 0 COMMENT '是否为超级管理员，0：否，1：是',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -106,7 +107,7 @@ DROP TABLE IF EXISTS `exam`;
 CREATE TABLE `exam`
 (
     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` smallint(10) NOT NULL COMMENT '发布考试的教师的工号',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '发布考试的教师的工号',
     `start_time`           datetime     NOT NULL COMMENT '考试开始时间',
     `end_time`             datetime     NOT NULL COMMENT '考试结束时间',
     `time_allowed`         varchar(200) NOT NULL COMMENT '考生答题时间',
@@ -122,7 +123,7 @@ CREATE TABLE `exam_session`
 (
     `id`         int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `exam_id`    int(10)      NOT NULL COMMENT '连接 exam',
-    `student_id` smallint(10) NOT NULL COMMENT '连接 student',
+    `student_id` varchar(10) NOT NULL COMMENT '连接 student',
     `start_time` datetime     NOT NULL COMMENT '作答开始时间',
     `end_time`   datetime         DEFAULT NULL COMMENT '交卷时间',
     `score`      tinyint unsigned DEFAULT NULL COMMENT '最终成绩',
@@ -140,7 +141,7 @@ DROP TABLE IF EXISTS `mcq`;
 CREATE TABLE `mcq`
 (
     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` smallint(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(20)     NOT NULL COMMENT '题干',
     `choice_1`             text(20)     NOT NULL COMMENT '选项的内容',
     `choice_2`             text(20)     NOT NULL COMMENT '选项的内容',
@@ -183,7 +184,7 @@ DROP TABLE IF EXISTS `bfq`;
 CREATE TABLE `bfq`
 (
     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` smallint(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(20)     NOT NULL COMMENT '题干',
     `blank_num`            tinyint(1)   NOT NULL COMMENT '要填的空的数目，若大于 1，则说明是 crq',
     `answer_1`             text(20)     NOT NULL COMMENT '填空的答案',
@@ -226,7 +227,7 @@ DROP TABLE IF EXISTS `tfq`;
 CREATE TABLE `tfq`
 (
     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` smallint(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(20)     NOT NULL COMMENT '题干',
     `answer`               bit(1)   NOT NULL COMMENT '0：错，1：对',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
@@ -261,7 +262,7 @@ CREATE TABLE `tfq_answer`
 -- CREATE TABLE `cq`
 -- (
 --     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
---     `publisher_teacher_id` smallint(10) NOT NULL COMMENT '创建本题的教师的工号',
+--     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
 --     `stem`                 text(20)     NOT NULL COMMENT '题干',
 --     `answer`               text(30)   NOT NULL COMMENT '0：错，1：对',
 --     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),

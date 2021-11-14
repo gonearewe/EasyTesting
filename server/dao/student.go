@@ -2,6 +2,12 @@ package dao
 
 import "github.com/gonearewe/EasyTesting/models"
 
+func GetStudentByStudentId(studentId string) (res models.Student) {
+	res.StudentID = studentId
+	db.Find(&res)
+	return
+}
+
 func GetStudentsById(pageSize int, pageIndex int) (res []models.Student) {
 	db.Limit(pageSize).Offset(pageSize * pageIndex).Find(&res)
 	return

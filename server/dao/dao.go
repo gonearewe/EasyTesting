@@ -4,14 +4,14 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"gopkg.in/errgo.v2/fmt/errors"
+	"gopkg.in/errgo.v2/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
-func init() {
+func InitDb() {
 	var err error
 	db, err = gorm.Open(mysql.Open(viper.GetString("dsn")), &gorm.Config{})
 	if err != nil {

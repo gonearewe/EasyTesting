@@ -1,28 +1,25 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/spf13/viper"
 )
 
 func init() {
-	viper.SetConfigName("config") // name of config file (without extension)
-	viper.SetConfigType("yaml")   // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(".")      // optionally look for config in the working directory
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
-	}
-
-	// Config file found and successfully parsed
-
+	initViper()
+	dao.InitDb()
 }
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r := gin.New()
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	SetupAuth(r)
+	if err := http.ListenAndServe(":"+viper.GetString("port"), r); err != nil {
+		log.Fatal(err)
+	}
 }
