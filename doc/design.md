@@ -95,7 +95,7 @@ CREATE TABLE `teacher`
     `name`       varchar(50)         NOT NULL COMMENT '姓名',
     `password`   varchar(100)        NOT NULL COMMENT '加盐后的密码',
     `salt`       varchar(50)         NOT NULL COMMENT '盐',
-    `is_admin`   bit(1)              NOT NULL DEFAULT 0 COMMENT '是否为超级管理员，0：否，1：是',
+    `is_admin`   bool              NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员，0：否，1：是',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -150,7 +150,7 @@ CREATE TABLE `mcq`
     `choice_5`             text(20)              DEFAULT NULL COMMENT '选项的内容',
     `choice_6`             text(20)              DEFAULT NULL COMMENT '选项的内容',
     `choice_7`             text(20)              DEFAULT NULL COMMENT '选项的内容',
-    `is_maq`               bit(1)       NOT NULL DEFAULT 0 COMMENT '是不是多选题，0：否，1：是',
+    `is_maq`               bool       NOT NULL DEFAULT FALSE COMMENT '是不是多选题，0：否，1：是',
     `right_answer`         char(7)               DEFAULT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
     PRIMARY KEY (`id`)
@@ -229,7 +229,7 @@ CREATE TABLE `tfq`
     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(20)     NOT NULL COMMENT '题干',
-    `answer`               bit(1)   NOT NULL COMMENT '0：错，1：对',
+    `answer`               bool   NOT NULL COMMENT '0：错，1：对',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -245,8 +245,8 @@ CREATE TABLE `tfq_answer`
     `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `tfq_id`           int(10)          NOT NULL COMMENT '连接 tfq',
     `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    bit(1)  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
-    `student_answer` bit(1)         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
+    `right_answer`    bool  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
+    `student_answer` bool         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
     `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`),
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
@@ -280,8 +280,8 @@ CREATE TABLE `tfq_answer`
 --     `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
 --     `tfq_id`           int(10)          NOT NULL COMMENT '连接 tfq',
 --     `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
---     `right_answer`    bit(1)  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
---     `student_answer` bit(1)         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
+--     `right_answer`    bool  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
+--     `student_answer` bool         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
 --     `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
 --     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`),
 --     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
