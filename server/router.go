@@ -5,7 +5,9 @@ import (
 	"github.com/gonearewe/EasyTesting/handlers"
 )
 
-func SetupRoute(r gin.IRouter) {
-	r.POST("/ping", handlers.PingHandler)
-	r.POST("/teachers", handlers.TeachersRegisterHandler)
+func SetupRoute(UnauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, adminAuthRouter *gin.RouterGroup) {
+	UnauthRouter.GET("/ping", handlers.PingHandler)
+	adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)
+	adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
+	teacherAuthRouter.GET("/hello", handlers.HelloHandler)
 }

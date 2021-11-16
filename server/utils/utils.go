@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,12 @@ func MustParseJsonTo(c *gin.Context, container interface{}) {
 	PanicWhen(err)
 	err = json.Unmarshal(data, container)
 	PanicWhen(err)
+}
+
+func Int(num string) int {
+	ret, err := strconv.Atoi(num)
+	PanicWhen(err)
+	return ret
 }
 
 func PanicWhen(err error) {

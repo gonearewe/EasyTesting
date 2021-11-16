@@ -4,22 +4,20 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/dao"
-	"github.com/gonearewe/EasyTesting/handlers"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
 	"github.com/spf13/viper"
 )
 
-func setupAuth(r *gin.Engine) {
+func setupAuth(r *gin.Engine) (teacherAuthRouter *gin.RouterGroup, adminAuthRouter *gin.RouterGroup) {
 	teacherAuthMiddleware := generateAuthMiddleware(teacherAuthenticator, teacherPayLoadFunc, nil)
 	adminAuthMiddleware := generateAuthMiddleware(teacherAuthenticator, teacherPayLoadFunc, adminAuthorizator)
 	r.GET("/teacher_auth", teacherAuthMiddleware.LoginHandler)
-	authRequired := r.Group("/")
-	authRequired.Use(teacherAuthMiddleware.MiddlewareFunc())
-	adminRequired := authRequired.Group("admin")
-	adminRequired.Use(adminAuthMiddleware.MiddlewareFunc())
-	adminRequired.GET("/teachers", handlers.GetTeachersHandler)
-	authRequired.POST("/hello", handlers.HelloHandler)
+	teacherAuthRouter = r.Group("/")
+	teacherAuthRouter.Use(teacherAuthMiddleware.MiddlewareFunc())
+	adminAuthRouter = r.Group("/")
+	adminAuthRouter.Use(adminAuthMiddleware.MiddlewareFunc())
+	return
 }
 
 func generateAuthMiddleware(
@@ -45,10 +43,9 @@ func teacherAuthenticator(c *gin.Context) (user interface{}, err error) {
 			user, err = nil, jwt.ErrFailedAuthentication
 		}
 	}()
-	json := utils.MustParseJson(c)
-	id := json["teacher_id"].(string)
+	id := c.Query("teacher_id")
 	teacher := dao.GetTeacherByTeacherId(id)
-	err = utils.VerifyPassword(json["password"].(string), teacher.Salt, teacher.Password)
+	err = utils.VerifyPassword(c.Query("password"), teacher.Salt, teacher.Password)
 	utils.PanicWhen(err)
 	return teacher, nil
 }

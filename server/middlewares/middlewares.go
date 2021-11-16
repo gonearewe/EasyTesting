@@ -2,8 +2,8 @@ package middlewares
 
 import "github.com/gin-gonic/gin"
 
-func SetupMiddleWares(r *gin.Engine) {
+func SetupMiddleWares(r *gin.Engine) (teacherAuthRoute *gin.RouterGroup, adminAuthRoute *gin.RouterGroup) {
 	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
-	setupAuth(r)
+	r.Use(recovery)
+	return setupAuth(r)
 }

@@ -19,8 +19,7 @@ func TeachersRegisterHandler(c *gin.Context) {
 }
 
 func GetTeachersHandler(c *gin.Context) {
-	json := utils.MustParseJson(c)
-	teacher := dao.GetTeachersBy(json["teacher_id"].(string), json["name"].(string),
-		int(json["page_size"].(float64)), int(json["page_index"].(float64)))
+	teacher := dao.GetTeachersBy(c.Query("teacher_id"), c.Query("name"),
+		utils.Int(c.Query("page_size")), utils.Int(c.Query("page_index")))
 	c.JSON(200, teacher)
 }

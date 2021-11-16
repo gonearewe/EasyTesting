@@ -1,0 +1,296 @@
+openapi: 3.0.0
+info:
+  title: easy_testing
+  version: 0.5.0
+servers:
+  - {}
+paths:
+  /ping:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                example-1:
+                  value: pong
+      operationId: get-ping
+      security: []
+  /hello:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  greeting:
+                    type: string
+                  id:
+                    type: string
+                    description: Teacher ID or Student ID
+                required:
+                  - greeting
+                  - id
+              examples:
+                example-1:
+                  value:
+                    greeting: hello
+                    id: '2018301234'
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-hello
+  /my_questions:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyQuestions'
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-my_questions
+  /teachers:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    teacher_id:
+                      type: string
+                    name:
+                      type: string
+                    is_admin:
+                      type: boolean
+                  required:
+                    - id
+                    - teacher_id
+                    - name
+                    - is_admin
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      teacher_id: '2010301800'
+                      name: 王二
+                      is_admin: true
+                    - id: 1
+                      teacher_id: '2010301811'
+                      name: 李四
+                      is_admin: false
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-teachers
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: teacher_id
+        - schema:
+            type: string
+          in: query
+          name: name
+    post:
+      summary: ''
+      operationId: post-teachers
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Teacher'
+            examples:
+              example-1:
+                value:
+                  - id: 6
+                    teacher_id: '2017301088'
+                    name: 王五
+                    password: 0dXk6hc5l1
+                    is_admin: true
+        application/json:
+          schema:
+            type: object
+            properties: {}
+    delete:
+      summary: ''
+      operationId: delete-teachers
+      responses:
+        '200':
+          $ref: '#/components/responses/401'
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id (not Teacher ID or Student ID) to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 1
+                  - 2
+                  - 7
+                  - 9
+    put:
+      summary: ''
+      operationId: put-teachers
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Teacher'
+components:
+  schemas:
+    MyQuestions:
+      title: MyQuestions
+      type: object
+      properties:
+        mcq:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              stem:
+                type: string
+              choices:
+                type: array
+                items:
+                  type: string
+        maq:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              stem:
+                type: string
+              choices:
+                type: array
+                items:
+                  type: string
+        bfq:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              stem:
+                type: string
+        tfq:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              stem:
+                type: string
+        crq:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+        cq:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+    Teacher:
+      title: Teacher
+      type: object
+      properties:
+        id:
+          type: integer
+        teacher_id:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+        is_admin:
+          type: boolean
+      required:
+        - id
+        - teacher_id
+        - name
+        - password
+        - is_admin
+  securitySchemes:
+    JWT:
+      name: Authorization
+      type: apiKey
+      in: header
+  responses:
+    '401':
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+          examples:
+            example-1:
+              code: 401
+              message: auth header is empty
+            example-2:
+              code: 401
+              message: Token is expired
+security:
+  - JWT: []
