@@ -16,6 +16,10 @@ class StudentTableWidget(TableWidget):
         self.PAGE_SIZE = 20
         self.queries = {}
         super().__init__(parent, ["学号", "姓名", "班号", ("修改", "删除")], self.PAGE_SIZE, True)
+        self.setData(1, 1,
+                     [[3, 2018300000, "小明", "08060000"],
+                      [4, 2018300001, "小红", "08060000"]],
+                     lambda id, op: print(f"{id}, {op}"))
 
     def onExport(self, filepath: str):
         students = api.getStudents(**self.queries)
@@ -52,11 +56,6 @@ class StudentTableWidget(TableWidget):
                 li[i] = [student[k] for k in ("id", "student_id", "name", "class_id")]
             self.setData(page_num=-(num["num"] // -self.PAGE_SIZE), page_index=page_index, data=li,
                          op_callback=lambda id, op: print(f"{id}, {op}"))
-
-            # self.setData(1, 1,
-            #              [[3, 2018300000, "小明", "08060000"],
-            #               [4, 2018300001, "小红", "08060000"]],
-            #              lambda id, op: print(f"{id}, {op}"))
 
     def onTurnToPage(self, page_index: int):
         self.updateTable(page_index)

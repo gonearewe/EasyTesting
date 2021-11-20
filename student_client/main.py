@@ -51,9 +51,9 @@ class MenuWidget(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    qtmodern.styles.light(app)
     app.setFont(QFont("YaHei", 25))
+    qtmodern.styles.light(app)
+    # if LoginDialog().exec_() == QDialog.Accepted:
     window = MainWindow()
-    # window.resize(1024,720)
     window.showMaximized()
     sys.exit(app.exec_())
