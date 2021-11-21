@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"time"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/dao"
@@ -29,6 +31,7 @@ func generateAuthMiddleware(
 	ret, err = jwt.New(&jwt.GinJWTMiddleware{
 		Realm:         "easy testing",
 		Key:           []byte(viper.GetString("jwt_secret_key")),
+		Timeout:  	   72*time.Hour,
 		Authenticator: authenticator,
 		PayloadFunc:   payloadFunc,
 		Authorizator:  authorizator,
