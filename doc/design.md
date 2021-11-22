@@ -76,13 +76,18 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `student`;
 CREATE TABLE `student`
 (
-    `id`         int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `student_id` varchar(10)  UNIQUE NOT NULL COMMENT '学号',
-    `name`       varchar(50)         NOT NULL COMMENT '姓名',
+    `id`         int(10)            NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `student_id` varchar(10) UNIQUE NOT NULL COMMENT '学号',
+    `name`       varchar(50)        NOT NULL COMMENT '姓名',
     `class_id`   varchar(10)        NOT NULL COMMENT '班号',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `student`
+    (`student_id`, `name`, `class_id`)
+VALUES ('2020501880', '小明', '10072005'),
+       ('2020501826', '小红', '10072005');
 
 -- ----------------------------
 -- Table structure for teacher
@@ -90,15 +95,25 @@ CREATE TABLE `student`
 DROP TABLE IF EXISTS `teacher`;
 CREATE TABLE `teacher`
 (
-    `id`         int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `teacher_id` varchar(10)  UNIQUE NOT NULL COMMENT '工号',
-    `name`       varchar(50)         NOT NULL COMMENT '姓名',
-    `password`   varchar(100)        NOT NULL COMMENT '加盐后的密码',
-    `salt`       varchar(50)         NOT NULL COMMENT '盐',
-    `is_admin`   bool              NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员，0：否，1：是',
+    `id`         int(10)            NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `teacher_id` varchar(10) UNIQUE NOT NULL COMMENT '工号',
+    `name`       varchar(50)        NOT NULL COMMENT '姓名',
+    `password`   varchar(100)       NOT NULL COMMENT '加盐后的密码',
+    `salt`       varchar(50)        NOT NULL COMMENT '盐',
+    `is_admin`   bool               NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `teacher`
+    (`teacher_id`, `name`, `password`, `salt`, `is_admin`)
+VALUES
+    -- client should input password 'ET000' and hash its utf-8 encoding with sha256  
+    ('0', 'root', '$2a$10$lgnXPiP9UR3rj2.tu9l8F.iQJqy5jXwTEuH1b9NWGpbxi0816HiNy',
+     'S0xMx8Hx4mxNui1RCPk1n6MfElv41bgkiBFR3NxS', TRUE),
+    -- client should input password 'three' and hash it with sha256   
+    ('2010301800', '张三', '$2a$10$k2UxaMbG5cagT4n7mLOdpOKrBSHvuDiFCmGraYslI7vCPutoxcdyC',
+     'Mpi6VFBlTlCUe8IVuUCHHtaOMS3GpTVaiGfFn2gT', FALSE);
 
 -- ----------------------------
 -- Table structure for exam
@@ -107,10 +122,23 @@ DROP TABLE IF EXISTS `exam`;
 CREATE TABLE `exam`
 (
     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '发布考试的教师的工号',
+    `publisher_teacher_id` varchar(10)  NOT NULL COMMENT '发布考试的教师的工号',
     `start_time`           datetime     NOT NULL COMMENT '考试开始时间',
     `end_time`             datetime     NOT NULL COMMENT '考试结束时间',
     `time_allowed`         varchar(200) NOT NULL COMMENT '考生答题时间',
+    `mcq_score`            tinyint(1) unsigned  NOT NULL COMMENT '单选题每题分数',
+    `mcq_num`              tinyint(2) unsigned  NOT NULL COMMENT '单选题题数',
+    `maq_score`            tinyint(1) unsigned  NOT NULL COMMENT '多选题每题分数',
+    `maq_num`              tinyint(2) unsigned  NOT NULL COMMENT '多选题题数',
+    `bfq_score`            tinyint(1) unsigned  NOT NULL COMMENT '填空题每题分数',
+    `bfq_num`              tinyint(2) unsigned  NOT NULL COMMENT '填空题题数',
+    `tfq_score`            tinyint(1) unsigned  NOT NULL COMMENT '判断题每题分数',
+    `tfq_num`              tinyint(2) unsigned  NOT NULL COMMENT '判断题题数',
+    `crq_score`            tinyint(1) unsigned  NOT NULL COMMENT '代码阅读题每题分数',
+    `crq_num`              tinyint(1) unsigned  NOT NULL COMMENT '代码阅读题题数',
+    `cq_score`             tinyint(2) unsigned  NOT NULL COMMENT '写代码题每题分数',
+    `cq_num`               tinyint(1) unsigned  NOT NULL COMMENT '写代码题题数',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -121,38 +149,34 @@ CREATE TABLE `exam`
 DROP TABLE IF EXISTS `exam_session`;
 CREATE TABLE `exam_session`
 (
-    `id`         int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `exam_id`    int(10)      NOT NULL COMMENT '连接 exam',
+    `id`         int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `exam_id`    int(10)     NOT NULL COMMENT '连接 exam',
     `student_id` varchar(10) NOT NULL COMMENT '连接 student',
-    `start_time` datetime     NOT NULL COMMENT '作答开始时间',
+    `start_time` datetime    NOT NULL COMMENT '作答开始时间',
     `end_time`   datetime         DEFAULT NULL COMMENT '交卷时间',
+    `answer_sheet` mediumblob  DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档'
     `score`      tinyint unsigned DEFAULT NULL COMMENT '最终成绩',
-    FOREIGN KEY (`exam_id`) REFERENCES exam (`id`),
-    FOREIGN KEY (`student_id`) REFERENCES student (`student_id`),
+    FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
 -- ----------------------------
--- Table structure for multiple choice question (mcq), including multiple answer question (maq)
+-- Table structure for multiple choice question (mcq)
 -- ----------------------------
-
 DROP TABLE IF EXISTS `mcq`;
 CREATE TABLE `mcq`
 (
-    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)     NOT NULL COMMENT '题干',
-    `choice_1`             text(20)     NOT NULL COMMENT '选项的内容',
-    `choice_2`             text(20)     NOT NULL COMMENT '选项的内容',
-    `choice_3`             text(20)     NOT NULL COMMENT '选项的内容',
-    `choice_4`             text(20)     NOT NULL COMMENT '选项的内容',
-    `choice_5`             text(20)              DEFAULT NULL COMMENT '选项的内容',
-    `choice_6`             text(20)              DEFAULT NULL COMMENT '选项的内容',
-    `choice_7`             text(20)              DEFAULT NULL COMMENT '选项的内容',
-    `is_maq`               bool       NOT NULL DEFAULT FALSE COMMENT '是不是多选题，0：否，1：是',
-    `right_answer`         char(7)               DEFAULT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
-    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
+    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `choice_1`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_2`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_3`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_4`             text(20)    NOT NULL COMMENT '选项的内容',
+    `right_answer`         char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -160,39 +184,73 @@ CREATE TABLE `mcq`
 -- ----------------------------
 -- Table structure for students' answer of multiple choice question (mcq)
 -- ----------------------------
-
 DROP TABLE IF EXISTS `mcq_answer`;
 CREATE TABLE `mcq_answer`
 (
     `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `mcq_id`          int(10)          NOT NULL COMMENT '连接 mcq',
     `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    char(7) NOT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
-    `student_answer`  char(7) DEFAULT NULL COMMENT '学生的答案',
-    `score`           tinyint unsigned NOT NULL COMMENT '本题分值',
-    FOREIGN KEY (`mcq_id`) REFERENCES mcq (`id`),
-    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
+    `right_answer`    char(1)          NOT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
+    `student_answer`  char(1) DEFAULT NULL COMMENT '学生的答案',
+    FOREIGN KEY (`mcq_id`) REFERENCES mcq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
 -- ----------------------------
--- Table structure for blank filling question (bfq), including code reading question (crq)
+-- Table structure for multiple answer question (maq)
 -- ----------------------------
+DROP TABLE IF EXISTS `maq`;
+CREATE TABLE `maq`
+(
+    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `choice_1`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_2`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_3`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_4`             text(20)    NOT NULL COMMENT '选项的内容',
+    `choice_5`             text(20)             DEFAULT NULL COMMENT '选项的内容',
+    `choice_6`             text(20)             DEFAULT NULL COMMENT '选项的内容',
+    `choice_7`             text(20)             DEFAULT NULL COMMENT '选项的内容',
+    `right_answer`         char(7)     NOT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
+-- ----------------------------
+-- Table structure for students' answer of multiple answer question (maq)
+-- ----------------------------
+DROP TABLE IF EXISTS `maq_answer`;
+CREATE TABLE `maq_answer`
+(
+    `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `maq_id`          int(10)          NOT NULL COMMENT '连接 maq',
+    `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
+    `right_answer`    char(7)          NOT NULL COMMENT '正确答案，与 maq 中同名字段保持一致',
+    `student_answer`  char(7) DEFAULT NULL COMMENT '学生的答案',
+    FOREIGN KEY (`maq_id`) REFERENCES maq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+-- ----------------------------
+-- Table structure for blank filling question (bfq)
+-- ----------------------------
 DROP TABLE IF EXISTS `bfq`;
 CREATE TABLE `bfq`
 (
-    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)     NOT NULL COMMENT '题干',
-    `blank_num`            tinyint(1)   NOT NULL COMMENT '要填的空的数目，若大于 1，则说明是 crq',
-    `answer_1`             text(20)     NOT NULL COMMENT '填空的答案',
+    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `blank_num`            tinyint(1)  NOT NULL COMMENT '要填的空的数目',
+    `answer_1`             text(20)    NOT NULL COMMENT '填空的答案',
     `answer_2`             text(20) DEFAULT NULL COMMENT '填空的答案',
     `answer_3`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    `answer_4`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    `answer_5`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -200,7 +258,6 @@ CREATE TABLE `bfq`
 -- ----------------------------
 -- Table structure for students' answer of blank filling question (bfq)
 -- ----------------------------
-
 DROP TABLE IF EXISTS `bfq_answer`;
 CREATE TABLE `bfq_answer`
 (
@@ -210,11 +267,8 @@ CREATE TABLE `bfq_answer`
     `student_answer_1` text(20) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_2` text(20) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_3` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_4` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_5` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
-    FOREIGN KEY (`bfq_id`) REFERENCES bfq (`id`),
-    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
+    FOREIGN KEY (`bfq_id`) REFERENCES bfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -222,15 +276,14 @@ CREATE TABLE `bfq_answer`
 -- ----------------------------
 -- Table structure for true false question (tfq)
 -- ----------------------------
-
 DROP TABLE IF EXISTS `tfq`;
 CREATE TABLE `tfq`
 (
-    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)     NOT NULL COMMENT '题干',
-    `answer`               bool   NOT NULL COMMENT '0：错，1：对',
-    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
+    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `answer`               bool        NOT NULL COMMENT '正确答案',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -238,18 +291,58 @@ CREATE TABLE `tfq`
 -- ----------------------------
 -- Table structure for students' answer of true false question (tfq)
 -- ----------------------------
-
 DROP TABLE IF EXISTS `tfq_answer`;
 CREATE TABLE `tfq_answer`
 (
+    `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `tfq_id`          int(10)          NOT NULL COMMENT '连接 tfq',
+    `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
+    `right_answer`    bool             NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
+    `student_answer`  bool DEFAULT NULL COMMENT '学生的答案',
+    FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+-- ----------------------------
+-- Table structure for code reading question (crq)
+-- ----------------------------
+DROP TABLE IF EXISTS `crq`;
+CREATE TABLE `crq`
+(
+    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `blank_num`            tinyint(1)  NOT NULL COMMENT '要填的空的数目',
+    `answer_1`             text(20)    NOT NULL COMMENT '填空的答案',
+    `answer_2`             text(20) NOT NULL COMMENT '填空的答案',
+    `answer_3`             text(20) DEFAULT NULL COMMENT '填空的答案',
+    `answer_4`             text(20) DEFAULT NULL COMMENT '填空的答案',
+    `answer_5`             text(20) DEFAULT NULL COMMENT '填空的答案',
+    `answer_6`             text(20) DEFAULT NULL COMMENT '填空的答案',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+-- ----------------------------
+-- Table structure for students' answer of code reading question (crq)
+-- ----------------------------
+DROP TABLE IF EXISTS `crq_answer`;
+CREATE TABLE `crq_answer`
+(
     `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `tfq_id`           int(10)          NOT NULL COMMENT '连接 tfq',
+    `crq_id`           int(10)          NOT NULL COMMENT '连接 crq',
     `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    bool  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
-    `student_answer` bool         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
-    `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
-    FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`),
-    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
+    `student_answer_1` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_2` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_3` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_4` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_5` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_6` text(20) DEFAULT NULL COMMENT '学生的答案',
+    FOREIGN KEY (`crq_id`) REFERENCES crq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -257,37 +350,29 @@ CREATE TABLE `tfq_answer`
 -- ----------------------------
 -- Table structure for coding question (cq)
 -- ----------------------------
+DROP TABLE IF EXISTS `cq`;
+CREATE TABLE `cq`
+(
+    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                 text(20)     NOT NULL COMMENT '题干',
+    FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
--- DROP TABLE IF EXISTS `cq`;
--- CREATE TABLE `cq`
--- (
---     `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
---     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
---     `stem`                 text(20)     NOT NULL COMMENT '题干',
---     `answer`               text(30)   NOT NULL COMMENT '0：错，1：对',
---     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`),
---     PRIMARY KEY (`id`)
--- ) ENGINE = InnoDB
---   DEFAULT CHARSET = utf8mb4;
-
--- ----------------------------
--- Table structure for students' answer of true false question (tfq)
--- ----------------------------
-
--- DROP TABLE IF EXISTS `tfq_answer`;
--- CREATE TABLE `tfq_answer`
--- (
---     `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
---     `tfq_id`           int(10)          NOT NULL COMMENT '连接 tfq',
---     `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
---     `right_answer`    bool  NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
---     `student_answer` bool         DEFAULT NULL COMMENT '学生的答案，0：错，1：对',
---     `score`            tinyint unsigned NOT NULL COMMENT '本题分值',
---     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`),
---     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`),
---     PRIMARY KEY (`id`)
--- ) ENGINE = InnoDB
---   DEFAULT CHARSET = utf8mb4;
+DROP TABLE IF EXISTS `cq_answer`;
+CREATE TABLE `cq_answer`
+(
+    `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `cq_id`           int(10)          NOT NULL COMMENT '连接 cq',
+    `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
+    `student_answer`   text(20)         DEFAULT NULL COMMENT '学生的答案',
+    FOREIGN KEY (`cq_id`) REFERENCES cq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

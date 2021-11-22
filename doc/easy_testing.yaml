@@ -49,7 +49,7 @@ paths:
         '401':
           $ref: '#/components/responses/401'
       operationId: get-hello
-  /my_questions:
+  /paper:
     get:
       summary: Your GET endpoint
       tags: []
@@ -59,10 +59,392 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MyQuestions'
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    mcq:
+                      - id: 0
+                        stem: 6 + 6 = ?
+                        choices:
+                          - '12'
+                          - '13'
+                          - '0'
+                          - '1'
+                      - id: 1
+                        stem: 6 * 6 = ?
+                        choices:
+                          - '30'
+                          - '32'
+                          - '34'
+                          - '36'
+                    maq:
+                      - id: 0
+                        stem: 下列是 Python 关键词的有
+                        choices:
+                          - del
+                          - def
+                          - elif
+                          - from
+                          - self
+                          - except
+                    bfq:
+                      - id: 0
+                        stem: Python 中用于检查列表、元组等集合中是否存在某个值的关键词是 __
+                        blank_num: 1
+                    tfq:
+                      - id: 0
+                        stem: Python 是面向对象语言
+                      - id: 1
+                        stem: '**AK47** 于 **1949** 年推出的改良版本获苏军认可并正式采用'
+                    crq:
+                      - id: 0
+                        stem: |-
+                          下面代码的运行结果是：
+                          ```py
+                          print(2+1)
+                          ```
+                        blank_num: 1
+                    cq:
+                      - id: 0
+                properties:
+                  mcq:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                          minLength: 1
+                        choices:
+                          type: array
+                          minItems: 4
+                          maxItems: 4
+                          items:
+                            type: string
+                      required:
+                        - id
+                        - stem
+                  maq:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                          minLength: 1
+                        choices:
+                          type: array
+                          minItems: 4
+                          maxItems: 7
+                          items:
+                            type: string
+                      required:
+                        - id
+                        - stem
+                  bfq:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                          minLength: 1
+                        blank_num:
+                          type: integer
+                      required:
+                        - id
+                        - stem
+                        - blank_num
+                  tfq:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                          minLength: 1
+                      required:
+                        - id
+                        - stem
+                  crq:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                          minLength: 1
+                        blank_num:
+                          type: integer
+                      required:
+                        - id
+                        - stem
+                        - blank_num
+                  cq:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                      required:
+                        - id
+                required:
+                  - mcq
+                  - maq
+                  - bfq
+                  - tfq
+                  - crq
+                  - cq
+              examples:
+                example-1:
+                  value:
+                    mcq:
+                      - id: 0
+                        stem: 6 + 6 = ?
+                        choices:
+                          - '12'
+                          - '13'
+                          - '0'
+                          - '1'
+                      - id: 1
+                        stem: 6 * 6 = ?
+                        choices:
+                          - '30'
+                          - '32'
+                          - '34'
+                          - '36'
+                    maq:
+                      - id: 0
+                        stem: 下列是 Python 关键词的有
+                        choices:
+                          - del
+                          - def
+                          - elif
+                          - from
+                          - self
+                          - except
+                    bfq:
+                      - id: 0
+                        stem: Python 中用于检查列表、元组等集合中是否存在某个值的关键词是 __
+                        blank_num: 1
+                    tfq:
+                      - id: 0
+                        stem: Python 是面向对象语言
+                      - id: 1
+                        stem: '**AK47** 于 **1949** 年推出的改良版本获苏军认可并正式采用'
+                    crq:
+                      - id: 0
+                        stem: |-
+                          下面代码的运行结果是：
+                          ```py
+                          print(2+1)
+                          ```
+                        blank_num: 1
+                    cq:
+                      - id: 0
         '401':
           $ref: '#/components/responses/401'
-      operationId: get-my_questions
+        '403':
+          description: Forbidden
+      operationId: get-paper
+    parameters: []
+    put:
+      summary: ''
+      operationId: put-paper
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  mcq:
+                    - id: 0
+                      answer: 1
+                    - id: 1
+                      answer: 4
+                  maq:
+                    - id: 0
+                      answers:
+                        - 1
+                        - 2
+                        - 4
+                  bfq:
+                    - id: 0
+                      answers:
+                        - 封装
+                        - 继承
+                        - 多态
+                  tfq:
+                    - id: 0
+                      answer: true
+                    - id: 1
+                      answer: false
+                  crq:
+                    - id: 0
+                      answers:
+                        - len(li)
+                        - x+=1
+                  cq:
+                    - id: 0
+              properties:
+                mcq:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: integer
+                    required:
+                      - id
+                      - answer
+                maq:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answers:
+                        type: array
+                        items:
+                          type: integer
+                    required:
+                      - id
+                bfq:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answers:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - id
+                tfq:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: boolean
+                    required:
+                      - id
+                      - answer
+                crq:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answers:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - id
+                cq:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                    required:
+                      - id
+              required:
+                - mcq
+                - maq
+                - bfq
+                - tfq
+                - crq
+                - cq
+            examples:
+              example-1:
+                value:
+                  mcq:
+                    - id: 0
+                      answer: 1
+                    - id: 1
+                      answer: 4
+                  maq:
+                    - id: 0
+                      answers:
+                        - 1
+                        - 2
+                        - 4
+                  bfq:
+                    - id: 0
+                      answers:
+                        - 封装
+                        - 继承
+                        - 多态
+                  tfq:
+                    - id: 0
+                      answer: true
+                    - id: 1
+                      answer: false
+                  crq:
+                    - id: 0
+                      answers:
+                        - len(li)
+                        - x+=1
+                  cq:
+                    - id: 0
   /teachers:
     get:
       summary: Your GET endpoint
@@ -93,11 +475,11 @@ paths:
               examples:
                 example-1:
                   value:
-                    - id: 0
+                    - id: 1
                       teacher_id: '2010301800'
                       name: 王二
                       is_admin: true
-                    - id: 1
+                    - id: 2
                       teacher_id: '2010301811'
                       name: 李四
                       is_admin: false
@@ -115,6 +497,15 @@ paths:
             type: string
           in: query
           name: name
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-teachers
@@ -135,10 +526,15 @@ paths:
             examples:
               example-1:
                 value:
-                  - id: 6
-                    teacher_id: '2017301088'
+                  - teacher_id: '2017301088'
                     name: 王五
                     password: 0dXk6hc5l1
+                    is_admin: true
+              example-2:
+                value:
+                  - teacher_id: '0'
+                    name: root
+                    password: e66ac56a12d26003451e18a29215995ff52c26441b28c399bb6ce45e9b81fad8
                     is_admin: true
         application/json:
           schema:
@@ -154,6 +550,8 @@ paths:
           description: Bad Request
         '401':
           $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
       requestBody:
         content:
           application/json:
@@ -184,6 +582,1859 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Teacher'
+  /teacher_auth:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    code: 200
+                    expire: '2021-11-24T15:24:44+08:00'
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzc3Mzg2ODQsImlzX2FkbWluIjp0cnVlLCJvcmlnX2lhdCI6MTYzNzQ3OTQ4NCwidGVhY2hlcl9pZCI6IjIwMTAzMDE3MDAifQ.UXDGHHIvdzOR-78DMkKGgLMet59HhlJ3DjWBo29CnuM
+                properties:
+                  code:
+                    type: integer
+                  expire:
+                    type: string
+                    minLength: 1
+                  token:
+                    type: string
+                    minLength: 1
+                required:
+                  - code
+                  - expire
+                  - token
+              examples:
+                example-1:
+                  value:
+                    code: 200
+                    expire: '2021-11-24T15:24:44+08:00'
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzc3Mzg2ODQsImlzX2FkbWluIjp0cnVlLCJvcmlnX2lhdCI6MTYzNzQ3OTQ4NCwidGVhY2hlcl9pZCI6IjIwMTAzMDE3MDAifQ.UXDGHHIvdzOR-78DMkKGgLMet59HhlJ3DjWBo29CnuM
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-teacher_auth
+      security: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: teacher_id
+        - schema:
+            type: string
+          in: query
+          name: password
+          description: hashed password
+  /student_auth:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    code: 200
+                    expire: '2021-11-24T15:28:48+08:00'
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzc3Mzg5MjgsImlzX2FkbWluIjp0cnVlLCJvcmlnX2lhdCI6MTYzNzQ3OTcyOCwidGVhY2hlcl9pZCI6IjIwMTAzMDE3MDAifQ.DW5w-aaqqqJxRz0v1FLktN4bfw4J5w-IlQdn1mXiGOg
+                properties:
+                  code:
+                    type: integer
+                  expire:
+                    type: string
+                    minLength: 1
+                  token:
+                    type: string
+                    minLength: 1
+                required:
+                  - code
+                  - expire
+                  - token
+              examples:
+                example-1:
+                  value:
+                    code: 200
+                    expire: '2021-11-24T15:28:48+08:00'
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzc3Mzg5MjgsImlzX2FkbWluIjp0cnVlLCJvcmlnX2lhdCI6MTYzNzQ3OTcyOCwidGVhY2hlcl9pZCI6IjIwMTAzMDE3MDAifQ.DW5w-aaqqqJxRz0v1FLktN4bfw4J5w-IlQdn1mXiGOg
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-student_auth
+      security: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: student_id
+        - schema:
+            type: string
+          in: query
+          name: exam_id
+  /students:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - student_id: '2020501880'
+                      name: 小明
+                      class_id: '10072005'
+                    - student_id: '2020501826'
+                      name: 小红
+                      class_id: '10072005'
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    student_id:
+                      type: string
+                      minLength: 1
+                    name:
+                      type: string
+                      minLength: 1
+                    class_id:
+                      type: string
+                      minLength: 1
+                  required:
+                    - id
+                    - student_id
+                    - name
+                    - class_id
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      student_id: '2020501880'
+                      name: 小明
+                      class_id: '10072005'
+                    - id: 1
+                      student_id: '2020501826'
+                      name: 小红
+                      class_id: '10072005'
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-students
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: student_id
+        - schema:
+            type: string
+          in: query
+          name: name
+        - schema:
+            type: string
+          in: query
+          name: class_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
+    post:
+      summary: ''
+      operationId: post-students
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              items:
+                type: object
+                required:
+                  - student_id
+                  - name
+                  - class_id
+                properties:
+                  student_id:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  class_id:
+                    type: string
+                    minLength: 1
+              x-examples:
+                example-1:
+                  - student_id: '2020501840'
+                    name: 小军
+                    class_id: '10072005'
+                  - student_id: '2021501826'
+                    name: 小亮
+                    class_id: '10072003'
+            examples:
+              example-1:
+                value:
+                  - student_id: '2020501840'
+                    name: 小军
+                    class_id: '10072005'
+                  - student_id: '2021501826'
+                    name: 小亮
+                    class_id: '10072003'
+    put:
+      summary: ''
+      operationId: put-students
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 0
+                    student_id: '2020501880'
+                    name: 小明
+                    class_id: '10072005'
+                  - id: 1
+                    student_id: '2020501855'
+                    name: 小红
+                    class_id: '10072005'
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  student_id:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  class_id:
+                    type: string
+                    minLength: 1
+                required:
+                  - id
+                  - student_id
+                  - name
+                  - class_id
+            examples:
+              example-1:
+                value:
+                  - id: 0
+                    student_id: '2020501880'
+                    name: 小明
+                    class_id: '10072005'
+                  - id: 1
+                    student_id: '2020501855'
+                    name: 小红
+                    class_id: '10072005'
+    delete:
+      summary: ''
+      operationId: delete-students
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id (not Teacher ID or Student ID) to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 2
+                  - 3
+  /exams:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      start_time: '2021/11/21 14:00:00'
+                      end_time: '2021/11/21 17:00:00'
+                      time_allowed: '02:00:00'
+                      mcq_score: 2
+                      mcq_num: 20
+                      maq_score: 3
+                      maq_num: 5
+                      bfq_score: 3
+                      bfq_num: 5
+                      tfq_score: 2
+                      tfq_num: 5
+                      crq_score: 6
+                      crq_num: 2
+                      cq_score: 4
+                      cq_num: 2
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    publisher_teacher_id:
+                      type: string
+                      minLength: 1
+                    start_time:
+                      type: string
+                      minLength: 1
+                    end_time:
+                      type: string
+                      minLength: 1
+                    time_allowed:
+                      type: string
+                      minLength: 1
+                    mcq_score:
+                      type: integer
+                    mcq_num:
+                      type: integer
+                    maq_score:
+                      type: integer
+                    maq_num:
+                      type: integer
+                    bfq_score:
+                      type: integer
+                    bfq_num:
+                      type: integer
+                    tfq_score:
+                      type: integer
+                    tfq_num:
+                      type: integer
+                    crq_score:
+                      type: integer
+                    crq_num:
+                      type: integer
+                    cq_score:
+                      type: integer
+                    cq_num:
+                      type: integer
+                  required:
+                    - id
+                    - publisher_teacher_id
+                    - start_time
+                    - end_time
+                    - time_allowed
+                    - mcq_score
+                    - mcq_num
+                    - maq_score
+                    - maq_num
+                    - bfq_score
+                    - bfq_num
+                    - tfq_score
+                    - tfq_num
+                    - crq_score
+                    - crq_num
+                    - cq_score
+                    - cq_num
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      start_time: '2021/11/21 14:00:00'
+                      end_time: '2021/11/21 17:00:00'
+                      time_allowed: '02:00:00'
+                      mcq_score: 2
+                      mcq_num: 20
+                      maq_score: 3
+                      maq_num: 5
+                      bfq_score: 3
+                      bfq_num: 5
+                      tfq_score: 2
+                      tfq_num: 5
+                      crq_score: 6
+                      crq_num: 2
+                      cq_score: 4
+                      cq_num: 2
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-exams
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: id
+          description: the exam id
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+    post:
+      summary: ''
+      operationId: post-exams
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 0
+                    start_time: '2021/11/21 14:00:00'
+                    end_time: '2021/11/21 17:00:00'
+                    time_allowed: '02:00:00'
+                    mcq_score: 2
+                    mcq_num: 20
+                    maq_score: 3
+                    maq_num: 5
+                    bfq_score: 3
+                    bfq_num: 5
+                    tfq_score: 2
+                    tfq_num: 5
+                    crq_score: 6
+                    crq_num: 2
+                    cq_score: 4
+                    cq_num: 2
+              items:
+                type: object
+                properties:
+                  start_time:
+                    type: string
+                    minLength: 1
+                  end_time:
+                    type: string
+                    minLength: 1
+                  time_allowed:
+                    type: string
+                    minLength: 1
+                  mcq_score:
+                    type: integer
+                  mcq_num:
+                    type: integer
+                  maq_score:
+                    type: integer
+                  maq_num:
+                    type: integer
+                  bfq_score:
+                    type: integer
+                  bfq_num:
+                    type: integer
+                  tfq_score:
+                    type: integer
+                  tfq_num:
+                    type: integer
+                  crq_score:
+                    type: integer
+                  crq_num:
+                    type: integer
+                  cq_score:
+                    type: integer
+                  cq_num:
+                    type: integer
+                required:
+                  - start_time
+                  - end_time
+                  - time_allowed
+                  - mcq_score
+                  - mcq_num
+                  - maq_score
+                  - maq_num
+                  - bfq_score
+                  - bfq_num
+                  - tfq_score
+                  - tfq_num
+                  - crq_score
+                  - crq_num
+                  - cq_score
+                  - cq_num
+            examples:
+              example-1:
+                value:
+                  - start_time: '2021/11/21 14:00:00'
+                    end_time: '2021/11/21 17:00:00'
+                    time_allowed: '02:00:00'
+                    mcq_score: 2
+                    mcq_num: 20
+                    maq_score: 3
+                    maq_num: 5
+                    bfq_score: 3
+                    bfq_num: 5
+                    tfq_score: 2
+                    tfq_num: 5
+                    crq_score: 6
+                    crq_num: 2
+                    cq_score: 4
+                    cq_num: 2
+    put:
+      summary: ''
+      operationId: put-exams
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 0
+                    start_time: '2021/11/21 14:00:00'
+                    end_time: '2021/11/21 17:00:00'
+                    time_allowed: '02:00:00'
+                    mcq_score: 2
+                    mcq_num: 20
+                    maq_score: 3
+                    maq_num: 5
+                    bfq_score: 3
+                    bfq_num: 5
+                    tfq_score: 2
+                    tfq_num: 5
+                    crq_score: 6
+                    crq_num: 2
+                    cq_score: 4
+                    cq_num: 2
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  start_time:
+                    type: string
+                    minLength: 1
+                  end_time:
+                    type: string
+                    minLength: 1
+                  time_allowed:
+                    type: string
+                    minLength: 1
+                  mcq_score:
+                    type: integer
+                  mcq_num:
+                    type: integer
+                  maq_score:
+                    type: integer
+                  maq_num:
+                    type: integer
+                  bfq_score:
+                    type: integer
+                  bfq_num:
+                    type: integer
+                  tfq_score:
+                    type: integer
+                  tfq_num:
+                    type: integer
+                  crq_score:
+                    type: integer
+                  crq_num:
+                    type: integer
+                  cq_score:
+                    type: integer
+                  cq_num:
+                    type: integer
+                required:
+                  - id
+                  - start_time
+                  - end_time
+                  - time_allowed
+                  - mcq_score
+                  - mcq_num
+                  - maq_score
+                  - maq_num
+                  - bfq_score
+                  - bfq_num
+                  - tfq_score
+                  - tfq_num
+                  - crq_score
+                  - crq_num
+                  - cq_score
+                  - cq_num
+            examples:
+              example-1:
+                value:
+                  - id: 0
+                    start_time: '2021/11/21 14:00:00'
+                    end_time: '2021/11/21 17:00:00'
+                    time_allowed: '02:00:00'
+                    mcq_score: 2
+                    mcq_num: 20
+                    maq_score: 3
+                    maq_num: 5
+                    bfq_score: 3
+                    bfq_num: 5
+                    tfq_score: 2
+                    tfq_num: 5
+                    crq_score: 6
+                    crq_num: 2
+                    cq_score: 4
+                    cq_num: 2
+    delete:
+      summary: ''
+      operationId: delete-exams
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 0
+                  - 1
+  /mcq:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '1'
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '2'
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    publisher_teacher_id:
+                      type: string
+                      minLength: 1
+                    stem:
+                      type: string
+                      minLength: 1
+                    choices:
+                      type: array
+                      minItems: 4
+                      maxItems: 4
+                      items:
+                        type: string
+                    right_answer:
+                      type: integer
+                      description: 1-based index of the right answer in the choices array
+                  required:
+                    - id
+                    - publisher_teacher_id
+                    - stem
+                    - choices
+                    - right_answer
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choices:
+                        - '2'
+                        - '3'
+                        - '4'
+                        - '5'
+                      right_answer: 1
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choices:
+                        - '2'
+                        - '3'
+                        - '4'
+                        - '5'
+                      right_answer: 2
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-mcq
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+    post:
+      summary: ''
+      operationId: post-mcq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - stem: 2 * 2 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '3'
+                  - stem: 2 - 0 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  stem:
+                    type: string
+                    minLength: 1
+                  choices:
+                    type: array
+                    minItems: 4
+                    maxItems: 4
+                    items:
+                      type: string
+                  right_answer:
+                    type: integer
+                    description: 1-based index of the right answer in the choices array
+                required:
+                  - stem
+                  - choices
+                  - right_answer
+            examples:
+              example-1:
+                value:
+                  - stem: 2 * 2 = ?
+                    choices:
+                      - '2'
+                      - '3'
+                      - '4'
+                      - '5'
+                    right_answer: 3
+                  - stem: 2 - 0 = ?
+                    choices:
+                      - '2'
+                      - '3'
+                      - '4'
+                      - '5'
+                    right_answer: 1
+    put:
+      summary: ''
+      operationId: put-mcq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 2
+                    stem: 2 * 1 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  stem:
+                    type: string
+                    minLength: 1
+                  choices:
+                    type: array
+                    minItems: 4
+                    maxItems: 4
+                    items:
+                      type: string
+                  right_answer:
+                    type: integer
+                    description: 1-based index of the right answer in the choices array
+                required:
+                  - id
+                  - stem
+                  - choices
+                  - right_answer
+            examples:
+              example-1:
+                value:
+                  - id: 2
+                    stem: 2 * 1 = ?
+                    choices:
+                      - '2'
+                      - '3'
+                      - '4'
+                      - '5'
+                    right_answer: 1
+    delete:
+      summary: ''
+      operationId: delete-mcq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 2
+                  - 3
+  /maq:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '1'
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '2'
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    publisher_teacher_id:
+                      type: string
+                      minLength: 1
+                    stem:
+                      type: string
+                      minLength: 1
+                    choices:
+                      type: array
+                      minItems: 4
+                      maxItems: 7
+                      items:
+                        type: string
+                    right_answer:
+                      type: array
+                      description: 1-based indices of right answer in the choices array
+                      items:
+                        type: integer
+                  required:
+                    - id
+                    - publisher_teacher_id
+                    - stem
+                    - choices
+                    - right_answer
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choices:
+                        - '2'
+                        - '3'
+                        - '4'
+                        - '5'
+                      right_answer: 1
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choices:
+                        - '2'
+                        - '3'
+                        - '4'
+                        - '5'
+                      right_answer: 2
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-maq
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+    post:
+      summary: ''
+      operationId: post-maq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - stem: 2 * 2 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '3'
+                  - stem: 2 - 0 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  stem:
+                    type: string
+                    minLength: 1
+                  choices:
+                    type: array
+                    minItems: 4
+                    maxItems: 7
+                    items:
+                      type: string
+                  right_answer:
+                    type: array
+                    description: 1-based indices of right answer in the choices array
+                    items:
+                      type: integer
+                required:
+                  - stem
+                  - choices
+                  - right_answer
+            examples:
+              example-1:
+                value:
+                  - stem: 四书五经是四书和五经的合称，是中国儒家的经典书籍。其中的**四书**指的是哪四本书？
+                    choices:
+                      - 《论语》
+                      - 《诗经》
+                      - 《孟子》
+                      - 《大学》
+                      - 《尚书》
+                      - 《中庸》
+                      - 《春秋》
+                    right_answer:
+                      - 1
+                      - 3
+                      - 4
+                      - 6
+    put:
+      summary: ''
+      operationId: put-maq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 2
+                    stem: 2 * 1 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  stem:
+                    type: string
+                    minLength: 1
+                  choices:
+                    type: array
+                    minItems: 4
+                    maxItems: 7
+                    items:
+                      type: string
+                  right_answer:
+                    type: array
+                    description: 1-based indices of right answer in the choices array
+                    items:
+                      type: integer
+                required:
+                  - id
+                  - stem
+                  - choices
+                  - right_answer
+            examples:
+              example-1:
+                value:
+                  - id: 2
+                    stem: 四书五经是四书和五经的合称，是中国儒家的经典书籍。其中的**四书**指的是哪四本书？
+                    choices:
+                      - 《论语》
+                      - 《礼记》
+                      - 《孟子》
+                      - 《大学》
+                      - 《尚书》
+                      - 《中庸》
+                      - 《周易》
+                    right_answer:
+                      - 1
+                      - 3
+                      - 4
+                      - 6
+    delete:
+      summary: ''
+      operationId: delete-maq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 2
+  /bfq:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '1'
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '2'
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    publisher_teacher_id:
+                      type: string
+                      minLength: 1
+                    stem:
+                      type: string
+                      minLength: 1
+                    right_answers:
+                      type: array
+                      description: ''
+                      minItems: 1
+                      maxItems: 3
+                      items:
+                        type: string
+                  required:
+                    - id
+                    - publisher_teacher_id
+                    - stem
+                    - right_answers
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 中国的首都是
+                      right_answers:
+                        - 北京
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 小说三要素是什么？
+                      right_answers:
+                        - 人物
+                        - 情节
+                        - 环境
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-bfq
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+    post:
+      summary: ''
+      operationId: post-bfq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - stem: 2 * 2 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '3'
+                  - stem: 2 - 0 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  stem:
+                    type: string
+                    minLength: 1
+                  right_answers:
+                    type: array
+                    description: ''
+                    maxItems: 3
+                    minItems: 1
+                    items:
+                      type: string
+                required:
+                  - stem
+                  - right_answers
+            examples:
+              example-1:
+                value:
+                  - stem: 'What''s the name of the industrial-strength programming language extending the Caml dialect of ML with object-oriented features, which was created in 1996 by Xavier Leroy, Jérôme Vouillon, Damien Doligez, Didier Rémy, Ascánder Suárez, and others.'
+                    right_answers:
+                      - OCaml
+    put:
+      summary: ''
+      operationId: put-bfq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 2
+                    stem: 2 * 1 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  stem:
+                    type: string
+                    minLength: 1
+                  right_answers:
+                    type: array
+                    description: ''
+                    minItems: 1
+                    maxItems: 3
+                    items:
+                      type: string
+                required:
+                  - id
+                  - stem
+                  - right_answers
+            examples:
+              example-1:
+                value:
+                  - id: 2
+                    stem: What's the name of the industrial-strength programming language extending the Caml dialect of ML with object-oriented features?
+                    right_answers:
+                      - OCaml
+    delete:
+      summary: ''
+      operationId: delete-bfq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 2
+  /tfq:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '1'
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '2'
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    publisher_teacher_id:
+                      type: string
+                      minLength: 1
+                    stem:
+                      type: string
+                      minLength: 1
+                    right_answer:
+                      type: boolean
+                      description: ''
+                  required:
+                    - id
+                    - publisher_teacher_id
+                    - stem
+                    - right_answer
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 中国的首都是
+                      right_answers:
+                        - 北京
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 小说三要素是什么？
+                      right_answers:
+                        - 人物
+                        - 情节
+                        - 环境
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-tfq
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+    post:
+      summary: ''
+      operationId: post-tfq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - stem: 2 * 2 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '3'
+                  - stem: 2 - 0 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  stem:
+                    type: string
+                    minLength: 1
+                  right_answer:
+                    description: ''
+                    type: boolean
+                required:
+                  - stem
+                  - right_answer
+            examples:
+              example-1:
+                value:
+                  - stem: AP 弹指的是穿甲弹
+                    right_answer: true
+    put:
+      summary: ''
+      operationId: put-tfq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 2
+                    stem: 2 * 1 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  stem:
+                    type: string
+                    minLength: 1
+                  right_answer:
+                    description: ''
+                    type: boolean
+                required:
+                  - id
+                  - stem
+                  - right_answer
+            examples:
+              example-1:
+                value:
+                  - id: 2
+                    stem: HE 弹指的是高爆弹
+                    right_answer: true
+    delete:
+      summary: ''
+      operationId: delete-tfq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 2
+                  - 3
+  /crq:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                minItems: 1
+                uniqueItems: true
+                x-examples:
+                  example-1:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 1 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '1'
+                    - id: 1
+                      publisher_teacher_id: '2010301800'
+                      stem: 1 + 2 = ?
+                      choice_1: '2'
+                      choice_2: '3'
+                      choice_3: '4'
+                      choice_4: '5'
+                      right_answer: '2'
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    publisher_teacher_id:
+                      type: string
+                      minLength: 1
+                    stem:
+                      type: string
+                      minLength: 1
+                    right_answers:
+                      type: array
+                      description: ''
+                      maxItems: 6
+                      minItems: 2
+                      items:
+                        type: string
+                  required:
+                    - id
+                    - publisher_teacher_id
+                    - stem
+                    - right_answers
+              examples:
+                example-1:
+                  value:
+                    - id: 0
+                      publisher_teacher_id: '2010301800'
+                      stem: |-
+                        下面的代码用于进行矩阵加法，试完成填空，补全代码：
+                        ```py
+                        # 两个矩阵相加
+                        X = [[12,7,3], [4 ,5,6], [7 ,8,9]]
+                        Y = [[5,8,1], [6,7,3], [4,5,9]]
+
+                        result = [[0,0,0], [0,0,0]]
+                        for i in range(len(X)): # 迭代输出行
+                            for _1_ in range(len(X[0])): # 迭代输出列
+                                result[_2_][j] = X[i][j]+Y[i][_3_] 
+                        for r in result:
+                            print(r) # 打印出结果
+                        ```
+                      right_answers:
+                        - j
+                        - i
+                        - j
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-crq
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+    post:
+      summary: ''
+      operationId: post-crq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - stem: 2 * 2 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '3'
+                  - stem: 2 - 0 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  stem:
+                    type: string
+                    minLength: 1
+                  right_answers:
+                    type: array
+                    description: ''
+                    maxItems: 6
+                    minItems: 2
+                    items:
+                      type: string
+                required:
+                  - stem
+                  - right_answers
+            examples:
+              example-1:
+                value:
+                  - stem: |-
+                      下面的代码用于进行矩阵减法，试完成填空，补全代码：
+                      ```py
+                      # 两个矩阵相加
+                      X = [[5,7,8], [8 ,5,6], [0 ,8,9]]
+                      Y = [[5,8,1], [6,7,3], [4,5,9]]
+
+                      result = [[0,0,0], [0,0,0]]
+                      for _1_ in range(len(X)): # 迭代输出行
+                          for j in range(len(X[0])): # 迭代输出列
+                              result[_2_][j] = X[i][j] _3_ Y[i][j] 
+                      for r in result:
+                          print(r) # 打印出结果
+                      ```
+                    right_answers:
+                      - i
+                      - i
+                      - '-'
+    put:
+      summary: ''
+      operationId: put-crq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - id: 2
+                    stem: 2 * 1 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  stem:
+                    type: string
+                    minLength: 1
+                  right_answers:
+                    type: array
+                    description: ''
+                    maxItems: 6
+                    minItems: 2
+                    items:
+                      type: string
+                required:
+                  - id
+                  - stem
+                  - right_answers
+            examples:
+              example-1:
+                value:
+                  - id: 1
+                    stem: |-
+                      下面的代码用于进行矩阵减法，试完成填空，补全代码：
+                      ```py
+                      # 两个矩阵相加
+                      _1_ = [[5,7,8], [8 ,5,6], [0 ,8,9]]
+                      Y = [[5,8,1], [6,7,3], [4,5,9]]
+
+                      result = [[0,0,0], [0,0,0]]
+                      for i in range(len(X)): # 迭代输出行
+                          for j in range(len(X[0])): # 迭代输出列
+                              result[_2_][j] = X[i][j] _3_ Y[i][j] 
+                      for r in result:
+                          print(r) # 打印出结果
+                      ```
+                    right_answers:
+                      - X
+                      - i
+                      - '-'
+    delete:
+      summary: ''
+      operationId: delete-crq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: array of id to be deleted
+              items:
+                type: integer
+            examples:
+              example-1:
+                value:
+                  - 2
+                  - 1
 components:
   schemas:
     MyQuestions:
@@ -262,12 +2513,6 @@ components:
           type: string
         is_admin:
           type: boolean
-      required:
-        - id
-        - teacher_id
-        - name
-        - password
-        - is_admin
   securitySchemes:
     JWT:
       name: Authorization
@@ -289,6 +2534,9 @@ components:
             example-1:
               code: 401
               message: auth header is empty
+              value:
+                code: 401
+                message: incorrect Username or Password
             example-2:
               code: 401
               message: Token is expired
