@@ -111,9 +111,9 @@ VALUES
     -- client should input password 'ET000' and hash its utf-8 encoding with sha256  
     ('0', 'root', '$2a$10$lgnXPiP9UR3rj2.tu9l8F.iQJqy5jXwTEuH1b9NWGpbxi0816HiNy',
      'S0xMx8Hx4mxNui1RCPk1n6MfElv41bgkiBFR3NxS', TRUE),
-    -- client should input password 'three' and hash it with sha256   
-    ('2010301800', '张三', '$2a$10$k2UxaMbG5cagT4n7mLOdpOKrBSHvuDiFCmGraYslI7vCPutoxcdyC',
-     'Mpi6VFBlTlCUe8IVuUCHHtaOMS3GpTVaiGfFn2gT', FALSE);
+    -- client should input password 'Scala' and hash it with sha256   
+    ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
+     '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
 
 -- ----------------------------
 -- Table structure for exam
@@ -154,7 +154,7 @@ CREATE TABLE `exam_session`
     `student_id` varchar(10) NOT NULL COMMENT '连接 student',
     `start_time` datetime    NOT NULL COMMENT '作答开始时间',
     `end_time`   datetime         DEFAULT NULL COMMENT '交卷时间',
-    `answer_sheet` mediumblob  DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档'
+    `answer_sheet` mediumblob  DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
     `score`      tinyint unsigned DEFAULT NULL COMMENT '最终成绩',
     FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,

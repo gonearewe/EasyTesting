@@ -3,12 +3,13 @@ info:
   title: easy_testing
   version: 0.5.0
 servers:
-  - {}
+  - url: 'http://localhost:443'
 paths:
   /ping:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - others
       responses:
         '200':
           description: OK
@@ -24,7 +25,6 @@ paths:
   /hello:
     get:
       summary: Your GET endpoint
-      tags: []
       responses:
         '200':
           description: OK
@@ -49,10 +49,13 @@ paths:
         '401':
           $ref: '#/components/responses/401'
       operationId: get-hello
+      tags:
+        - others
   /paper:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - exam
       responses:
         '200':
           description: OK
@@ -445,10 +448,13 @@ paths:
                         - x+=1
                   cq:
                     - id: 0
+      tags:
+        - exam
   /teachers:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - user
       responses:
         '200':
           description: OK
@@ -475,13 +481,13 @@ paths:
               examples:
                 example-1:
                   value:
-                    - id: 1
-                      teacher_id: '2010301800'
-                      name: 王二
+                    - id: 0
+                      teacher_id: '0'
+                      name: root
                       is_admin: true
                     - id: 2
-                      teacher_id: '2010301811'
-                      name: 李四
+                      teacher_id: '2010301800'
+                      name: 张三
                       is_admin: false
         '400':
           description: Bad Request
@@ -521,15 +527,41 @@ paths:
           application/json:
             schema:
               type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
               items:
-                $ref: '#/components/schemas/Teacher'
+                type: object
+                required:
+                  - teacher_id
+                  - name
+                  - password
+                  - is_admin
+                properties:
+                  teacher_id:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  password:
+                    type: string
+                    minLength: 1
+                  is_admin:
+                    type: boolean
+              x-examples:
+                example-1:
+                  - teacher_id: '2010301800'
+                    name: 张三
+                    password: 8fcd1836eba80875018ae5bb1f5e0754ccd28ff157379ca1a29db8f6d4450726
+                    is_admin: false
             examples:
               example-1:
                 value:
-                  - teacher_id: '2017301088'
-                    name: 王五
-                    password: 0dXk6hc5l1
-                    is_admin: true
+                  - teacher_id: '2010301800'
+                    name: 张三
+                    password: 8fcd1836eba80875018ae5bb1f5e0754ccd28ff157379ca1a29db8f6d4450726
+                    is_admin: false
               example-2:
                 value:
                   - teacher_id: '0'
@@ -540,6 +572,8 @@ paths:
           schema:
             type: object
             properties: {}
+      tags:
+        - user
     delete:
       summary: ''
       operationId: delete-teachers
@@ -552,21 +586,14 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id (not Teacher ID or Student ID) to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 1
-                  - 2
-                  - 7
-                  - 9
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id (not Teacher ID or Student ID) to be deleted, seperated by '','''
+      tags:
+        - user
     put:
       summary: ''
       operationId: put-teachers
@@ -581,11 +608,50 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Teacher'
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  id: 1
+                  teacher_id: '2015339940'
+                  name: 张三
+                  password: 8fcd1836eba80875018ae5bb1f5e0754ccd28ff157379ca1a29db8f6d4450726
+                  is_admin: false
+              properties:
+                id:
+                  type: integer
+                teacher_id:
+                  type: string
+                  minLength: 1
+                name:
+                  type: string
+                  minLength: 1
+                password:
+                  type: string
+                  minLength: 1
+                is_admin:
+                  type: boolean
+              required:
+                - id
+                - teacher_id
+                - name
+                - password
+                - is_admin
+            examples:
+              example-1:
+                value:
+                  id: 1
+                  teacher_id: '2015339940'
+                  name: 张三
+                  password: 8fcd1836eba80875018ae5bb1f5e0754ccd28ff157379ca1a29db8f6d4450726
+                  is_admin: false
+      tags:
+        - user
   /teacher_auth:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - user
       responses:
         '200':
           description: OK
@@ -637,7 +703,8 @@ paths:
   /student_auth:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - user
       responses:
         '200':
           description: OK
@@ -688,7 +755,8 @@ paths:
   /students:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - user
       responses:
         '200':
           description: OK
@@ -815,6 +883,8 @@ paths:
                   - student_id: '2021501826'
                     name: 小亮
                     class_id: '10072003'
+      tags:
+        - user
     put:
       summary: ''
       operationId: put-students
@@ -873,6 +943,8 @@ paths:
                     student_id: '2020501855'
                     name: 小红
                     class_id: '10072005'
+      tags:
+        - user
     delete:
       summary: ''
       operationId: delete-students
@@ -885,23 +957,19 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id (not Teacher ID or Student ID) to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 2
-                  - 3
+      parameters:
+        - schema:
+            type: string
+          in: query
+          description: 'array of id (not Teacher ID or Student ID) to be deleted, seperated by '','''
+          name: ids
+      tags:
+        - user
   /exams:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - exam
       responses:
         '200':
           description: OK
@@ -1025,6 +1093,15 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-exams
@@ -1133,6 +1210,8 @@ paths:
                     crq_num: 2
                     cq_score: 4
                     cq_num: 2
+      tags:
+        - exam
     put:
       summary: ''
       operationId: put-exams
@@ -1245,6 +1324,8 @@ paths:
                     crq_num: 2
                     cq_score: 4
                     cq_num: 2
+      tags:
+        - exam
     delete:
       summary: ''
       operationId: delete-exams
@@ -1257,23 +1338,19 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 0
-                  - 1
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, seperated by '','''
+      tags:
+        - exam
   /mcq:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - question
       responses:
         '200':
           description: OK
@@ -1359,6 +1436,15 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-mcq
@@ -1427,6 +1513,8 @@ paths:
                       - '4'
                       - '5'
                     right_answer: 1
+      tags:
+        - question
     put:
       summary: ''
       operationId: put-mcq
@@ -1489,6 +1577,8 @@ paths:
                       - '4'
                       - '5'
                     right_answer: 1
+      tags:
+        - question
     delete:
       summary: ''
       operationId: delete-mcq
@@ -1501,23 +1591,19 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 2
-                  - 3
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, seperated by '','''
+      tags:
+        - question
   /maq:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - question
       responses:
         '200':
           description: OK
@@ -1605,6 +1691,15 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-maq
@@ -1675,6 +1770,8 @@ paths:
                       - 3
                       - 4
                       - 6
+      tags:
+        - question
     put:
       summary: ''
       operationId: put-maq
@@ -1746,6 +1843,8 @@ paths:
                       - 3
                       - 4
                       - 6
+      tags:
+        - question
     delete:
       summary: ''
       operationId: delete-maq
@@ -1758,22 +1857,19 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 2
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, seperated by '','''
+      tags:
+        - question
   /bfq:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - question
       responses:
         '200':
           description: OK
@@ -1850,6 +1946,15 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-bfq
@@ -1904,6 +2009,8 @@ paths:
                   - stem: 'What''s the name of the industrial-strength programming language extending the Caml dialect of ML with object-oriented features, which was created in 1996 by Xavier Leroy, Jérôme Vouillon, Damien Doligez, Didier Rémy, Ascánder Suárez, and others.'
                     right_answers:
                       - OCaml
+      tags:
+        - question
     put:
       summary: ''
       operationId: put-bfq
@@ -1959,6 +2066,8 @@ paths:
                     stem: What's the name of the industrial-strength programming language extending the Caml dialect of ML with object-oriented features?
                     right_answers:
                       - OCaml
+      tags:
+        - question
     delete:
       summary: ''
       operationId: delete-bfq
@@ -1971,22 +2080,19 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 2
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, seperated by '','''
+      tags:
+        - question
   /tfq:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - question
       responses:
         '200':
           description: OK
@@ -2059,6 +2165,15 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-tfq
@@ -2108,6 +2223,8 @@ paths:
                 value:
                   - stem: AP 弹指的是穿甲弹
                     right_answer: true
+      tags:
+        - question
     put:
       summary: ''
       operationId: put-tfq
@@ -2158,6 +2275,8 @@ paths:
                   - id: 2
                     stem: HE 弹指的是高爆弹
                     right_answer: true
+      tags:
+        - question
     delete:
       summary: ''
       operationId: delete-tfq
@@ -2170,23 +2289,19 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 2
-                  - 3
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, seperated by '','''
+      tags:
+        - question
   /crq:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - question
       responses:
         '200':
           description: OK
@@ -2271,6 +2386,15 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
     post:
       summary: ''
       operationId: post-crq
@@ -2340,6 +2464,8 @@ paths:
                       - i
                       - i
                       - '-'
+      tags:
+        - question
     put:
       summary: ''
       operationId: put-crq
@@ -2410,6 +2536,8 @@ paths:
                       - X
                       - i
                       - '-'
+      tags:
+        - question
     delete:
       summary: ''
       operationId: delete-crq
@@ -2422,97 +2550,16 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              description: array of id to be deleted
-              items:
-                type: integer
-            examples:
-              example-1:
-                value:
-                  - 2
-                  - 1
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, seperated by '','''
+      tags:
+        - question
 components:
-  schemas:
-    MyQuestions:
-      title: MyQuestions
-      type: object
-      properties:
-        mcq:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              stem:
-                type: string
-              choices:
-                type: array
-                items:
-                  type: string
-        maq:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              stem:
-                type: string
-              choices:
-                type: array
-                items:
-                  type: string
-        bfq:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              stem:
-                type: string
-        tfq:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              stem:
-                type: string
-        crq:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-        cq:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-    Teacher:
-      title: Teacher
-      type: object
-      properties:
-        id:
-          type: integer
-        teacher_id:
-          type: string
-        name:
-          type: string
-        password:
-          type: string
-        is_admin:
-          type: boolean
+  schemas: {}
   securitySchemes:
     JWT:
       name: Authorization
@@ -2540,5 +2587,8 @@ components:
             example-2:
               code: 401
               message: Token is expired
+              value:
+                code: 401
+                message: Token is expired
 security:
   - JWT: []
