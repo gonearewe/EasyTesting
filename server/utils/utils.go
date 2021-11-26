@@ -21,6 +21,7 @@ func MustParseJsonTo(c *gin.Context, container interface{}) {
 	PanicWhen(err)
 }
 
+// Int trys to parse `num` to an integer, otherwise panics.
 func Int(num string) int {
 	ret, err := strconv.Atoi(num)
 	PanicWhen(err)
