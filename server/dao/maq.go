@@ -7,10 +7,10 @@ import (
     "gorm.io/gorm/clause"
 )
 
-// GetExamsBy searches the database for exam whose publisher teacher id (string) starts
+// GetMaqsBy searches the database for Multiple Answer Question (maq) whose publisher teacher id (string) starts
 // with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id.
 // When any error occurs, it panics.
-func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Exam) {
+func GetMaqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Maq) {
     var err error
     if teacherId != "" {
         err = db.Limit(pageSize).Offset(pageSize*(pageIndex-1)).Find(&ret, "publisher_teacher_id LIKE ?",
@@ -22,35 +22,28 @@ func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Ex
     return
 }
 
-// GetExams searches the database for all exams.
-// When any error occurs, it panics.
-func GetExams() (ret []models.Exam) {
-    utils.PanicWhen(db.Find(&ret).Error)
-    return
-}
-
-// CreateExams stores given exam into the database,
+// CreateMaqs stores given Multiple Answer Question (maq) into the database,
 // with their id property ignored and handled by the database. When any error occurs,
-// it panics and none of the given exam will be created alone.
-func CreateExams(exams []*models.Exam) {
-    utils.PanicWhen(db.Create(&exams).Error)
+// it panics and none of the given maq will be created alone.
+func CreateMaqs(questions []*models.Maq) {
+    utils.PanicWhen(db.Create(&questions).Error)
 }
 
-// UpdateExams updates all the columns of all given exam,
-// the record to be updated will be specified by given exam's id.
-// If any id of given `exams` doesn't exist, it refuses to proceed and throws an error.
-// When any error occurs, it panics and none of the given exam will be updated alone.
-func UpdateExams(exams []*models.Exam) {
+// UpdateMaqs updates all the columns of all given Multiple Answer Question (maq),
+// the record to be updated will be specified by given maq's id.
+// If any id of given `questions` doesn't exist, it refuses to proceed and throws an error.
+// When any error occurs, it panics and none of the given maq will be updated alone.
+func UpdateMaqs(questions []*models.Maq) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        tmpExam := &models.Exam{}
-        for _, exam := range exams {
+        tmpMaq := &models.Maq{}
+        for _, maq := range questions {
             // SELECT FOR UPDATE, make sure all the ids exist
             err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", exam.ID).First(tmpExam).Error
+                Select("id").Where("id = ?", maq.ID).First(tmpMaq).Error
             if err != nil {
                 return err
             }
-            err = tx.Where("id = ?", exam.ID).Updates(exam).Error
+            err = tx.Where("id = ?", maq.ID).Updates(maq).Error
             if err != nil {
                 return err
             }
@@ -60,22 +53,22 @@ func UpdateExams(exams []*models.Exam) {
     utils.PanicWhen(err)
 }
 
-// DeleteExams deletes all the records whose id is in given `ids`.
+// DeleteMaqs deletes all the records whose id is in given `ids`.
 // If any id in given `ids` doesn't exist, it refuses to proceed and throws an error.
-// When any error occurs, it panics and none of the given exam will be deleted alone.
-func DeleteExams(ids []int) {
+// When any error occurs, it panics and none of the given maq will be deleted alone.
+func DeleteMaqs(ids []int) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        tmpExam := &models.Exam{}
+        tmpMaq := &models.Maq{}
         for _, id := range ids {
             // SELECT FOR UPDATE, make sure all the ids exist
             err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", id).First(tmpExam).Error
+                Select("id").Where("id = ?", id).First(tmpMaq).Error
             if err != nil {
                 return err
             }
         }
         // batch delete
-        return tx.Delete(&models.Exam{}, ids).Error
+        return tx.Delete(&models.Maq{}, ids).Error
     })
     utils.PanicWhen(err)
 }

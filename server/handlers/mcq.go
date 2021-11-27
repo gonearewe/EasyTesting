@@ -1,5 +1,7 @@
 package handlers
 
+// Handlers for multiple choice question (mcq) endpoints, refer to easy_testing.yaml(OpenAPI file) for details.
+
 import (
 	"strconv"
 	"strings"
@@ -22,7 +24,7 @@ func GetMcqHandler(c *gin.Context) {
 			"id":                   mcq.ID,
 			"publisher_teacher_id": mcq.PublisherTeacherID,
 			"stem":                 mcq.Stem,
-			"choices":              [4]string{mcq.Choice1, mcqs[i].Choice2, mcqs[i].Choice3, mcqs[i].Choice4},
+			"choices":              [4]string{mcq.Choice1, mcq.Choice2, mcq.Choice3, mcq.Choice4},
 			"right_answer":         mcq.RightAnswer,
 		}
 	}
@@ -30,6 +32,7 @@ func GetMcqHandler(c *gin.Context) {
 }
 
 func PostMcqHandler(c *gin.Context) {
+	abortIfAnyExamActive(c)
 	var reqs []gin.H
 	utils.MustParseJsonTo(c, &reqs)
 	var mcqs = make([]*models.Mcq, len(reqs))
@@ -49,6 +52,7 @@ func PostMcqHandler(c *gin.Context) {
 }
 
 func PutMcqHandler(c *gin.Context) {
+	abortIfAnyExamActive(c)
 	var reqs []gin.H
 	utils.MustParseJsonTo(c, &reqs)
 	var mcqs = make([]*models.Mcq, len(reqs))
@@ -68,6 +72,7 @@ func PutMcqHandler(c *gin.Context) {
 }
 
 func DeleteMcqHandler(c *gin.Context) {
+	abortIfAnyExamActive(c)
 	li := strings.Split(c.Query("ids"), ",")
 	ids := make([]int, len(li))
 	for i, e := range li {

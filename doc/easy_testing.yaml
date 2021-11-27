@@ -7,7 +7,7 @@ servers:
 paths:
   /ping:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - others
       responses:
@@ -24,7 +24,7 @@ paths:
       security: []
   /hello:
     get:
-      summary: Your GET endpoint
+      summary: ''
       responses:
         '200':
           description: OK
@@ -53,7 +53,7 @@ paths:
         - others
   /paper:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - exam
       responses:
@@ -452,7 +452,7 @@ paths:
         - exam
   /teachers:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - user
       responses:
@@ -591,7 +591,7 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id (not Teacher ID or Student ID) to be deleted, seperated by '','''
+          description: 'array of id (not Teacher ID or Student ID) to be deleted, separated by '','''
       tags:
         - user
     put:
@@ -649,7 +649,7 @@ paths:
         - user
   /teacher_auth:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - user
       responses:
@@ -702,7 +702,7 @@ paths:
           description: hashed password
   /student_auth:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - user
       responses:
@@ -754,7 +754,7 @@ paths:
           name: exam_id
   /students:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - user
       responses:
@@ -961,13 +961,13 @@ paths:
         - schema:
             type: string
           in: query
-          description: 'array of id (not Teacher ID or Student ID) to be deleted, seperated by '','''
+          description: 'array of id (not Teacher ID or Student ID) to be deleted, separated by '','''
           name: ids
       tags:
         - user
   /exams:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - exam
       responses:
@@ -1343,12 +1343,12 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id to be deleted, seperated by '','''
+          description: 'array of id to be deleted, separated by '','''
       tags:
         - exam
   /mcq:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - question
       responses:
@@ -1596,12 +1596,12 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id to be deleted, seperated by '','''
+          description: 'array of id to be deleted, separated by '','''
       tags:
         - question
   /maq:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - question
       responses:
@@ -1862,12 +1862,12 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id to be deleted, seperated by '','''
+          description: 'array of id to be deleted, separated by '','''
       tags:
         - question
   /bfq:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - question
       responses:
@@ -2085,12 +2085,12 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id to be deleted, seperated by '','''
+          description: 'array of id to be deleted, separated by '','''
       tags:
         - question
   /tfq:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - question
       responses:
@@ -2294,12 +2294,12 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id to be deleted, seperated by '','''
+          description: 'array of id to be deleted, separated by '','''
       tags:
         - question
   /crq:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - question
       responses:
@@ -2555,7 +2555,7 @@ paths:
             type: string
           in: query
           name: ids
-          description: 'array of id to be deleted, seperated by '','''
+          description: 'array of id to be deleted, separated by '','''
       tags:
         - question
 components:
