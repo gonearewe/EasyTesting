@@ -14,3 +14,11 @@ def getStudents(**kwargs):
 
 def getStudentsNum(**kwargs):
     return network.get("/students/num", params=kwargs)
+
+
+def getTeachers(**kwargs):
+    return network.get("/teachers", params=kwargs)
+
+
+def getTeachersNum(**kwargs):
+    return network.get("/teachers/num", params=kwargs)

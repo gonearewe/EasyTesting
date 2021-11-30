@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import *
 class CardWidget(QWidget):
     def __init__(self, parent, image: str, text: str, on_click: Callable):
         super().__init__(parent)
+        self.setMaximumWidth(320)
         layout = QVBoxLayout(self)
         layout.setSpacing(20)
         label = QLabel(text)
@@ -19,5 +20,6 @@ class CardWidget(QWidget):
         img.setPixmap(pixmap)
         layout.addWidget(img)
         btn = QPushButton("查看")
-        btn.clicked.connect(on_click)
+        # NOTICE: `ignored` is needed to receive pyqt slot parameter, in this case, a boolean
+        btn.clicked.connect(lambda ignored: on_click())
         layout.addWidget(btn)

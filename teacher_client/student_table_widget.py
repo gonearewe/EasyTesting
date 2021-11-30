@@ -1,8 +1,7 @@
 import sys
-from typing import List
+from typing import Dict
 
 import qtmodern.styles
-import xlsxwriter
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 
@@ -12,37 +11,29 @@ from teacher_client.table_widget import TableWidget
 
 
 class StudentTableWidget(TableWidget):
-    def __init__(self, parent):
+    tab_name = "学生管理"
+
+    def __init__(self, tab_widget):
+        self.tab_widget = tab_widget
         self.PAGE_SIZE = 20
         self.queries = {}
-        super().__init__(parent, ["学号", "姓名", "班号", ("修改", "删除")], self.PAGE_SIZE, True)
-        self.setData(1, 1,
-                     [[3, 2018300000, "小明", "08060000"],
-                      [4, 2018300001, "小红", "08060000"]],
-                     lambda id, op: print(f"{id}, {op}"))
+        super().__init__(parent=tab_widget,
+                         queries=[("学号", "student_id"), ("姓名", "name"), ("班号", "class_id")],
+                         columns=["学号", "姓名", "班号", ("修改", "删除")],
+                         row_num=self.PAGE_SIZE,
+                         insertable=True)
+        self.onSearch({})  # initial data
 
     def onExport(self, filepath: str):
         students = api.getStudents(**self.queries)
         if students is None:
             AlertDialog("无法获取数据").exec_()
         else:
-            self.exportTemplate(filepath)
-            try:
-                workbook = xlsxwriter.Workbook(filepath)
-                worksheet = workbook.get_worksheet_by_name("Sheet1")
-                for i, student in enumerate(students):
-                    for j, column in enumerate(("student_id", "name", "class_id")):
-                        worksheet.write(i + 1, j, student[column])
-                workbook.close()
-            except Exception as e:
-                AlertDialog("无法导出文件", detail=str(e))
+            self.exportData(filepath,
+                            ((student["student_id"], student["name"], student["class_id"]) for student in students))
 
-    def onSearch(self, queries: List[str]):
-        self.queries = {}
-        for i, field in ("student_id", "name", "class_id"):
-            query = queries[i].strip()
-            if query != "":
-                self.queries[field] = query
+    def onSearch(self, queries: Dict[str, str]):
+        self.queries = queries
         self.updateTable(page_index=1)
 
     def updateTable(self, page_index):
@@ -51,10 +42,10 @@ class StudentTableWidget(TableWidget):
         if students is None or num is None:
             AlertDialog("无法获取数据").exec_()
         else:
-            li = [None] * len(students)
+            li = [[]] * len(students)
             for i, student in enumerate(students):
                 li[i] = [student[k] for k in ("id", "student_id", "name", "class_id")]
-            self.setData(page_num=-(num["num"] // -self.PAGE_SIZE), page_index=page_index, data=li,
+            self.setData(page_num=-(num // -self.PAGE_SIZE), page_index=page_index, data=li,
                          op_callback=lambda id, op: print(f"{id}, {op}"))
 
     def onTurnToPage(self, page_index: int):

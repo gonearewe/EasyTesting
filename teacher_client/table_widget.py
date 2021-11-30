@@ -1,19 +1,23 @@
 import abc
-from typing import List
+from typing import List, Tuple, Generator, Dict
 
 import xlsxwriter
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
+from common.alert_dialog import AlertDialog
+
 
 class TableWidget(QWidget):
-    def __init__(self, parent, columns: List, row_num: int, insertable: bool):
+    def __init__(self, parent, queries: List[Tuple[str, str]], columns: List, row_num: int, insertable: bool):
         super().__init__(parent)
         self.setMaximumWidth(720)
         self.columns = columns[:-1]
         self.ops = columns[-1]
         self.row_num = row_num
         layout = QVBoxLayout(self)
+        # USELESS
+        # layout.setAlignment(QtCore.Qt.AlignCenter)
 
         # entries manipulation
         hbox0 = QHBoxLayout(self)
@@ -54,12 +58,14 @@ class TableWidget(QWidget):
         # search bar
         hbox1 = QHBoxLayout(self)
         layout.addLayout(hbox1)
-        self.edits = [QLineEdit() for _ in columns[:-1]]
-        for i, column in enumerate(columns[:-1]):
-            self.edits[i].setPlaceholderText(column)
+        self.edits = [QLineEdit() for _ in queries]
+        for i, (text, query) in enumerate(queries):
+            self.edits[i].setPlaceholderText(text)
+            self.edits[i].setObjectName(query)
             hbox1.addWidget(self.edits[i])
         self.searchBtn = QPushButton("搜索")
-        self.searchBtn.pressed.connect(lambda: self.onSearch([edit.text() for edit in self.edits]))
+        self.searchBtn.pressed.connect(
+            lambda: self.onSearch({edit.objectName(): edit.text().strip() for edit in self.edits}))
         hbox1.addWidget(self.searchBtn)
 
         # table for data
@@ -146,7 +152,8 @@ class TableWidget(QWidget):
             for op in self.ops:
                 btn = QPushButton(w)
                 btn.setText(op)
-                btn.pressed.connect(lambda id=data[i][0], op=op: op_callback(id, op))
+                # NOTICE: `ignored` is needed to receive pyqt slot parameter, in this case, a boolean
+                btn.pressed.connect(lambda ignored, id=data[i][0], op=op: op_callback(id, op))
                 box.addWidget(btn)
             self.table.setCellWidget(i, len(data[i]), w)
         self.table.resizeColumnsToContents()
@@ -156,7 +163,6 @@ class TableWidget(QWidget):
     def onExport(self, filepath: str):
         pass
 
-    @abc.abstractmethod
     def exportTemplate(self, filepath: str):
         try:
             workbook = xlsxwriter.Workbook(filepath)
@@ -166,6 +172,20 @@ class TableWidget(QWidget):
             workbook.close()
         except Exception as e:
             print(e)
+            AlertDialog("无法导出文件", detail=str(e))
+
+    def exportData(self, filepath: str, data: Generator):
+        self.exportTemplate(filepath)
+        try:
+            workbook = xlsxwriter.Workbook(filepath)
+            worksheet = workbook.get_worksheet_by_name("Sheet1")
+            for i, elem in enumerate(data):
+                for j, content in enumerate(elem):
+                    worksheet.write(i + 1, j, content)
+            workbook.close()
+        except Exception as e:
+            print(e)
+            AlertDialog("无法导出文件", detail=str(e))
 
     @abc.abstractmethod
     def onInsert(self):
@@ -176,7 +196,7 @@ class TableWidget(QWidget):
         pass
 
     @abc.abstractmethod
-    def onSearch(self, queries: List[str]):
+    def onSearch(self, queries: Dict[str, str]):
         pass
 
     @abc.abstractmethod

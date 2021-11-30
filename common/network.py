@@ -10,7 +10,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def setServerAddr(ip_port: str) -> bool:
     try:
-        response = requests.get(f"http://{ip_port}/ping")
+        response = requests.get(f"https://{ip_port}/ping")
     except Exception as e:
         _LOGGER.error(e)
         return False
@@ -26,7 +26,7 @@ def getAuth(auth_path: str, params) -> bool:
         _LOGGER.critical(f"broken state to send request: _SERVER_ADDR is not set")
         return False
     try:
-        response = requests.get("http://" + _SERVER_ADDR + auth_path, params)
+        response = requests.get("https://" + _SERVER_ADDR + auth_path, params)
     except Exception as e:
         _LOGGER.error(e)
     else:
@@ -46,8 +46,8 @@ def request(method: str, path: str, params):
                          f"_AUTHENTICATION_TOKEN({_AUTHENTICATION_TOKEN})")
         return None
     try:
-        response = requests.request(method, "http://" + _SERVER_ADDR + path,
-                                    params, auth=("Authorization", "Bearer " + _AUTHENTICATION_TOKEN))
+        response = requests.request(method, url="https://" + _SERVER_ADDR + path,
+                                    params=params, auth=("Authorization", "Bearer " + _AUTHENTICATION_TOKEN))
     except Exception as e:
         _LOGGER.error(e)
         return None
