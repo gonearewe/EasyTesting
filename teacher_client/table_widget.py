@@ -11,16 +11,17 @@ from common.alert_dialog import AlertDialog
 class TableWidget(QWidget):
     def __init__(self, parent, queries: List[Tuple[str, str]], columns: List, row_num: int, insertable: bool):
         super().__init__(parent)
-        self.setMaximumWidth(720)
+        self.setContentsMargins(300,40,300,40)
+        # self.setMaximumWidth(720)
         self.columns = columns[:-1]
         self.ops = columns[-1]
         self.row_num = row_num
         layout = QVBoxLayout(self)
-        # USELESS
-        # layout.setAlignment(QtCore.Qt.AlignCenter)
+        layout.setSpacing(30)
 
         # entries manipulation
         hbox0 = QHBoxLayout(self)
+        hbox0.setSpacing(20)
         hbox0.setAlignment(QtCore.Qt.AlignLeft)
         layout.addLayout(hbox0)
         export_btn = QPushButton("导出")
@@ -57,15 +58,19 @@ class TableWidget(QWidget):
 
         # search bar
         hbox1 = QHBoxLayout(self)
+        hbox1.setSpacing(20)
+        hbox1.setAlignment(QtCore.Qt.AlignLeft)
         layout.addLayout(hbox1)
         self.edits = [QLineEdit() for _ in queries]
         for i, (text, query) in enumerate(queries):
             self.edits[i].setPlaceholderText(text)
             self.edits[i].setObjectName(query)
+            self.edits[i].setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
             hbox1.addWidget(self.edits[i])
         self.searchBtn = QPushButton("搜索")
         self.searchBtn.pressed.connect(
             lambda: self.onSearch({edit.objectName(): edit.text().strip() for edit in self.edits}))
+        self.searchBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         hbox1.addWidget(self.searchBtn)
 
         # table for data
@@ -76,14 +81,19 @@ class TableWidget(QWidget):
         headers.insert(0, "序号")
         headers.append("操作")
         self.table.setHorizontalHeaderLabels(headers)
+        # self.table.horizontalHeader().setSizePolicy(QSizePolicy.Preferred)
         self.table.setRowCount(row_num)
+        self.table.resizeColumnsToContents()
         self.table.setEditTriggers(Qt.QAbstractItemView.NoEditTriggers)  # not directly editable
 
         # navigation bar
         hbox2 = QHBoxLayout(self)
+        hbox2.setSpacing(20)
+        hbox2.setAlignment(QtCore.Qt.AlignCenter)
         layout.addLayout(hbox2)
         self.prev_page_btn = QPushButton("<")
         self.prev_page_btn.setDisabled(True)
+        self.prev_page_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         hbox2.addWidget(self.prev_page_btn)
         self._page_num = 0
         self._page_index = 0
@@ -92,6 +102,7 @@ class TableWidget(QWidget):
         hbox2.addWidget(self.page_label)
         self.next_page_btn = QPushButton(">")
         self.next_page_btn.setDisabled(True)
+        self.next_page_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         hbox2.addWidget(self.next_page_btn)
         self.page_edit = QLineEdit()
         self.page_edit.setPlaceholderText("页码")
@@ -103,6 +114,7 @@ class TableWidget(QWidget):
             lambda text: self.page_btn.setDisabled(not (text.isdigit() and 1 <= int(text) <= self._page_num))
         )
         self.page_btn.pressed.connect(lambda: self.onTurnToPage(int(self.page_edit.text())))
+        self.page_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         hbox2.addWidget(self.page_btn)
 
     @property

@@ -3,30 +3,37 @@ package dao
 import (
     "github.com/gin-gonic/gin"
     "github.com/gonearewe/EasyTesting/models"
+    "gorm.io/gorm"
 )
 
 func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher) {
-    var filtered = db
+    buildTeacherQueryFrom(teacherId , name ).
+        Select("id", "teacher_id", "name", "is_admin").
+        Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
+        Find(&res)
+    return
+}
+
+func GetTeacherNumBy(teacherId string, name string) (num int64){
+    buildTeacherQueryFrom(teacherId , name ).Count(&num)
+    return
+}
+
+func  buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
+    var filtered = db.Model(&models.Teacher{})
     if teacherId != "" {
-        filtered = filtered.Where("teacher_id LIKE ?", "%"+teacherId+"%")
+        filtered = filtered.Where("teacher_id LIKE ?", teacherId+"%")
     }
     if name != "" {
         filtered = filtered.Where("name LIKE ?", "%"+name+"%")
     }
-    filtered.Select("id", "teacher_id", "name", "is_admin").
-        Limit(pageSize).Offset(pageSize * (pageIndex - 1)).Find(&res)
-    return
+    return filtered
 }
 
 func GetTeacherByTeacherId(teacherId string) *models.Teacher {
     var ret models.Teacher
     db.Find(&ret,"teacher_id = ?",teacherId)
     return &ret
-}
-
-func GetTeachersByTeacherId(pageSize int, pageIndex int) (res []models.Teacher) {
-    db.Limit(pageSize).Offset(pageSize * pageIndex).Order("teacher_id").Find(&res)
-    return
 }
 
 func CreateTeachers(teachers []*models.Teacher) {

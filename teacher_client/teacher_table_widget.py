@@ -38,9 +38,9 @@ class TeacherTableWidget(TableWidget):
             AlertDialog("无法获取数据").exec_()
         else:
             li = [None] * len(teachers)
-            for i, student in enumerate(teachers):
-                li[i] = [student[k] for k in ("id", "teacher_id", "name", "is_admin")]
-            self.setData(page_num=-(num["num"] // -self.PAGE_SIZE), page_index=page_index, data=li,
+            for i, teacher in enumerate(teachers):
+                li[i] = [teacher[k] for k in ("id", "teacher_id", "name", "is_admin")]
+            self.setData(page_num=-(num // -self.PAGE_SIZE), page_index=page_index, data=li,
                          op_callback=lambda id, op: print(f"{id}, {op}"))
 
     def onTurnToPage(self, page_index: int):
