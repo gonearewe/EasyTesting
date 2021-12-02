@@ -7,10 +7,13 @@ import (
 
 func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, adminAuthRouter *gin.RouterGroup) {
     unauthRouter.GET("/ping", handlers.PingHandler)
-    adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)
-    adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
-    adminAuthRouter.GET("/teachers/num", handlers.GetTeacherNumHandler)
     teacherAuthRouter.GET("/hello", handlers.HelloHandler)
+
+    adminAuthRouter.GET("/teachers/num", handlers.GetTeacherNumHandler)
+    adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
+    adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)
+    adminAuthRouter.PUT("/teachers",handlers.PutTeacherHandler)
+    adminAuthRouter.DELETE("/teachers",handlers.DeleteTeachersHandler)
 
     teacherAuthRouter.GET("/students",handlers.GetStudentsHandler)
     teacherAuthRouter.GET("/students/num",handlers.GetStudentNumHandler)

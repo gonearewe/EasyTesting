@@ -5,15 +5,16 @@ import xlsxwriter
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
-from common.alert_dialog import AlertDialog
+from common.dialogs import AlertDialog, ConfirmDialog
 
 
 class TableWidget(QWidget):
-    def __init__(self, parent, queries: List[Tuple[str, str]], columns: List, row_num: int, insertable: bool):
+    def __init__(self, parent, queries: List[Tuple[str, str]], columns: List, row_num: int, is_readonly: bool):
         super().__init__(parent)
-        self.setContentsMargins(300,40,300,40)
+        self.setContentsMargins(300, 40, 300, 40)
         # self.setMaximumWidth(720)
         self.columns = columns[:-1]
+        self.rows = []
         self.ops = columns[-1]
         self.row_num = row_num
         layout = QVBoxLayout(self)
@@ -31,7 +32,7 @@ class TableWidget(QWidget):
         )
         export_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)  # set policy in case it expands
         hbox0.addWidget(export_btn)
-        if insertable:
+        if not is_readonly:
             export_template_btn = QPushButton("导出模板")
             export_template_btn.setToolTip("生成 Excel 文件模板，仅包含列属性，而不包含数据")
             export_template_btn.pressed.connect(
@@ -55,6 +56,19 @@ class TableWidget(QWidget):
             )
             import_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)  # set policy in case it expands
             hbox0.addWidget(import_btn)
+
+            def on_delete():
+                indices = [row.row() for row in self.table.selectionModel().selectedRows()]
+                rows_to_be_deleted = "\n".join("，".join(map(str, row))
+                                               for row in (self.rows[index] for index in indices))
+                if ConfirmDialog(f"以下{len(indices)}行条目将被删除：", detail=rows_to_be_deleted).exec_() == QDialog.Accepted:
+                    self.onDelete([self.rows[index][0] for index in indices])
+
+            delete_btn = QPushButton("删除")
+            delete_btn.setToolTip("批量删除条目，按住 Ctrl 点击左侧行号选中多行，删除当前页所有选中的条目")
+            delete_btn.pressed.connect(on_delete)
+            delete_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)  # set policy in case it expands
+            hbox0.addWidget(delete_btn)
 
         # search bar
         hbox1 = QHBoxLayout(self)
@@ -150,6 +164,7 @@ class TableWidget(QWidget):
     def setData(self, page_num: int, page_index: int, data: List[List], op_callback):
         self.page_num = page_num
         self.page_index = page_index
+        self.rows = data
         self.table.clearContents()
         for i, row in enumerate(data):
             # row index, starts with 1
@@ -165,9 +180,14 @@ class TableWidget(QWidget):
                 btn = QPushButton(w)
                 btn.setText(op)
                 # NOTICE: `ignored` is needed to receive pyqt slot parameter, in this case, a boolean
-                btn.pressed.connect(lambda ignored, id=data[i][0], op=op: op_callback(id, op))
+                btn.pressed.connect(lambda ignored=None, id=data[i][0], op=op: op_callback(id, op))
                 box.addWidget(btn)
             self.table.setCellWidget(i, len(data[i]), w)
+        for i in range(self.table.rowCount()):
+            for j in range(self.table.columnCount()):
+                item = self.table.item(i, j)
+                if item is not None:
+                    item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
 
@@ -205,6 +225,10 @@ class TableWidget(QWidget):
 
     @abc.abstractmethod
     def onImport(self, filepath: str):
+        pass
+
+    @abc.abstractmethod
+    def onDelete(self, ids: List[int]):
         pass
 
     @abc.abstractmethod

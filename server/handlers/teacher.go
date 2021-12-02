@@ -1,6 +1,10 @@
 package handlers
 
 import (
+    "net/http"
+    "strings"
+
+    jwt "github.com/appleboy/gin-jwt/v2"
     "github.com/gin-gonic/gin"
     "github.com/gonearewe/EasyTesting/dao"
     "github.com/gonearewe/EasyTesting/models"
@@ -29,7 +33,7 @@ func GetTeacherNumHandler(c *gin.Context) {
     c.JSON(200, num)
 }
 
-func UpdateTeacherHandler(c *gin.Context) {
+func PutTeacherHandler(c *gin.Context) {
     var teacher models.Teacher
     utils.MustParseJsonTo(c, &teacher)
     if teacher.Password != "" {
@@ -41,9 +45,14 @@ func UpdateTeacherHandler(c *gin.Context) {
 }
 
 func DeleteTeachersHandler(c *gin.Context) {
-    var teacherIds []string
-    utils.MustParseJsonTo(c, teacherIds)
-    for _, id := range teacherIds {
-        dao.DeleteTeacherByTeacherId(id)
+    abortIfAnyExamActive(c)
+    li := strings.Split(c.Query("ids"), ",")
+    ids := make([]int, len(li))
+    for i, e := range li {
+        ids[i] = utils.Int(e)
+        if jwt.ExtractClaims(c)["id"] == ids[i] { // not allowed to delete himself or herself
+            c.AbortWithStatus(http.StatusForbidden)
+        }
     }
+    dao.DeleteTeachers(ids)
 }

@@ -40,13 +40,33 @@ def getAuth(auth_path: str, params) -> bool:
     return False
 
 
-def request(method: str, path: str, params):
+def request(method: str, path: str, params) -> bool:
+    if _SERVER_ADDR == "" or _AUTHENTICATION_TOKEN == "":
+        _LOGGER.critical(f"broken state to send request: _SERVER_ADDR({_SERVER_ADDR}) and "
+                         f"_AUTHENTICATION_TOKEN({_AUTHENTICATION_TOKEN})")
+        return False
+    try:
+        response = requests.request(method, url="http://" + _SERVER_ADDR + path,
+                                    params=params, headers={"Authorization": "Bearer " + _AUTHENTICATION_TOKEN})
+    except Exception as e:
+        _LOGGER.error(e)
+        return False
+    else:
+        if response.status_code == http.HTTPStatus.OK:
+            _LOGGER.info("request success")
+            return True
+        else:
+            _LOGGER.warning(f"request failure: http status code {response.status_code}")
+            return False
+
+
+def get(path: str, params):
     if _SERVER_ADDR == "" or _AUTHENTICATION_TOKEN == "":
         _LOGGER.critical(f"broken state to send request: _SERVER_ADDR({_SERVER_ADDR}) and "
                          f"_AUTHENTICATION_TOKEN({_AUTHENTICATION_TOKEN})")
         return None
     try:
-        response = requests.request(method, url="http://" + _SERVER_ADDR + path,
+        response = requests.request("GET", url="http://" + _SERVER_ADDR + path,
                                     params=params, headers={"Authorization": "Bearer " + _AUTHENTICATION_TOKEN})
     except Exception as e:
         _LOGGER.error(e)
@@ -59,10 +79,13 @@ def request(method: str, path: str, params):
             _LOGGER.warning(f"request failure: http status code {response.status_code}")
             return None
 
-
-def get(path: str, params):
-    return request("GET", path, params)
-
-
 def post(path: str, params):
     return request("POST", path, params)
+
+
+def put(path: str, params):
+    return request("PUT", path, params)
+
+
+def delete(path: str, params):
+    return request("DELETE", path, params)

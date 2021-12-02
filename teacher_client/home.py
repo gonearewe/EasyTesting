@@ -37,7 +37,8 @@ class HomeWidget(QWidget):
                 tab_class = card[2]
                 hbox.addWidget(CardWidget(
                     parent=self, text=card[0], image=card[1],
-                    on_click=lambda cls=tab_class: tab_widget.addTab(cls(tab_widget), cls.tab_name)))
+                    on_click=lambda cls=tab_class: (tab_widget.addTab(cls(tab_widget), cls.tab_name),
+                                                    tab_widget.setCurrentIndex(tab_widget.count()-1))))
 
         add_header("试题管理", "./img/question.svg")
         add_cards([("单选题", "./img/mcq.svg", McqTab), ("多选题", "./img/maq.svg", MaqTab)])

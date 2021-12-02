@@ -3,7 +3,9 @@ package dao
 import (
     "github.com/gin-gonic/gin"
     "github.com/gonearewe/EasyTesting/models"
+    "github.com/gonearewe/EasyTesting/utils"
     "gorm.io/gorm"
+    "gorm.io/gorm/clause"
 )
 
 func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher) {
@@ -49,6 +51,19 @@ func UpdateTeacherByTeacherId(t *models.Teacher) {
     }
 }
 
-func DeleteTeacherByTeacherId(teacherId string)  {
-    db.Delete(&models.Teacher{},"teacher_id = ?",teacherId)
+func DeleteTeachers(ids []int)  {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        tmpTeacher := &models.Teacher{}
+        for _, id := range ids {
+            // SELECT FOR UPDATE, make sure all the ids exist
+            err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+                Select("id").Where("id = ?", id).First(tmpTeacher).Error
+            if err != nil {
+                return err
+            }
+        }
+        // batch delete
+        return tx.Delete(&models.Teacher{}, ids).Error
+    })
+    utils.PanicWhen(err)
 }

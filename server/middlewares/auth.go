@@ -56,6 +56,7 @@ func teacherAuthenticator(c *gin.Context) (user interface{}, err error) {
 func teacherPayLoadFunc(data interface{}) jwt.MapClaims {
 	v := data.(*models.Teacher)
 	return jwt.MapClaims{
+		"id":v.ID,
 		"teacher_id": v.TeacherID,
 		"is_admin":   v.IsAdmin,
 	}

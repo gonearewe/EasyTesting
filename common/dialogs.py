@@ -10,3 +10,14 @@ class AlertDialog(QMessageBox):
         if detail is not None:
             self.setDetailedText(detail)
         self.setStandardButtons(QMessageBox.Ok)
+
+
+class ConfirmDialog(QMessageBox):
+    def __init__(self, text: str, detail: str = None):
+        super().__init__()
+        self.setWindowTitle("确认操作")
+        self.setIcon(QMessageBox.Information)
+        self.setText(text)
+        if detail is not None:
+            self.setDetailedText(detail)
+        self.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
