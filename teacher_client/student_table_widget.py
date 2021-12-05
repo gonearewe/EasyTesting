@@ -19,10 +19,10 @@ class StudentTableWidget(TableWidget):
         self.queries = {}
         super().__init__(parent=tab_widget,
                          queries=[("学号", "student_id"), ("姓名", "name"), ("班号", "class_id")],
-                         columns=["学号", "姓名", "班号", ("修改", "删除")],
+                         columns_text=["学号", "姓名", "班号", ("修改", "删除")],
                          row_num=self.PAGE_SIZE,
                          is_readonly=True)
-        self.onSearch({})  # initial data
+        self._on_search({})  # initial data
 
     def onExport(self, filepath: str):
         students = api.getStudents(**self.queries)
@@ -32,17 +32,17 @@ class StudentTableWidget(TableWidget):
             self.exportData(filepath,
                             ((student["student_id"], student["name"], student["class_id"]) for student in students))
 
-    def onDelete(self, ids: List[int]):
+    def doDelete(self, ids: List[int]):
         api.delStudents(ids=ids)
 
-    def onSearch(self, queries: Dict[str, str]):
+    def _on_search(self, queries: Dict[str, str]):
         self.queries = queries
         self.updateTable(page_index=1)
 
     def updateTable(self, page_index):
         def handle_op(id: int, op: str):
             if op == "删除":
-                self.onDelete([id])
+                self.doDelete([id])
 
         num = api.getStudentsNum(**self.queries)
         students = api.getStudents(**self.queries, page_size=self.PAGE_SIZE, page_index=page_index)

@@ -1,22 +1,26 @@
 import abc
-from typing import List, Tuple, Generator, Dict
+from typing import List, Tuple, Generator, Dict, Iterator
 
 import xlsxwriter
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
-from common.dialogs import AlertDialog, ConfirmDialog
+from common.dialogs import AlertDialog, ConfirmDialogWithTable
 
 
 class TableWidget(QWidget):
-    def __init__(self, parent, queries: List[Tuple[str, str]], columns: List, row_num: int, is_readonly: bool):
+    def __init__(self, parent, queries: List[Tuple[str, str]],
+                 columns: List[str], columns_text: List[str], is_readonly: bool):
         super().__init__(parent)
         self.setContentsMargins(300, 40, 300, 40)
         # self.setMaximumWidth(720)
-        self.columns = columns[:-1]
+        self.queries = {}
+        self.columns = columns
+        self.columns_text = columns_text
         self.rows = []
-        self.ops = columns[-1]
-        self.row_num = row_num
+        self.PAGE_SIZE = 20
+        self.row_num = self.PAGE_SIZE
+        self.is_readonly = is_readonly
         layout = QVBoxLayout(self)
         layout.setSpacing(30)
 
@@ -59,10 +63,7 @@ class TableWidget(QWidget):
 
             def on_delete():
                 indices = [row.row() for row in self.table.selectionModel().selectedRows()]
-                rows_to_be_deleted = "\n".join("，".join(map(str, row))
-                                               for row in (self.rows[index] for index in indices))
-                if ConfirmDialog(f"以下{len(indices)}行条目将被删除：", detail=rows_to_be_deleted).exec_() == QDialog.Accepted:
-                    self.onDelete([self.rows[index][0] for index in indices])
+                self._on_delete(indices)
 
             delete_btn = QPushButton("删除")
             delete_btn.setToolTip("批量删除条目，按住 Ctrl 点击左侧行号选中多行，删除当前页所有选中的条目")
@@ -83,20 +84,21 @@ class TableWidget(QWidget):
             hbox1.addWidget(self.edits[i])
         self.searchBtn = QPushButton("搜索")
         self.searchBtn.pressed.connect(
-            lambda: self.onSearch({edit.objectName(): edit.text().strip() for edit in self.edits}))
+            lambda: self._on_search({edit.objectName(): edit.text().strip() for edit in self.edits}))
         self.searchBtn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         hbox1.addWidget(self.searchBtn)
 
         # table for data
         self.table = QTableWidget(self)
         layout.addWidget(self.table)
-        self.table.setColumnCount(len(columns) + 1)
-        headers = columns[:-1].copy()
+        self.table.setColumnCount(len(columns_text) + 1)
+        headers = columns_text[:-1]
         headers.insert(0, "序号")
-        headers.append("操作")
+        if not is_readonly:
+            headers.append("操作")
         self.table.setHorizontalHeaderLabels(headers)
         # self.table.horizontalHeader().setSizePolicy(QSizePolicy.Preferred)
-        self.table.setRowCount(row_num)
+        self.table.setRowCount(self.row_num)
         self.table.resizeColumnsToContents()
         self.table.setEditTriggers(Qt.QAbstractItemView.NoEditTriggers)  # not directly editable
 
@@ -127,7 +129,7 @@ class TableWidget(QWidget):
         self.page_edit.textChanged.connect(
             lambda text: self.page_btn.setDisabled(not (text.isdigit() and 1 <= int(text) <= self._page_num))
         )
-        self.page_btn.pressed.connect(lambda: self.onTurnToPage(int(self.page_edit.text())))
+        self.page_btn.pressed.connect(lambda: self.updateTable(page_index=int(self.page_edit.text())))
         self.page_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         hbox2.addWidget(self.page_btn)
 
@@ -139,7 +141,7 @@ class TableWidget(QWidget):
     def page_num(self, value):
         self.page_label.setText(f"{self.page_index}/{value}")
         self._page_num = value
-        self.handle_page_btn()
+        self._handle_page_btn()
 
     @property
     def page_index(self):
@@ -149,9 +151,9 @@ class TableWidget(QWidget):
     def page_index(self, value):
         self.page_label.setText(f"{value}/{self.page_num}")
         self._page_index = value
-        self.handle_page_btn()
+        self._handle_page_btn()
 
-    def handle_page_btn(self):
+    def _handle_page_btn(self):
         if 1 < self.page_index < self.page_num:
             self.prev_page_btn.setDisabled(False)
             self.next_page_btn.setDisabled(False)
@@ -160,34 +162,62 @@ class TableWidget(QWidget):
         if self.page_index >= self.page_num:
             self.next_page_btn.setDisabled(True)
 
-    # data: [id, data for each column]
-    def setData(self, page_num: int, page_index: int, data: List[List], op_callback):
-        self.page_num = page_num
+    @abc.abstractmethod
+    def onGetDataNum(self, queries: Dict[str, str]):
+        pass
+
+    @abc.abstractmethod
+    def onGetData(self, queries: Dict[str, str], page_size: int, page_index: int):
+        pass
+
+    def updateTable(self, page_index: int):
+        # get data from network
+        num = self.onGetDataNum(self.queries)
+        # data: [id, data for each column]
+        data = self.onGetData(self.queries, page_size=self.PAGE_SIZE, page_index=page_index)
+        if data is None or num is None:
+            AlertDialog("无法获取数据").exec_()
+            return
+
+        # extract data into list for display
+        li = [[]] * len(data)
+        for i, e in enumerate(data):
+            li[i] = [e[k] for k in self.columns]
+        self.rows = li
+
+        # set page info for navigation bar to work
+        self.page_num = -(num // -self.PAGE_SIZE)
         self.page_index = page_index
-        self.rows = data
+
+        # set up table to display
         self.table.clearContents()
-        for i, row in enumerate(data):
-            # row index, starts with 1
+        for i, row in enumerate(li):
+            # global row index, starts with 1
             self.table.setItem(i, 0, QTableWidgetItem(str((page_index - 1) * self.row_num + i + 1)))
             # data columns
-            for j, column in enumerate(data[i][1:]):
+            for j, column in enumerate(li[i][1:]):
                 self.table.setItem(i, j + 1, QTableWidgetItem(str(column)))
             # operation column
-            w = QWidget(self.table)
-            box = QHBoxLayout()
-            w.setLayout(box)
-            for op in self.ops:
-                btn = QPushButton(w)
-                btn.setText(op)
-                # NOTICE: `ignored` is needed to receive pyqt slot parameter, in this case, a boolean
-                btn.pressed.connect(lambda ignored=None, id=data[i][0], op=op: op_callback(id, op))
-                box.addWidget(btn)
-            self.table.setCellWidget(i, len(data[i]), w)
+            if not self.is_readonly:
+                w = QWidget(self.table)
+                box = QHBoxLayout()
+                w.setLayout(box)
+                for op in ("修改", "删除"):
+                    btn = QPushButton(w)
+                    btn.setText(op)
+                    # NOTICE: `ignored` is needed to receive pyqt slot parameter, in this case, a boolean
+                    btn.pressed.connect(lambda ignored=None, i=i, op=op:
+                                        self._on_modify(i) if op == "修改" else self._on_delete([i]))
+                    box.addWidget(btn)
+                self.table.setCellWidget(i, len(li[i]), w)
+        # set text align center for each cell
         for i in range(self.table.rowCount()):
             for j in range(self.table.columnCount()):
                 item = self.table.item(i, j)
                 if item is not None:
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
+
+        # resize
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
 
@@ -227,14 +257,27 @@ class TableWidget(QWidget):
     def onImport(self, filepath: str):
         pass
 
-    @abc.abstractmethod
-    def onDelete(self, ids: List[int]):
+    def _on_search(self, queries: Dict[str, str]):
+        self.queries = queries
+        self.updateTable(page_index=1)
+
+    def _on_modify(self, row_indices: int):
         pass
 
-    @abc.abstractmethod
-    def onSearch(self, queries: Dict[str, str]):
-        pass
+    def _on_delete(self, row_indices: List[int]):
+        # pop up a dialog for confirmation
+        dialog = ConfirmDialogWithTable(f"以下 {len(row_indices)} 行条目将被删除：", self.columns,
+                                        (self.rows[i][1:] for i in row_indices))
+        if dialog.exec_() != QDialog.Accepted:
+            return  # user canceled deletion
+
+        # do delete
+        successful = self.doDelete(self.rows[i][0] for i in row_indices)
+        if successful:
+            self.updateTable(page_index=1)
+        else:
+            AlertDialog("删除失败").exec_()
 
     @abc.abstractmethod
-    def onTurnToPage(self, page_index: int):
+    def doDelete(self, ids: Iterator[int]) -> bool:
         pass
