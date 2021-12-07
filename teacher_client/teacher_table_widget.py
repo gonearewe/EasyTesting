@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from common.dialogs import AlertDialog
 from teacher_client import api
+from teacher_client.form_widget import *
 from teacher_client.table_widget import TableWidget
 
 
@@ -25,6 +26,13 @@ class TeacherTableWidget(TableWidget):
         else:
             self.exportData(filepath,
                             ((teacher["teacher_id"], teacher["name"], teacher["is_admin"]) for teacher in teachers))
+
+    def doModify(self, data: List) -> bool:
+        form_rows = []
+        for i, (key,key_text) in enumerate((("id","ID"),("teacher_id", "工号"),("name", "姓名"))):
+            form_rows.append(FormRow(key,key_text, data[i], FormValueType.SINGLE_LINE))
+        form_rows.append(FormRow("is_admin", "是管理员", ("是", "否"), FormValueType.COMBO_BOX))
+        self.tab_widget.addTab(ModifyFormWidget(self.tab_widget, form_rows, api.putTeachers),f"修改教师 {data[1]}")
 
     def doDelete(self, ids: List[int]) -> bool:
         return api.delTeachers(ids=ids)

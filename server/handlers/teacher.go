@@ -41,7 +41,7 @@ func PutTeacherHandler(c *gin.Context) {
         teacher.Salt = string(salt)
         teacher.Password = string(utils.CalculatePasswordWithSalt(teacher.Password, salt))
     }
-    dao.UpdateTeacherByTeacherId(&teacher)
+    dao.UpdateTeacherById(&teacher)
 }
 
 func DeleteTeachersHandler(c *gin.Context) {

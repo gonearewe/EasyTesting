@@ -29,27 +29,11 @@ func CreateMcqs(questions []*models.Mcq) {
     utils.PanicWhen(db.Create(&questions).Error)
 }
 
-// UpdateMcqs updates all the columns of all given Multiple Choice Question (mcq),
+// UpdateMcqById updates all the columns of given Multiple Choice Question (mcq),
 // the record to be updated will be specified by given mcq's id.
-// If any id of given `questions` doesn't exist, it refuses to proceed and throws an error.
-// When any error occurs, it panics and none of the given mcq will be updated alone.
-func UpdateMcqs(questions []*models.Mcq) {
-    err := db.Transaction(func(tx *gorm.DB) error {
-        tmpMcq := &models.Mcq{}
-        for _, mcq := range questions {
-            // SELECT FOR UPDATE, make sure all the ids exist
-            err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", mcq.ID).First(tmpMcq).Error
-            if err != nil {
-                return err
-            }
-            err = tx.Where("id = ?", mcq.ID).Updates(mcq).Error
-            if err != nil {
-                return err
-            }
-        }
-        return nil
-    })
+// When any error occurs, it panics and the given mcq will not be updated.
+func UpdateMcqById(question *models.Mcq) {
+    err := db.Where("id = ?", question.ID).Updates(question).Error
     utils.PanicWhen(err)
 }
 

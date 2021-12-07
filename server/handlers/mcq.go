@@ -53,22 +53,18 @@ func PostMcqHandler(c *gin.Context) {
 
 func PutMcqHandler(c *gin.Context) {
 	abortIfAnyExamActive(c)
-	var reqs []gin.H
-	utils.MustParseJsonTo(c, &reqs)
-	var mcqs = make([]*models.Mcq, len(reqs))
-	for i, req := range reqs {
-		choices := req["choices"].([]interface{})
-		mcqs[i] = &models.Mcq{
-			ID:          int(req["id"].(float64)),
-			Stem:        req["stem"].(string),
-			Choice1:     choices[0].(string),
-			Choice2:     choices[1].(string),
-			Choice3:     choices[2].(string),
-			Choice4:     choices[3].(string),
-			RightAnswer: strconv.Itoa(int(req["right_answer"].(float64))),
-		}
+	req := utils.MustParseJson(c)
+	choices := req["choices"].([]interface{})
+	mcq := &models.Mcq{
+		ID:          int(req["id"].(float64)),
+		Stem:        req["stem"].(string),
+		Choice1:     choices[0].(string),
+		Choice2:     choices[1].(string),
+		Choice3:     choices[2].(string),
+		Choice4:     choices[3].(string),
+		RightAnswer: strconv.Itoa(int(req["right_answer"].(float64))),
 	}
-	dao.UpdateMcqs(mcqs)
+	dao.UpdateMcqById(mcq)
 }
 
 func DeleteMcqHandler(c *gin.Context) {

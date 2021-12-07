@@ -29,27 +29,11 @@ func CreateMaqs(questions []*models.Maq) {
     utils.PanicWhen(db.Create(&questions).Error)
 }
 
-// UpdateMaqs updates all the columns of all given Multiple Answer Question (maq),
+// UpdateMaqById updates all the columns of given Multiple Answer Question (maq),
 // the record to be updated will be specified by given maq's id.
-// If any id of given `questions` doesn't exist, it refuses to proceed and throws an error.
-// When any error occurs, it panics and none of the given maq will be updated alone.
-func UpdateMaqs(questions []*models.Maq) {
-    err := db.Transaction(func(tx *gorm.DB) error {
-        tmpMaq := &models.Maq{}
-        for _, maq := range questions {
-            // SELECT FOR UPDATE, make sure all the ids exist
-            err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", maq.ID).First(tmpMaq).Error
-            if err != nil {
-                return err
-            }
-            err = tx.Where("id = ?", maq.ID).Updates(maq).Error
-            if err != nil {
-                return err
-            }
-        }
-        return nil
-    })
+// When any error occurs, it panics and the given maq will not be updated.
+func UpdateMaqById(question *models.Maq) {
+    err := db.Where("id = ?", question.ID).Updates(question).Error
     utils.PanicWhen(err)
 }
 

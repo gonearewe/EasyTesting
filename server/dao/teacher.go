@@ -1,7 +1,6 @@
 package dao
 
 import (
-    "github.com/gin-gonic/gin"
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
     "gorm.io/gorm"
@@ -9,19 +8,19 @@ import (
 )
 
 func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher) {
-    buildTeacherQueryFrom(teacherId , name ).
+    buildTeacherQueryFrom(teacherId, name).
         Select("id", "teacher_id", "name", "is_admin").
         Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
         Find(&res)
     return
 }
 
-func GetTeacherNumBy(teacherId string, name string) (num int64){
-    buildTeacherQueryFrom(teacherId , name ).Count(&num)
+func GetTeacherNumBy(teacherId string, name string) (num int64) {
+    buildTeacherQueryFrom(teacherId, name).Count(&num)
     return
 }
 
-func  buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
+func buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
     var filtered = db.Model(&models.Teacher{})
     if teacherId != "" {
         filtered = filtered.Where("teacher_id LIKE ?", teacherId+"%")
@@ -34,7 +33,7 @@ func  buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
 
 func GetTeacherByTeacherId(teacherId string) *models.Teacher {
     var ret models.Teacher
-    db.Find(&ret,"teacher_id = ?",teacherId)
+    db.Find(&ret, "teacher_id = ?", teacherId)
     return &ret
 }
 
@@ -42,16 +41,21 @@ func CreateTeachers(teachers []*models.Teacher) {
     db.Create(&teachers)
 }
 
-func UpdateTeacherByTeacherId(t *models.Teacher) {
-    var filtered = db.Where("teacher_id = ?", t.TeacherID)
-    if t.Password == "" && t.Salt == ""{
-        filtered.Updates(gin.H{"name": t.Name, "is_admin": t.IsAdmin})
-    }else {
-        filtered.Updates(gin.H{"name": t.Name, "password": t.Password, "salt": t.Salt, "is_admin": t.IsAdmin})
+func UpdateTeacherById(t *models.Teacher) {
+    var filtered = db.Model(t).Where("id = ?", t.ID)
+    var err error
+    if t.Password == "" && t.Salt == "" {
+        err = filtered.Updates(
+            map[string]interface{}{"teacher_id": t.TeacherID, "name": t.Name, "is_admin": t.IsAdmin}).Error
+    } else {
+        err = filtered.Updates(
+            map[string]interface{}{"teacher_id": t.TeacherID, "name": t.Name, "is_admin": t.IsAdmin,
+                "password": t.Password, "salt": t.Salt}).Error
     }
+    utils.PanicWhen(err)
 }
 
-func DeleteTeachers(ids []int)  {
+func DeleteTeachers(ids []int) {
     err := db.Transaction(func(tx *gorm.DB) error {
         tmpTeacher := &models.Teacher{}
         for _, id := range ids {

@@ -899,50 +899,49 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 0
-                    student_id: '2020501880'
-                    name: 小明
-                    class_id: '10072005'
-                  - id: 1
-                    student_id: '2020501855'
-                    name: 小红
-                    class_id: '10072005'
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  student_id:
-                    type: string
-                    minLength: 1
-                  name:
-                    type: string
-                    minLength: 1
-                  class_id:
-                    type: string
-                    minLength: 1
-                required:
-                  - id
-                  - student_id
-                  - name
-                  - class_id
+                  id: 0
+                  student_id: '2020501880'
+                  name: 小明
+                  class_id: '10072005'
+                example-2:
+                  id: 1
+                  student_id: '2020501855'
+                  name: 小红
+                  class_id: '10072005'
+              properties:
+                id:
+                  type: integer
+                student_id:
+                  type: string
+                  minLength: 1
+                name:
+                  type: string
+                  minLength: 1
+                class_id:
+                  type: string
+                  minLength: 1
+              required:
+                - id
+                - student_id
+                - name
+                - class_id
             examples:
               example-1:
                 value:
-                  - id: 0
-                    student_id: '2020501880'
-                    name: 小明
-                    class_id: '10072005'
-                  - id: 1
-                    student_id: '2020501855'
-                    name: 小红
-                    class_id: '10072005'
+                  id: 0
+                  student_id: '2020501880'
+                  name: 小明
+                  class_id: '10072005'
+              example-2:
+                value:
+                  id: 1
+                  student_id: '2020501855'
+                  name: 小红
+                  class_id: '10072005'
       tags:
         - user
     delete:
@@ -1228,102 +1227,98 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 0
-                    start_time: '2021/11/21 14:00:00'
-                    end_time: '2021/11/21 17:00:00'
-                    time_allowed: '02:00:00'
-                    mcq_score: 2
-                    mcq_num: 20
-                    maq_score: 3
-                    maq_num: 5
-                    bfq_score: 3
-                    bfq_num: 5
-                    tfq_score: 2
-                    tfq_num: 5
-                    crq_score: 6
-                    crq_num: 2
-                    cq_score: 4
-                    cq_num: 2
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  start_time:
-                    type: string
-                    minLength: 1
-                  end_time:
-                    type: string
-                    minLength: 1
-                  time_allowed:
-                    type: string
-                    minLength: 1
-                  mcq_score:
-                    type: integer
-                  mcq_num:
-                    type: integer
-                  maq_score:
-                    type: integer
-                  maq_num:
-                    type: integer
-                  bfq_score:
-                    type: integer
-                  bfq_num:
-                    type: integer
-                  tfq_score:
-                    type: integer
-                  tfq_num:
-                    type: integer
-                  crq_score:
-                    type: integer
-                  crq_num:
-                    type: integer
-                  cq_score:
-                    type: integer
-                  cq_num:
-                    type: integer
-                required:
-                  - id
-                  - start_time
-                  - end_time
-                  - time_allowed
-                  - mcq_score
-                  - mcq_num
-                  - maq_score
-                  - maq_num
-                  - bfq_score
-                  - bfq_num
-                  - tfq_score
-                  - tfq_num
-                  - crq_score
-                  - crq_num
-                  - cq_score
-                  - cq_num
+                  id: 0
+                  start_time: '2021/11/21 14:00:00'
+                  end_time: '2021/11/21 17:00:00'
+                  time_allowed: '02:00:00'
+                  mcq_score: 2
+                  mcq_num: 20
+                  maq_score: 3
+                  maq_num: 5
+                  bfq_score: 3
+                  bfq_num: 5
+                  tfq_score: 2
+                  tfq_num: 5
+                  crq_score: 6
+                  crq_num: 2
+                  cq_score: 4
+                  cq_num: 2
+              properties:
+                id:
+                  type: integer
+                start_time:
+                  type: string
+                  minLength: 1
+                end_time:
+                  type: string
+                  minLength: 1
+                time_allowed:
+                  type: string
+                  minLength: 1
+                mcq_score:
+                  type: integer
+                mcq_num:
+                  type: integer
+                maq_score:
+                  type: integer
+                maq_num:
+                  type: integer
+                bfq_score:
+                  type: integer
+                bfq_num:
+                  type: integer
+                tfq_score:
+                  type: integer
+                tfq_num:
+                  type: integer
+                crq_score:
+                  type: integer
+                crq_num:
+                  type: integer
+                cq_score:
+                  type: integer
+                cq_num:
+                  type: integer
+              required:
+                - id
+                - start_time
+                - end_time
+                - time_allowed
+                - mcq_score
+                - mcq_num
+                - maq_score
+                - maq_num
+                - bfq_score
+                - bfq_num
+                - tfq_score
+                - tfq_num
+                - crq_score
+                - crq_num
+                - cq_score
+                - cq_num
             examples:
               example-1:
                 value:
-                  - id: 0
-                    start_time: '2021/11/21 14:00:00'
-                    end_time: '2021/11/21 17:00:00'
-                    time_allowed: '02:00:00'
-                    mcq_score: 2
-                    mcq_num: 20
-                    maq_score: 3
-                    maq_num: 5
-                    bfq_score: 3
-                    bfq_num: 5
-                    tfq_score: 2
-                    tfq_num: 5
-                    crq_score: 6
-                    crq_num: 2
-                    cq_score: 4
-                    cq_num: 2
+                  id: 0
+                  start_time: '2021/11/21 14:00:00'
+                  end_time: '2021/11/21 17:00:00'
+                  time_allowed: '02:00:00'
+                  mcq_score: 2
+                  mcq_num: 20
+                  maq_score: 3
+                  maq_num: 5
+                  bfq_score: 3
+                  bfq_num: 5
+                  tfq_score: 2
+                  tfq_num: 5
+                  crq_score: 6
+                  crq_num: 2
+                  cq_score: 4
+                  cq_num: 2
       tags:
         - exam
     delete:
@@ -1531,52 +1526,48 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 2
-                    stem: 2 * 1 = ?
-                    choice_1: '2'
-                    choice_2: '3'
-                    choice_3: '4'
-                    choice_4: '5'
-                    right_answer: '1'
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  stem:
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choice_1: '2'
+                  choice_2: '3'
+                  choice_3: '4'
+                  choice_4: '5'
+                  right_answer: '1'
+              properties:
+                id:
+                  type: integer
+                stem:
+                  type: string
+                  minLength: 1
+                choices:
+                  type: array
+                  minItems: 4
+                  maxItems: 4
+                  items:
                     type: string
-                    minLength: 1
-                  choices:
-                    type: array
-                    minItems: 4
-                    maxItems: 4
-                    items:
-                      type: string
-                  right_answer:
-                    type: integer
-                    description: 1-based index of the right answer in the choices array
-                required:
-                  - id
-                  - stem
-                  - choices
-                  - right_answer
+                right_answer:
+                  type: integer
+                  description: 1-based index of the right answer in the choices array
+              required:
+                - id
+                - stem
+                - choices
+                - right_answer
             examples:
               example-1:
                 value:
-                  - id: 2
-                    stem: 2 * 1 = ?
-                    choices:
-                      - '2'
-                      - '3'
-                      - '4'
-                      - '5'
-                    right_answer: 1
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choices:
+                    - '2'
+                    - '3'
+                    - '4'
+                    - '5'
+                  right_answer: 1
       tags:
         - question
     delete:
@@ -1788,61 +1779,57 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 2
-                    stem: 2 * 1 = ?
-                    choice_1: '2'
-                    choice_2: '3'
-                    choice_3: '4'
-                    choice_4: '5'
-                    right_answer: '1'
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  stem:
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choice_1: '2'
+                  choice_2: '3'
+                  choice_3: '4'
+                  choice_4: '5'
+                  right_answer: '1'
+              properties:
+                id:
+                  type: integer
+                stem:
+                  type: string
+                  minLength: 1
+                choices:
+                  type: array
+                  minItems: 4
+                  maxItems: 7
+                  items:
                     type: string
-                    minLength: 1
-                  choices:
-                    type: array
-                    minItems: 4
-                    maxItems: 7
-                    items:
-                      type: string
-                  right_answer:
-                    type: array
-                    description: 1-based indices of right answer in the choices array
-                    items:
-                      type: integer
-                required:
-                  - id
-                  - stem
-                  - choices
-                  - right_answer
+                right_answer:
+                  type: array
+                  description: 1-based indices of right answer in the choices array
+                  items:
+                    type: integer
+              required:
+                - id
+                - stem
+                - choices
+                - right_answer
             examples:
               example-1:
                 value:
-                  - id: 2
-                    stem: 四书五经是四书和五经的合称，是中国儒家的经典书籍。其中的**四书**指的是哪四本书？
-                    choices:
-                      - 《论语》
-                      - 《礼记》
-                      - 《孟子》
-                      - 《大学》
-                      - 《尚书》
-                      - 《中庸》
-                      - 《周易》
-                    right_answer:
-                      - 1
-                      - 3
-                      - 4
-                      - 6
+                  id: 2
+                  stem: 四书五经是四书和五经的合称，是中国儒家的经典书籍。其中的**四书**指的是哪四本书？
+                  choices:
+                    - 《论语》
+                    - 《礼记》
+                    - 《孟子》
+                    - 《大学》
+                    - 《尚书》
+                    - 《中庸》
+                    - 《周易》
+                  right_answer:
+                    - 1
+                    - 3
+                    - 4
+                    - 6
       tags:
         - question
     delete:
@@ -2027,45 +2014,41 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 2
-                    stem: 2 * 1 = ?
-                    choice_1: '2'
-                    choice_2: '3'
-                    choice_3: '4'
-                    choice_4: '5'
-                    right_answer: '1'
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  stem:
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choice_1: '2'
+                  choice_2: '3'
+                  choice_3: '4'
+                  choice_4: '5'
+                  right_answer: '1'
+              properties:
+                id:
+                  type: integer
+                stem:
+                  type: string
+                  minLength: 1
+                right_answers:
+                  type: array
+                  description: ''
+                  minItems: 1
+                  maxItems: 3
+                  items:
                     type: string
-                    minLength: 1
-                  right_answers:
-                    type: array
-                    description: ''
-                    minItems: 1
-                    maxItems: 3
-                    items:
-                      type: string
-                required:
-                  - id
-                  - stem
-                  - right_answers
+              required:
+                - id
+                - stem
+                - right_answers
             examples:
               example-1:
                 value:
-                  - id: 2
-                    stem: What's the name of the industrial-strength programming language extending the Caml dialect of ML with object-oriented features?
-                    right_answers:
-                      - OCaml
+                  id: 2
+                  stem: What's the name of the industrial-strength programming language extending the Caml dialect of ML with object-oriented features?
+                  right_answers:
+                    - OCaml
       tags:
         - question
     delete:
@@ -2241,40 +2224,36 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 2
-                    stem: 2 * 1 = ?
-                    choice_1: '2'
-                    choice_2: '3'
-                    choice_3: '4'
-                    choice_4: '5'
-                    right_answer: '1'
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  stem:
-                    type: string
-                    minLength: 1
-                  right_answer:
-                    description: ''
-                    type: boolean
-                required:
-                  - id
-                  - stem
-                  - right_answer
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choice_1: '2'
+                  choice_2: '3'
+                  choice_3: '4'
+                  choice_4: '5'
+                  right_answer: '1'
+              properties:
+                id:
+                  type: integer
+                stem:
+                  type: string
+                  minLength: 1
+                right_answer:
+                  description: ''
+                  type: boolean
+              required:
+                - id
+                - stem
+                - right_answer
             examples:
               example-1:
                 value:
-                  - id: 2
-                    stem: HE 弹指的是高爆弹
-                    right_answer: true
+                  id: 2
+                  stem: HE 弹指的是高爆弹
+                  right_answer: true
       tags:
         - question
     delete:
@@ -2482,60 +2461,56 @@ paths:
         content:
           application/json:
             schema:
-              type: array
+              type: object
               description: ''
-              minItems: 1
-              uniqueItems: true
               x-examples:
                 example-1:
-                  - id: 2
-                    stem: 2 * 1 = ?
-                    choice_1: '2'
-                    choice_2: '3'
-                    choice_3: '4'
-                    choice_4: '5'
-                    right_answer: '1'
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  stem:
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choice_1: '2'
+                  choice_2: '3'
+                  choice_3: '4'
+                  choice_4: '5'
+                  right_answer: '1'
+              properties:
+                id:
+                  type: integer
+                stem:
+                  type: string
+                  minLength: 1
+                right_answers:
+                  type: array
+                  description: ''
+                  maxItems: 6
+                  minItems: 2
+                  items:
                     type: string
-                    minLength: 1
-                  right_answers:
-                    type: array
-                    description: ''
-                    maxItems: 6
-                    minItems: 2
-                    items:
-                      type: string
-                required:
-                  - id
-                  - stem
-                  - right_answers
+              required:
+                - id
+                - stem
+                - right_answers
             examples:
               example-1:
                 value:
-                  - id: 1
-                    stem: |-
-                      下面的代码用于进行矩阵减法，试完成填空，补全代码：
-                      ```py
-                      # 两个矩阵相加
-                      _1_ = [[5,7,8], [8 ,5,6], [0 ,8,9]]
-                      Y = [[5,8,1], [6,7,3], [4,5,9]]
+                  id: 1
+                  stem: |-
+                    下面的代码用于进行矩阵减法，试完成填空，补全代码：
+                    ```py
+                    # 两个矩阵相加
+                    _1_ = [[5,7,8], [8 ,5,6], [0 ,8,9]]
+                    Y = [[5,8,1], [6,7,3], [4,5,9]]
 
-                      result = [[0,0,0], [0,0,0]]
-                      for i in range(len(X)): # 迭代输出行
-                          for j in range(len(X[0])): # 迭代输出列
-                              result[_2_][j] = X[i][j] _3_ Y[i][j] 
-                      for r in result:
-                          print(r) # 打印出结果
-                      ```
-                    right_answers:
-                      - X
-                      - i
-                      - '-'
+                    result = [[0,0,0], [0,0,0]]
+                    for i in range(len(X)): # 迭代输出行
+                        for j in range(len(X[0])): # 迭代输出列
+                            result[_2_][j] = X[i][j] _3_ Y[i][j] 
+                    for r in result:
+                        print(r) # 打印出结果
+                    ```
+                  right_answers:
+                    - X
+                    - i
+                    - '-'
       tags:
         - question
     delete:

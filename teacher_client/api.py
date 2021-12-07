@@ -1,4 +1,5 @@
 from hashlib import sha256
+from typing import List, Dict
 
 from common import network
 
@@ -36,12 +37,12 @@ def getTeachersNum(**kwargs):
     return network.get("/teachers/num", params=kwargs)
 
 
-def postTeachers(**kwargs):
-    return network.post("/teachers", params=kwargs)
+def postTeachers(body:List[Dict]):
+    return network.post("/teachers", body)
 
 
-def putTeachers(**kwargs):
-    return network.put("/teachers", params=kwargs)
+def putTeachers(body:List[Dict]):
+    return network.put("/teachers", body)
 
 
 def delTeachers(**kwargs):

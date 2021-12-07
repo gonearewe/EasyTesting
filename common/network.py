@@ -40,14 +40,15 @@ def getAuth(auth_path: str, params) -> bool:
     return False
 
 
-def request(method: str, path: str, params) -> bool:
+def request(method: str, path: str, params=None, body=None) -> bool:
     if _SERVER_ADDR == "" or _AUTHENTICATION_TOKEN == "":
         _LOGGER.critical(f"broken state to send request: _SERVER_ADDR({_SERVER_ADDR}) and "
                          f"_AUTHENTICATION_TOKEN({_AUTHENTICATION_TOKEN})")
         return False
     try:
         response = requests.request(method, url="http://" + _SERVER_ADDR + path,
-                                    params=params, headers={"Authorization": "Bearer " + _AUTHENTICATION_TOKEN})
+                                    params=params, json=body,
+                                    headers={"Authorization": "Bearer " + _AUTHENTICATION_TOKEN})
     except Exception as e:
         _LOGGER.error(e)
         return False
@@ -79,13 +80,14 @@ def get(path: str, params):
             _LOGGER.warning(f"request failure: http status code {response.status_code}")
             return None
 
-def post(path: str, params):
-    return request("POST", path, params)
+
+def post(path: str, body):
+    return request("POST", path, body=body)
 
 
-def put(path: str, params):
-    return request("PUT", path, params)
+def put(path: str, body):
+    return request("PUT", path, body=body)
 
 
 def delete(path: str, params):
-    return request("DELETE", path, params)
+    return request("DELETE", path, params=params)

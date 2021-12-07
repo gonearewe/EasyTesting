@@ -6,6 +6,7 @@ from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
 from common.dialogs import AlertDialog, ConfirmDialogWithTable
+from teacher_client.form_widget import ModifyFormWidget, FormRow
 
 
 class TableWidget(QWidget):
@@ -13,7 +14,6 @@ class TableWidget(QWidget):
                  columns: List[str], columns_text: List[str], is_readonly: bool):
         super().__init__(parent)
         self.setContentsMargins(300, 40, 300, 40)
-        # self.setMaximumWidth(720)
         self.queries = {}
         self.columns = columns
         self.columns_text = columns_text
@@ -261,7 +261,12 @@ class TableWidget(QWidget):
         self.queries = queries
         self.updateTable(page_index=1)
 
-    def _on_modify(self, row_indices: int):
+    def _on_modify(self, row_index: int):
+        row = self.rows[row_index]
+        self.doModify(row)
+
+    @abc.abstractmethod
+    def doModify(self, data: List) -> bool:
         pass
 
     def _on_delete(self, row_indices: List[int]):
