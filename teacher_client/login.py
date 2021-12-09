@@ -21,16 +21,16 @@ class LoginDialog(QDialog):
         l = QLineEdit()
         l.textChanged.connect(lambda: setattr(self, 'server_addr', l.text()))
         l.setPlaceholderText("如：192.168.0.2:1234")
-        l.setText("localhost:443") # DEV SETTING
+        l.setText("localhost:443")  # DEV SETTING
         l.setMinimumWidth(350)
         form.addRow(QLabel("服务器地址"), l)
         l2 = QLineEdit()
         l2.textChanged.connect(lambda: setattr(self, 'teacher_id', l2.text()))
-        l2.setText("0") # DEV SETTING
+        l2.setText("0")  # DEV SETTING
         form.addRow(QLabel("工号"), l2)
         l3 = QLineEdit()
         l3.textChanged.connect(lambda: setattr(self, 'password', l3.text()))
-        l3.setText("ET000") # DEV SETTING
+        l3.setText("ET000")  # DEV SETTING
         form.addRow(QLabel("密码"), l3)
         btn = QPushButton("登录")
         btn.setFixedSize(200, 50)

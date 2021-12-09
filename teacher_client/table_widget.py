@@ -5,7 +5,8 @@ import xlsxwriter
 from PyQt5 import QtCore, Qt
 from PyQt5.QtWidgets import *
 
-from common.dialogs import AlertDialog, ConfirmDialogWithTable
+from common.dialogs import AlertDialog, ConfirmDialogWithTable, ConfirmDialog
+from teacher_client import status
 from teacher_client.form_widget import ModifyFormWidget, FormRow
 
 
@@ -32,7 +33,7 @@ class TableWidget(QWidget):
         export_btn = QPushButton("导出")
         export_btn.setToolTip("导出所有数据至 Excel 文件")
         export_btn.pressed.connect(
-            lambda: self.onExport(QFileDialog.getSaveFileName(self, filter="excel file (*.xlsx)")[0])
+            lambda: self._on_export(QFileDialog.getSaveFileName(self, filter="excel file (*.xlsx)")[0])
         )
         export_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)  # set policy in case it expands
         hbox0.addWidget(export_btn)
@@ -40,7 +41,7 @@ class TableWidget(QWidget):
             export_template_btn = QPushButton("导出模板")
             export_template_btn.setToolTip("生成 Excel 文件模板，仅包含列属性，而不包含数据")
             export_template_btn.pressed.connect(
-                lambda: self.exportTemplate(QFileDialog.getSaveFileName(self, filter="excel file (*.xlsx)")[0])
+                lambda: self._export_template(QFileDialog.getSaveFileName(self, filter="excel file (*.xlsx)")[0])
             )
             export_template_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)  # set policy in case it expands
             hbox0.addWidget(export_template_btn)
@@ -221,33 +222,47 @@ class TableWidget(QWidget):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
 
-    @abc.abstractmethod
-    def onExport(self, filepath: str):
-        pass
+    def _on_export(self, filepath: str):
+        data = self.doExport(**self.queries, page_size=2 ** 32, page_index=1)
+        if data is None:
+            status.failure("获取数据失败，无法导出")
+            AlertDialog("获取数据失败，无法导出")
+            return
 
-    def exportTemplate(self, filepath: str):
         try:
             workbook = xlsxwriter.Workbook(filepath)
-            worksheet = workbook.add_worksheet()
-            for i, column in enumerate(self.columns):
+            worksheet = workbook.add_worksheet("Sheet1")
+            # write header
+            for i, column in enumerate(self.columns_text[:-1]):
                 worksheet.write(0, i, column)
-            workbook.close()
-        except Exception as e:
-            print(e)
-            AlertDialog("无法导出文件", detail=str(e))
-
-    def exportData(self, filepath: str, data: Generator):
-        self.exportTemplate(filepath)
-        try:
-            workbook = xlsxwriter.Workbook(filepath)
-            worksheet = workbook.get_worksheet_by_name("Sheet1")
-            for i, elem in enumerate(data):
+            # write data
+            for i, elem in enumerate(((row[k] for k in self.columns[1:]) for row in data)):
                 for j, content in enumerate(elem):
                     worksheet.write(i + 1, j, content)
             workbook.close()
         except Exception as e:
             print(e)
-            AlertDialog("无法导出文件", detail=str(e))
+            status.failure("无法导出数据")
+            AlertDialog("无法导出数据", detail=str(e))
+        status.success("数据导出成功")
+
+    @abc.abstractmethod
+    def doExport(self, **kwargs):
+        pass
+
+    def _export_template(self, filepath: str) -> bool:
+        try:
+            workbook = xlsxwriter.Workbook(filepath)
+            worksheet = workbook.add_worksheet()
+            # write header
+            for i, column in enumerate(self.columns_text[:-1]):
+                worksheet.write(0, i, column)
+            workbook.close()
+        except Exception as e:
+            print(e)
+            status.failure("无法导出模板")
+            AlertDialog("无法导出模板", detail=str(e))
+        status.success("模板导出成功")
 
     @abc.abstractmethod
     def onInsert(self):
@@ -266,21 +281,23 @@ class TableWidget(QWidget):
         self.doModify(row)
 
     @abc.abstractmethod
-    def doModify(self, data: List) -> bool:
+    def doModify(self, data: List):
         pass
 
     def _on_delete(self, row_indices: List[int]):
         # pop up a dialog for confirmation
-        dialog = ConfirmDialogWithTable(f"以下 {len(row_indices)} 行条目将被删除：", self.columns,
-                                        (self.rows[i][1:] for i in row_indices))
-        if dialog.exec_() != QDialog.Accepted:
+        dialog = ConfirmDialog(f"以下 {len(row_indices)} 行条目将被删除：",
+                               detail="\n".join([" ; ".join(map(str, self.rows[i][1:])) for i in row_indices]))
+        if dialog.exec_() != QMessageBox.Ok:
             return  # user canceled deletion
 
         # do delete
         successful = self.doDelete(self.rows[i][0] for i in row_indices)
         if successful:
+            status.success("删除成功")
             self.updateTable(page_index=1)
         else:
+            status.failure("删除失败")
             AlertDialog("删除失败").exec_()
 
     @abc.abstractmethod

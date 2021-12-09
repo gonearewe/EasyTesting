@@ -13,6 +13,10 @@ class TabWidget(QTabWidget):
         # by removing the close button, we can make all tabs closeable except the very first one
         self.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
+    def newTab(self,widget:QWidget,title:str):
+        i = self.addTab(widget,title)
+        self.setCurrentIndex(i)
+
     def closeCurrentTab(self):
         self.removeTab(self.currentIndex())
 

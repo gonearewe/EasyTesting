@@ -26,6 +26,7 @@ class ConfirmDialog(QMessageBox):
         self.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
 
 
+# BUG
 class ConfirmDialogWithTable(QMessageBox):
     def __init__(self, text: str, header: List[str], data: Iterator[List]):
         super().__init__()

@@ -66,7 +66,7 @@ class CreateFormWidget(FormWidget):
         def on_pressed():
             if ConfirmDialog("确认要创建吗？").exec_() != QMessageBox.Ok:
                 return
-            successful = on_create(self.widgets[i].text() for i in range(len(rows)))
+            successful = on_create([self.get_form()])
             if successful:
                 status.success("创建成功")
                 tab_widget.closeCurrentTab()

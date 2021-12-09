@@ -24,7 +24,7 @@ class StudentTableWidget(TableWidget):
                          is_readonly=True)
         self._on_search({})  # initial data
 
-    def onExport(self, filepath: str):
+    def _on_export(self, filepath: str):
         students = api.getStudents(**self.queries)
         if students is None:
             AlertDialog("无法获取数据").exec_()
