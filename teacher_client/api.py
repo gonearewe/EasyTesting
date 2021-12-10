@@ -9,6 +9,8 @@ def login(teacher_id: str, password: str):
                            {"teacher_id": teacher_id, "password": sha256(password.encode("utf-8")).hexdigest()})
 
 
+# student
+
 def getStudents(**kwargs):
     return network.get("/students", params=kwargs)
 
@@ -17,17 +19,19 @@ def getStudentsNum(**kwargs):
     return network.get("/students/num", params=kwargs)
 
 
-def postStudents(**kwargs):
-    return network.post("/students", params=kwargs)
+def postStudents(body: List[Dict]):
+    return network.post("/students", body)
 
 
-def putStudents(**kwargs):
-    return network.put("/students", params=kwargs)
+def putStudents(body: List[Dict]):
+    return network.put("/students", body)
 
 
 def delStudents(**kwargs):
     return network.delete("/students", params=kwargs)
 
+
+# teacher
 
 def getTeachers(**kwargs):
     return network.get("/teachers", params=kwargs)
@@ -37,11 +41,11 @@ def getTeachersNum(**kwargs):
     return network.get("/teachers/num", params=kwargs)
 
 
-def postTeachers(body:List[Dict]):
+def postTeachers(body: List[Dict]):
     return network.post("/teachers", body)
 
 
-def putTeachers(body:List[Dict]):
+def putTeachers(body: List[Dict]):
     return network.put("/teachers", body)
 
 

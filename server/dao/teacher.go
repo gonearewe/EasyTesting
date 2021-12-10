@@ -46,6 +46,7 @@ func UpdateTeacherById(t *models.Teacher) {
     var err error
     if t.Password == "" && t.Salt == "" {
         err = filtered.Updates(
+            // Updates with map instead of struct to avoid fields of default value being ignored
             map[string]interface{}{"teacher_id": t.TeacherID, "name": t.Name, "is_admin": t.IsAdmin}).Error
     } else {
         err = filtered.Updates(
@@ -57,11 +58,10 @@ func UpdateTeacherById(t *models.Teacher) {
 
 func DeleteTeachers(ids []int) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        tmpTeacher := &models.Teacher{}
         for _, id := range ids {
             // SELECT FOR UPDATE, make sure all the ids exist
             err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", id).First(tmpTeacher).Error
+                Select("id").Where("id = ?", id).First(&models.Teacher{}).Error
             if err != nil {
                 return err
             }

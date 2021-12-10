@@ -84,11 +84,6 @@ CREATE TABLE `student`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
-INSERT INTO `student`
-    (`student_id`, `name`, `class_id`)
-VALUES ('2020501880', '小明', '10072005'),
-       ('2020501826', '小红', '10072005');
-
 -- ----------------------------
 -- Table structure for teacher
 -- ----------------------------
@@ -104,16 +99,6 @@ CREATE TABLE `teacher`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
-
-INSERT INTO `teacher`
-    (`teacher_id`, `name`, `password`, `salt`, `is_admin`)
-VALUES
-    -- client should input password 'ET000' and hash its utf-8 encoding with sha256  
-    ('0', 'root', '$2a$10$lgnXPiP9UR3rj2.tu9l8F.iQJqy5jXwTEuH1b9NWGpbxi0816HiNy',
-     'S0xMx8Hx4mxNui1RCPk1n6MfElv41bgkiBFR3NxS', TRUE),
-    -- client should input password 'Scala' and hash it with sha256   
-    ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
-     '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
 
 -- ----------------------------
 -- Table structure for exam
@@ -373,6 +358,60 @@ CREATE TABLE `cq_answer`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+SET FOREIGN_KEY_CHECKS = 1;
+```
+
+并准备如下的测试数据：
+
+```mysql
+USE easy_testing;
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE `student`;
+INSERT INTO `student`
+    (`student_id`, `name`, `class_id`)
+VALUES ('2020501880', '小明', '10072005'),
+       ('2020501826', '小红', '10072005'),
+       ('2020501827', '小亮', '10072005'),
+       ('2020501828', '小张', '10072005'),
+       ('2020501829', '小李', '10072005'),
+       ('2020501830', '小陆', '10072005'),
+       ('2020501700', '小甲', '10072012'),
+       ('2020501701', '小丁', '10072012'),
+       ('2020501702', '小吴', '10072012'),
+       ('2020501703', '小唐', '10072012'),
+       ('2020201733', '小高', '03042913'),
+       ('2020201734', '小岛', '03042913'),
+       ('2020201735', '小凯', '03042914'),
+       ('2020501096', '小雅', '10071855'),
+       ('2020501098', '小伞', '10071855'),
+       ('2020501099', '小坡', '10071856'),
+       ('2019501826', '小古', '06330054'),
+       ('2019501827', '小六', '06330055'),
+       ('2019501829', '小六', '06330055'),
+       ('2019501844', '小齐', '06330058'),
+       ('2019501848', '小拍', '06330058'),
+       ('2019501849', '小含', '06330059'),
+       ('2018201826', '小示', '05370014'),
+       ('2018216381', '小吞', '01370014'),
+       ('2018216382', '小真', '01370014'),
+       ('2018216385', '小夏', '01370014'),
+       ('2018216386', '小阿', '01370015'),
+       ('2018216387', '小金', '02300000'),
+       ('2017216387', '小贵', '10071705'),
+       ('2016664026', '小韩', '14954012');
+
+TRUNCATE TABLE `teacher`;
+INSERT INTO `teacher`
+    (`teacher_id`, `name`, `password`, `salt`, `is_admin`)
+VALUES
+    -- client should input password 'ET000' and hash its utf-8 encoding with sha256  
+    ('0', 'root', '$2a$10$lgnXPiP9UR3rj2.tu9l8F.iQJqy5jXwTEuH1b9NWGpbxi0816HiNy',
+     'S0xMx8Hx4mxNui1RCPk1n6MfElv41bgkiBFR3NxS', TRUE),
+    -- client should input password 'Scala' and hash it with sha256   
+    ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
+     '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

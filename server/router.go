@@ -13,10 +13,13 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, ad
     adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
     adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)
     adminAuthRouter.PUT("/teachers",handlers.PutTeacherHandler)
-    adminAuthRouter.DELETE("/teachers",handlers.DeleteTeachersHandler)
+    adminAuthRouter.DELETE("/teachers",handlers.DeleteTeacherHandler)
 
     teacherAuthRouter.GET("/students",handlers.GetStudentsHandler)
     teacherAuthRouter.GET("/students/num",handlers.GetStudentNumHandler)
+    teacherAuthRouter.POST("/students", handlers.StudentsRegisterHandler)
+    teacherAuthRouter.PUT("/students",handlers.PutStudentHandler)
+    teacherAuthRouter.DELETE("/students",handlers.DeleteStudentHandler)
 
     teacherAuthRouter.GET("/mcq", handlers.GetMcqHandler)
     teacherAuthRouter.POST("/mcq", handlers.PostMcqHandler)

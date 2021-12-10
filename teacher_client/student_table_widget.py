@@ -1,12 +1,8 @@
-import sys
 from typing import Dict, List
-
-import qtmodern.styles
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
-
+import pylightxl as xl
 from common.dialogs import AlertDialog
 from teacher_client import api
+from teacher_client.form_widget import *
 from teacher_client.table_widget import TableWidget
 
 
@@ -15,57 +11,51 @@ class StudentTableWidget(TableWidget):
 
     def __init__(self, tab_widget):
         self.tab_widget = tab_widget
-        self.PAGE_SIZE = 20
-        self.queries = {}
+
         super().__init__(parent=tab_widget,
                          queries=[("学号", "student_id"), ("姓名", "name"), ("班号", "class_id")],
+                         columns=["id", "student_id", "name", "class_id"],
                          columns_text=["学号", "姓名", "班号", ("修改", "删除")],
-                         row_num=self.PAGE_SIZE,
-                         is_readonly=True)
-        self._on_search({})  # initial data
+                         is_readonly=False)
+        self.updateTable(page_index=1)  # initial data
 
-    def _on_export(self, filepath: str):
-        students = api.getStudents(**self.queries)
-        if students is None:
-            AlertDialog("无法获取数据").exec_()
+    def doExport(self, **kwargs):
+        return api.getStudents(**kwargs)
+
+    def onInsert(self):
+        form_rows = []
+        for i, (key, key_text) in enumerate((("student_id", "学号"), ("name", "姓名"), ("class_id", "班号"))):
+            form_rows.append(FormRow(key, key_text, "", FormValueType.SINGLE_LINE))
+        self.tab_widget.newTab(CreateFormWidget(self.tab_widget, form_rows, api.postStudents), "新建学生")
+
+    def onImport(self, filepath: str):
+        students = [[]]
+        try:
+            worksheet = xl.readxl(filepath).ws("Sheet1")
+            students = [{"student_id": row[0], "name": row[1], "class_id": row[2]} for row in list(worksheet.rows)[1:]]
+        except Exception as e:
+            print(e)
+            status.failure("无法导入数据")
+            AlertDialog("无法导入数据", detail=str(e))
+            return
+        successful = api.postStudents(students)
+        if not successful:
+            status.failure("数据文件读取成功，但是网络出错或服务器拒绝了请求")
+            AlertDialog("无法导入数据", detail="网络出错或服务器拒绝了请求")
         else:
-            self.exportData(filepath,
-                            ((student["student_id"], student["name"], student["class_id"]) for student in students))
+            status.success("数据导入成功")
 
-    def doDelete(self, ids: List[int]):
-        api.delStudents(ids=ids)
+    def doModify(self, data: List):
+        form_rows = []
+        for i, (key, key_text) in enumerate((("id", "ID"), ("student_id", "学号"), ("name", "姓名"), ("class_id", "班号"))):
+            form_rows.append(FormRow(key, key_text, data[i], FormValueType.SINGLE_LINE))
+        self.tab_widget.newTab(ModifyFormWidget(self.tab_widget, form_rows, api.putStudents), f"修改学生 {data[1]}")
 
-    def _on_search(self, queries: Dict[str, str]):
-        self.queries = queries
-        self.updateTable(page_index=1)
+    def doDelete(self, ids: List[int]) -> bool:
+        return api.delStudents(ids=",".join(map(str, ids)))
 
-    def updateTable(self, page_index):
-        def handle_op(id: int, op: str):
-            if op == "删除":
-                self.doDelete([id])
+    def onGetDataNum(self, queries: Dict[str, str]):
+        return api.getStudentsNum(**queries)
 
-        num = api.getStudentsNum(**self.queries)
-        students = api.getStudents(**self.queries, page_size=self.PAGE_SIZE, page_index=page_index)
-        if students is None or num is None:
-            AlertDialog("无法获取数据").exec_()
-        else:
-            li = [[]] * len(students)
-            for i, student in enumerate(students):
-                li[i] = [student[k] for k in ("id", "student_id", "name", "class_id")]
-            self.setData(page_num=-(num // -self.PAGE_SIZE), page_index=page_index, data=li,
-                         op_callback=lambda id, op: handle_op(id, op))
-
-    def onTurnToPage(self, page_index: int):
-        self.updateTable(page_index)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    qtmodern.styles.light(app)
-    app.setFont(QFont("YaHei", 25))
-    w = QMainWindow()
-    s = StudentTableWidget(w)
-    s.frameGeometry().moveCenter(QDesktopWidget().availableGeometry().center())
-    w.setCentralWidget(s)
-    w.showMaximized()
-    sys.exit(app.exec_())
+    def onGetData(self, queries: Dict[str, str], page_size: int, page_index: int):
+        return api.getStudents(**queries, page_size=page_size, page_index=page_index)

@@ -54,7 +54,7 @@ class TeacherTableWidget(TableWidget):
         self.tab_widget.newTab(ModifyFormWidget(self.tab_widget, form_rows, api.putTeachers), f"修改教师 {data[1]}")
 
     def doDelete(self, ids: List[int]) -> bool:
-        return api.delTeachers(ids=ids)
+        return api.delTeachers(ids=",".join(map(str, ids)))
 
     def onGetDataNum(self, queries: Dict[str, str]):
         return api.getTeachersNum(**queries)

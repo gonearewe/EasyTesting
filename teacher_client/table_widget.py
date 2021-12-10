@@ -111,6 +111,7 @@ class TableWidget(QWidget):
         self.prev_page_btn = QPushButton("<")
         self.prev_page_btn.setDisabled(True)
         self.prev_page_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.prev_page_btn.pressed.connect(lambda: self.updateTable(page_index=self.page_index - 1))
         hbox2.addWidget(self.prev_page_btn)
         self._page_num = 0
         self._page_index = 0
@@ -120,6 +121,7 @@ class TableWidget(QWidget):
         self.next_page_btn = QPushButton(">")
         self.next_page_btn.setDisabled(True)
         self.next_page_btn.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.next_page_btn.pressed.connect(lambda: self.updateTable(page_index=self.page_index + 1))
         hbox2.addWidget(self.next_page_btn)
         self.page_edit = QLineEdit()
         self.page_edit.setPlaceholderText("页码")
@@ -155,13 +157,8 @@ class TableWidget(QWidget):
         self._handle_page_btn()
 
     def _handle_page_btn(self):
-        if 1 < self.page_index < self.page_num:
-            self.prev_page_btn.setDisabled(False)
-            self.next_page_btn.setDisabled(False)
-        if self.page_index <= 1:
-            self.prev_page_btn.setDisabled(True)
-        if self.page_index >= self.page_num:
-            self.next_page_btn.setDisabled(True)
+        self.prev_page_btn.setDisabled(self.page_index <= 1)
+        self.next_page_btn.setDisabled(self.page_index >= self.page_num)
 
     @abc.abstractmethod
     def onGetDataNum(self, queries: Dict[str, str]):
@@ -287,12 +284,12 @@ class TableWidget(QWidget):
     def _on_delete(self, row_indices: List[int]):
         # pop up a dialog for confirmation
         dialog = ConfirmDialog(f"以下 {len(row_indices)} 行条目将被删除：",
-                               detail="\n".join([" ; ".join(map(str, self.rows[i][1:])) for i in row_indices]))
+                               detail=" ;\n".join([" | ".join(map(str, self.rows[i][1:])) for i in row_indices]))
         if dialog.exec_() != QMessageBox.Ok:
             return  # user canceled deletion
 
         # do delete
-        successful = self.doDelete(self.rows[i][0] for i in row_indices)
+        successful = self.doDelete([self.rows[i][0] for i in row_indices])
         if successful:
             status.success("删除成功")
             self.updateTable(page_index=1)
@@ -301,5 +298,5 @@ class TableWidget(QWidget):
             AlertDialog("删除失败").exec_()
 
     @abc.abstractmethod
-    def doDelete(self, ids: Iterator[int]) -> bool:
+    def doDelete(self, ids: List[int]) -> bool:
         pass
