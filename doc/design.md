@@ -413,6 +413,17 @@ VALUES
     ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
      '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
 
+TRUNCATE TABLE `mcq`;
+INSERT INTO `mcq`
+    (`publisher_teacher_id`, `stem`, `choice_1`, `choice_2`, `choice_3`, `choice_4`, `right_answer`)
+VALUES
+    ('2010301800', '1 + 1 = ?', '2', '3', '4', '5', '1'),
+    ('2010301800', '1 + 2 = ?', '2', '3', '4', '5', '2'),
+    ('2010301800', '2 * 2 = ?', '2', '3', '4', '5', '3'),
+    ('2010301800', '2 - 0 = ?', '2', '3', '4', '5', '1'),
+    ('2010301800', '2 * 1 = ?', '2', '3', '4', '5', '1'),
+    ('0', '**红色**的英文是？', 'Red', 'Green', 'Blue', 'Yellow', '1');
+    
 SET FOREIGN_KEY_CHECKS = 1;
 ```
 

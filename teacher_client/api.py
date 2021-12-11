@@ -51,3 +51,25 @@ def putTeachers(body: List[Dict]):
 
 def delTeachers(**kwargs):
     return network.delete("/teachers", params=kwargs)
+
+
+# mcq
+
+def getMcqs(**kwargs):
+    return network.get("/mcq", params=kwargs)
+
+
+def getMcqsNum(**kwargs):
+    return network.get("/mcq/num", params=kwargs)
+
+
+def postMcqs(body: List[Dict]):
+    return network.post("/mcq", body)
+
+
+def putMcqs(body: List[Dict]):
+    return network.put("/mcq", body)
+
+
+def delMcqs(**kwargs):
+    return network.delete("/mcq", params=kwargs)

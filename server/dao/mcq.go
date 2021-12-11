@@ -22,6 +22,20 @@ func GetMcqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Mcq
     return
 }
 
+// GetMcqNumBy searches the database for the number of Multiple Choice Question (mcq) whose publisher teacher id (
+// string) starts with `teacherId`.
+// When any error occurs, it panics.
+func GetMcqNumBy(teacherId string) (num int64) {
+    var err error
+    if teacherId != "" {
+        err = db.Model(&models.Mcq{}).Where("publisher_teacher_id LIKE ?", teacherId+"%").Count(&num).Error
+    } else {
+        err = db.Model(&models.Mcq{}).Count(&num).Error
+    }
+    utils.PanicWhen(err)
+    return
+}
+
 // CreateMcqs stores given Multiple Choice Question (mcq) into the database,
 // with their id property ignored and handled by the database. When any error occurs,
 // it panics and none of the given mcq will be created alone.
@@ -42,11 +56,10 @@ func UpdateMcqById(question *models.Mcq) {
 // When any error occurs, it panics and none of the given mcq will be deleted alone.
 func DeleteMcqs(ids []int) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        tmpMcq := &models.Mcq{}
         for _, id := range ids {
             // SELECT FOR UPDATE, make sure all the ids exist
             err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", id).First(tmpMcq).Error
+                Select("id").Where("id = ?", id).First(&models.Mcq{}).Error
             if err != nil {
                 return err
             }

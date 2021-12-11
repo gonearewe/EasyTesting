@@ -31,6 +31,12 @@ func GetMcqHandler(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+func GetMcqNumHandler(c *gin.Context) {
+	teacherId := c.Query("publisher_teacher_id")
+	num := dao.GetMcqNumBy(teacherId)
+	c.JSON(200, num)
+}
+
 func PostMcqHandler(c *gin.Context) {
 	abortIfAnyExamActive(c)
 	var reqs []gin.H

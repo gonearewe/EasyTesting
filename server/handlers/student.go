@@ -32,7 +32,7 @@ func PutStudentHandler(c *gin.Context) {
     dao.UpdateStudentById(&student)
 }
 
-func DeleteStudentHandler(c *gin.Context) {
+func DeleteStudentsHandler(c *gin.Context) {
     abortIfAnyExamActive(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))

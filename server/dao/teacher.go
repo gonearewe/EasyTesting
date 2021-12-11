@@ -8,15 +8,17 @@ import (
 )
 
 func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher) {
-    buildTeacherQueryFrom(teacherId, name).
+    err:=buildTeacherQueryFrom(teacherId, name).
         Select("id", "teacher_id", "name", "is_admin").
         Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
-        Find(&res)
+        Find(&res).Error
+    utils.PanicWhen(err)
     return
 }
 
 func GetTeacherNumBy(teacherId string, name string) (num int64) {
-    buildTeacherQueryFrom(teacherId, name).Count(&num)
+    err:=buildTeacherQueryFrom(teacherId, name).Count(&num).Error
+    utils.PanicWhen(err)
     return
 }
 
@@ -33,12 +35,13 @@ func buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
 
 func GetTeacherByTeacherId(teacherId string) *models.Teacher {
     var ret models.Teacher
-    db.Find(&ret, "teacher_id = ?", teacherId)
+    err:=db.Find(&ret, "teacher_id = ?", teacherId).Error
+    utils.PanicWhen(err)
     return &ret
 }
 
 func CreateTeachers(teachers []*models.Teacher) {
-    db.Create(&teachers)
+    utils.PanicWhen(db.Create(&teachers).Error)
 }
 
 func UpdateTeacherById(t *models.Teacher) {

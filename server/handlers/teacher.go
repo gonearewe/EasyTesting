@@ -44,7 +44,7 @@ func PutTeacherHandler(c *gin.Context) {
     dao.UpdateTeacherById(&teacher)
 }
 
-func DeleteTeacherHandler(c *gin.Context) {
+func DeleteTeachersHandler(c *gin.Context) {
     abortIfAnyExamActive(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))

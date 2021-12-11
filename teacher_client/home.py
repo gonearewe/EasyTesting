@@ -5,8 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from common.card_widget import CardWidget
-from teacher_client.maq_tab import MaqTab
-from teacher_client.mcq_tab import McqTab
+from teacher_client.mcq_table_widget import McqTableWidget
 from teacher_client.student_table_widget import StudentTableWidget
 from teacher_client.teacher_table_widget import TeacherTableWidget
 
@@ -41,7 +40,7 @@ class HomeWidget(QWidget):
                                                     tab_widget.setCurrentIndex(tab_widget.count()-1))))
 
         add_header("试题管理", "./img/question.svg")
-        add_cards([("单选题", "./img/mcq.svg", McqTab), ("多选题", "./img/maq.svg", MaqTab)])
+        add_cards([("单选题", "./img/mcq.svg", McqTableWidget), ("多选题", "./img/maq.svg", McqTableWidget)])
 
         # add_header("考试管理", "./img/exam.svg")
         add_header("用户管理", "./img/user.svg")

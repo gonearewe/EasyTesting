@@ -19,12 +19,28 @@ class FormWidget(QWidget):
             v = None
             if row.type_ == FormValueType.SINGLE_LINE:
                 v = QLineEdit(str(row.default_val), self)
+                v.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
             elif row.type_ == FormValueType.RICH_TEXT:
-                v = QLabel("TODO")
+                v = QWidget()
+                l = QHBoxLayout(v)
+                v.setLayout(l)
+                text = """支持 Markdown 格式：\n\n**加粗** *倾斜* ***倾斜加粗***\n\n- 列表一号\n- 列表二号\n- 列表三号\n\n```py\n\n""" + \
+                       """# 代码区域内 Markdown 语法会被屏蔽\ndef foo(self, *args, **kwargs):\n    pass\n```\n\n""" + \
+                       """Markdown 不支持换行与缩进，请用一个空行分割段落\n\n""" + \
+                       """更多格式参考 https://www.markdownguide.org/basic-syntax/ """
+                edit = QTextEdit()
+                edit.setPlainText(row.default_val if row.default_val else text)
+                l.addWidget(edit)
+                l.addWidget(QLabel("预览："))
+                display = QTextBrowser()
+                display.setMarkdown(edit.toPlainText())
+                edit.textChanged.connect(
+                    lambda ignored=None, display=display, edit=edit: display.setMarkdown(edit.toPlainText()))
+                l.addWidget(display)
             elif row.type_ == FormValueType.COMBO_BOX:
                 v = QComboBox(self)
                 v.addItems(row.default_val)
-            v.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+                v.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
             self.widgets.append(v)
             self.layout.addRow(row.key_text, v)
 
