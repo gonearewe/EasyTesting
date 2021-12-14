@@ -9,6 +9,7 @@ require (
 	gopkg.in/errgo.v2 v2.1.0
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
+	github.com/gin-contrib/cors v1.3.1
 )
 
 require (
@@ -16,6 +17,7 @@ require (
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394 // indirect
 	github.com/denisenkom/go-mssqldb v0.11.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect

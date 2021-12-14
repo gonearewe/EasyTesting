@@ -7,23 +7,23 @@ import (
     "gorm.io/gorm/clause"
 )
 
-func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher) {
-    err:=buildTeacherQueryFrom(teacherId, name).
-        Select("id", "teacher_id", "name", "is_admin").
-        Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
-        Find(&res).Error
+func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher, num int64) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        err := buildTeacherQueryFrom(tx, teacherId, name).
+            Select("id", "teacher_id", "name", "is_admin").
+            Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
+            Find(&res).Error
+        if err != nil {
+            return err
+        }
+        return buildTeacherQueryFrom(tx, teacherId, name).Count(&num).Error
+    })
     utils.PanicWhen(err)
     return
 }
 
-func GetTeacherNumBy(teacherId string, name string) (num int64) {
-    err:=buildTeacherQueryFrom(teacherId, name).Count(&num).Error
-    utils.PanicWhen(err)
-    return
-}
-
-func buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
-    var filtered = db.Model(&models.Teacher{})
+func buildTeacherQueryFrom(tx *gorm.DB, teacherId string, name string) *gorm.DB {
+    var filtered = tx.Model(&models.Teacher{})
     if teacherId != "" {
         filtered = filtered.Where("teacher_id LIKE ?", teacherId+"%")
     }
@@ -35,7 +35,7 @@ func buildTeacherQueryFrom(teacherId string, name string) *gorm.DB {
 
 func GetTeacherByTeacherId(teacherId string) *models.Teacher {
     var ret models.Teacher
-    err:=db.Find(&ret, "teacher_id = ?", teacherId).Error
+    err := db.Find(&ret, "teacher_id = ?", teacherId).Error
     utils.PanicWhen(err)
     return &ret
 }

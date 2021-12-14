@@ -77,6 +77,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/teacher',
+    component: Layout,
+    children: [
+      {
+        path: 'teacher',
+        name: 'Teacher',
+        component: () => import('@/views/teacher/list'),
+        meta: {title: 'Teacher', icon: 'form'}
+      }
+    ]
+  },
+
+  {
     path: '/form',
     component: Layout,
     children: [

@@ -409,7 +409,7 @@ VALUES
     -- client should input password 'ET000' and hash its utf-8 encoding with sha256  
     ('0', 'root', '$2a$10$lgnXPiP9UR3rj2.tu9l8F.iQJqy5jXwTEuH1b9NWGpbxi0816HiNy',
      'S0xMx8Hx4mxNui1RCPk1n6MfElv41bgkiBFR3NxS', TRUE),
-    -- client should input password 'Scala' and hash it with sha256   
+    -- client should input password 'Scala' and hash its utf-8 encoding with sha256   
     ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
      '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
 
