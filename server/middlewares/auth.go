@@ -58,6 +58,7 @@ func teacherPayLoadFunc(data interface{}) jwt.MapClaims {
 	return jwt.MapClaims{
 		"id":v.ID,
 		"teacher_id": v.TeacherID,
+		"name": v.Name,
 		"is_admin":   v.IsAdmin,
 	}
 }

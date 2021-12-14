@@ -9,7 +9,6 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, ad
     unauthRouter.GET("/ping", handlers.PingHandler)
     teacherAuthRouter.GET("/hello", handlers.HelloHandler)
 
-    adminAuthRouter.GET("/teachers/num", handlers.GetTeacherNumHandler)
     adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
     adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)
     adminAuthRouter.PUT("/teachers",handlers.PutTeacherHandler)

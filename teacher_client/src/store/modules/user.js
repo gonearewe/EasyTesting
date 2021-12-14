@@ -1,12 +1,14 @@
 import {getInfo, login, logout} from '@/api/user'
 import {getToken, removeToken, setToken} from '@/utils/auth'
 import {resetRouter} from '@/router'
+import jwt_decode from "jwt-decode"
+import {sha256} from "js-sha256";
 
 const getDefaultState = () => {
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
+    teacher_id: '',
+    name: ''
   }
 }
 
@@ -19,45 +21,32 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
+  SET_TEACHER_ID: (state, teacher_id) => {
+    state.teacher_id = teacher_id
+  },
   SET_NAME: (state, name) => {
     state.name = name
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  }
 }
 
 const actions = {
   // user login
   login({commit}, userInfo) {
-    const {username, password} = userInfo
+    const {teacher_id, password} = userInfo
     return new Promise((resolve, reject) => {
-      login({username: username.trim(), password: password}).then(response => {
-        const {data} = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // get user info
-  getInfo({commit, state}) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const {data} = response
-
-        if (!data) {
-          return reject('Verification failed, please Login again.')
+      login({teacher_id: teacher_id.trim(), password: sha256(password)}).then(data => {
+        let token = data.token
+        commit('SET_TOKEN', token)
+        try {
+          let decoded = jwt_decode(token)
+          commit('SET_TEACHER_ID',decoded.teacher_id)
+          commit('SET_NAME',decoded.name)
+        } catch (error) {
+          // return error in production env
+          console.log( 'error from decoding token: ',error)
         }
-
-        const {name, avatar} = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+        setToken(token)
+        resolve()
       }).catch(error => {
         reject(error)
       })
@@ -67,14 +56,10 @@ const actions = {
   // user logout
   logout({commit, state}) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
         resolve()
-      }).catch(error => {
-        reject(error)
-      })
     })
   },
 

@@ -7,16 +7,16 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="teacher_id">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
+          v-model="loginForm.teacher_id"
           auto-complete="on"
-          name="username"
-          placeholder="Username"
+          name="工号"
+          placeholder="例如：2010204520"
           tabindex="1"
           type="text"
         />
@@ -32,8 +32,7 @@
           v-model="loginForm.password"
           :type="passwordType"
           auto-complete="on"
-          name="password"
-          placeholder="Password"
+          name="密码"
           tabindex="2"
           @keyup.enter.native="handleLogin"
         />
@@ -46,42 +45,38 @@
                  @click.native.prevent="handleLogin">Login
       </el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
-
     </el-form>
   </div>
 </template>
 
 <script>
-import {validUsername} from '@/utils/validate'
+import {validTeacherId} from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+    const validateTeacherId = (rule, value, callback) => {
+      if (!validTeacherId(value)) {
         callback(new Error('Please enter the correct user name'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 5) {
+        // TODO: demand strong password
+        callback(new Error('The password can not be less than 5 characters'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        teacher_id: '0',
+        password: 'ET000'
       },
       loginRules: {
-        username: [{required: true, trigger: 'blur', validator: validateUsername}],
+        teacher_id: [{required: true, trigger: 'blur', validator: validateTeacherId}],
         password: [{required: true, trigger: 'blur', validator: validatePassword}]
       },
       loading: false,

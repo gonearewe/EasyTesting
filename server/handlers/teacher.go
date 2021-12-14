@@ -23,14 +23,9 @@ func TeachersRegisterHandler(c *gin.Context) {
 }
 
 func GetTeachersHandler(c *gin.Context) {
-    teachers := dao.GetTeachersBy(c.Query("teacher_id"), c.Query("name"),
+    teachers,num := dao.GetTeachersBy(c.Query("teacher_id"), c.Query("name"),
         utils.Int(c.Query("page_size")), utils.Int(c.Query("page_index")))
-    c.JSON(200, teachers)
-}
-
-func GetTeacherNumHandler(c *gin.Context) {
-    num := dao.GetTeacherNumBy(c.Query("teacher_id"), c.Query("name"))
-    c.JSON(200, num)
+    c.JSON(200, gin.H{"total":num, "data":teachers})
 }
 
 func PutTeacherHandler(c *gin.Context) {
