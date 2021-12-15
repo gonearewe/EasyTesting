@@ -29,6 +29,6 @@ export function deleteTeachers(ids){
   return request({
     url: '/teachers',
     method: 'delete',
-    params: ids.join(',')
+    params: {'ids': ids.join(',')}
   })
 }
