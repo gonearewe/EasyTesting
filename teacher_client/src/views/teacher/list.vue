@@ -16,14 +16,24 @@
                  @click="handleMultiDelete">
         删除
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download"
+
+      <el-button v-waves class="filter-item" icon="el-icon-upload" type="primary"
+                 @click="$refs.file_picker.click()">
+        导入
+      </el-button>
+
+
+      <el-button v-waves :loading="downloadLoading" class="filter-item" icon="el-icon-download" type="success"
                  @click="handleDownload">
         导出
       </el-button>
     </div>
 
+    <input ref="file_picker" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden
+           type='file' @change="handleUpload"/>
+
     <el-table
-      ref = "teacherTable"
+      ref="teacherTable"
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
@@ -32,7 +42,6 @@
       fit
       show-header
       style="width: 100%;"
-      highlight-current-row
     >
 
       <el-table-column
@@ -61,7 +70,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="230">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -76,7 +85,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_index" :limit.sync="listQuery.page_size"
                 @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px"
                style="width: 400px; margin-left:50px;">
         <el-form-item label="工号" prop="teacher_id">
@@ -99,11 +108,19 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="确认删除" :visible.sync="dialogDeleteVisible">
+    <el-dialog :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
+               :visible.sync="dialogDeleteVisible">
       <el-table :data="rowsToBeDeleted">
         <el-table-column property="id" label="ID" width="150"></el-table-column>
         <el-table-column property="teacher_id" label="工号" width="150"></el-table-column>
         <el-table-column property="name" label="姓名" width="200"></el-table-column>
+        <el-table-column class-name="status-col" label="是管理员？" width="100">
+          <template slot-scope="{row}">
+            <el-tag :type="row.is_admin | boolColorFilter">
+              {{ row.is_admin | boolFilter }}
+            </el-tag>
+          </template>
+        </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteVisible = false">
@@ -113,6 +130,23 @@
           确定
         </el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="dialogImportVisible" width="30%">
+      <el-upload
+        :auto-upload="false"
+        :http-request="uploadData"
+        :limit="1"
+        :show-file-list="false"
+        accept=".xlsx"
+        action=""
+        class="upload-demo"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div slot="tip" class="el-upload__tip">只能上传 xlsx 文件</div>
+      </el-upload>
     </el-dialog>
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
@@ -128,9 +162,9 @@
 </template>
 
 <script>
-import {getTeachers, createTeachers, updateTeacher, deleteTeachers} from '@/api/teacher'
+import {createTeachers, deleteTeachers, getTeachers, updateTeacher} from '@/api/teacher'
 import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'TeacherList',
@@ -174,6 +208,8 @@ export default {
 
       rowsToBeDeleted: [],
       dialogDeleteVisible: false,
+
+      dialogImportVisible: false,
 
       dialogPvVisible: false,
       pvData: [],
@@ -221,13 +257,13 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createTeachers([this.temp]).then(() => {
-            this.getList()
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
               showClose: true,
               type: 'success'
             })
+            this.getList()
           })
         }
       })
@@ -273,159 +309,48 @@ export default {
         this.dialogPvVisible = true
       })
     },
-    deleteData(){
-      // TODO
+    deleteData() {
       console.log(this.rowsToBeDeleted)
-      this.dialogDeleteVisible = false
+      deleteTeachers(this.rowsToBeDeleted.map(v => v.id)).then(() => {
+        this.dialogDeleteVisible = false
+        this.$message({
+          message: '删除成功',
+          showClose: true,
+          type: 'success'
+        })
+        this.getList()
+      })
     },
     handleDownload() {
       this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
+      import('@/utils/Export2Excel').then(excel => {
+        const tHeader = ['teacher_id', 'name', 'is_admin']
+        let queryAll = Object.assign({}, this.listQuery, {page_index: 1, page_size: Math.pow(2, 32)})
+        getTeachers(queryAll).then(body => {
+          excel.export_json_to_excel({
+            header: tHeader,
+            data: body.data.map(teacher => tHeader.map(k => teacher[k])),
+            filename: 'teachers'
+          })
+          this.downloadLoading = false
         })
-        this.downloadLoading = false
       })
     },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
+    handleUpload(e) {
+      e.stopPropagation()
+      e.preventDefault()
+      let file = e.target.files[0]
+      import("@/utils/ImportFromExcel").then(xlsx => {
+        xlsx.extract_from_excel(file).then(teachers => {
+          console.log(teachers)
+          createTeachers(teachers)
+        })
+      })
+    },
+    uploadData(files) {
+      console.log(files)
     }
+
   }
 }
 </script>
-
-
-<!--<template>-->
-<!--  <div class="app-container">-->
-<!--    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">-->
-<!--      <el-table-column align="center" label="ID" width="80">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.id }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column width="180px" align="center" label="工号">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.teacher_id }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column width="120px" align="center" label="姓名">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.name }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column width="100px" label="是管理员">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button v-if="scope.row.is_admin" type="success" round>是</el-button>-->
-<!--          <el-button v-else type="info" round>否</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column align="center" label="操作" width="120">-->
-<!--        <template slot-scope="{row}">-->
-<!--          <el-row>-->
-<!--            <router-link :to="'/teacher/edit/'+row.id">-->
-<!--              <el-button type="primary" size="small" icon="el-icon-edit">-->
-<!--                编辑-->
-<!--              </el-button>-->
-<!--            </router-link>-->
-<!--            <el-button type="danger" size="small" icon="el-icon-delete" @click="delete(row.id)">-->
-<!--              删除-->
-<!--            </el-button>-->
-<!--          </el-row>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--    </el-table>-->
-
-<!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_index" :limit.sync="listQuery.page_size"-->
-<!--                @pagination="getList"/>-->
-<!--  </div>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--import {getTeachers} from '@/api/teacher'-->
-<!--import Pagination from '@/components/Pagination' // Secondary package based on el-pagination-->
-
-<!--export default {-->
-<!--  name: 'TeacherList',-->
-<!--  components: {Pagination},-->
-<!--  filters: {-->
-<!--    statusFilter(status) {-->
-<!--      const statusMap = {-->
-<!--        published: 'success',-->
-<!--        draft: 'info',-->
-<!--        deleted: 'danger'-->
-<!--      }-->
-<!--      return statusMap[status]-->
-<!--    }-->
-<!--  },-->
-<!--  data() {-->
-<!--    return {-->
-<!--      list: null,-->
-<!--      total: 0,-->
-<!--      listLoading: true,-->
-<!--      listQuery: {-->
-<!--        page_index: 1,-->
-<!--        page_size: 20-->
-<!--      }-->
-<!--    }-->
-<!--  },-->
-<!--  created() {-->
-<!--    this.getList()-->
-<!--  },-->
-<!--  methods: {-->
-<!--    getList() {-->
-<!--      this.listLoading = true-->
-<!--      getTeachers(this.listQuery).then(body => {-->
-<!--        this.list = body.data-->
-<!--        this.total = body.total-->
-<!--        this.listLoading = false-->
-<!--      })-->
-<!--    },-->
-<!--    delete(ids) {-->
-<!--      console.log(ids)-->
-<!--      console.log(this)-->
-<!--      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {-->
-<!--        confirmButtonText: '确定',-->
-<!--        cancelButtonText: '取消',-->
-<!--        type: 'warning'-->
-<!--      }).then(() => {-->
-<!--        this.$message({-->
-<!--          type: 'success',-->
-<!--          message: '删除成功!'-->
-<!--        });-->
-<!--      }).catch(() => {-->
-<!--        this.$message({-->
-<!--          type: 'info',-->
-<!--          message: '已取消删除'-->
-<!--        });-->
-<!--      })-->
-<!--    }-->
-<!--  }-->
-<!--}-->
-<!--</script>-->
-
-<!--<style scoped>-->
-<!--.edit-input {-->
-<!--  padding-right: 100px;-->
-<!--}-->
-
-<!--.cancel-btn {-->
-<!--  position: absolute;-->
-<!--  right: 15px;-->
-<!--  top: 10px;-->
-<!--}-->
-<!--</style>-->
