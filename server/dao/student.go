@@ -9,28 +9,26 @@ import (
 
 // GetStudentsBy searches the database for Student whose studentId or classId (string) starts
 // with respective param and name contains `name`, it only returns records in given `pageIndex` (
-// 1-based) in the increasing order of id.
+// 1-based) in the increasing order of id, but plus the total number of all filtered.
 // When any error occurs, it panics.
-func GetStudentsBy(studentId string, name string, classId string, pageSize int, pageIndex int) (res []*models.Student) {
-    err := buildStudentQueryFrom(studentId, name, classId).
-        Select("id", "student_id", "name", "class_id").
-        Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
-        Find(&res).Error
+func GetStudentsBy(studentId string, name string, classId string,
+    pageSize int, pageIndex int) (res []*models.Student, num int64) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        err := buildStudentQueryFrom(tx, studentId, name, classId).
+            Select("id", "student_id", "name", "class_id").
+            Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
+            Find(&res).Error
+        if err != nil {
+            return err
+        }
+        return buildStudentQueryFrom(tx,studentId, name, classId).Count(&num).Error
+    })
     utils.PanicWhen(err)
     return
 }
 
-// GetStudentNumBy searches the database for the number of Student whose studentId or classId (string) starts
-// with respective param and name contains `name`.
-// When any error occurs, it panics.
-func GetStudentNumBy(studentId string, name string, classId string) (num int64) {
-    err := buildStudentQueryFrom(studentId, name, classId).Count(&num).Error
-    utils.PanicWhen(err)
-    return
-}
-
-func buildStudentQueryFrom(studentId string, name string, classId string) *gorm.DB {
-    var filtered = db.Model(&models.Student{})
+func buildStudentQueryFrom(tx *gorm.DB, studentId string, name string, classId string) *gorm.DB {
+    var filtered = tx.Model(&models.Student{})
     if studentId != "" {
         filtered = filtered.Where("student_id LIKE ?", studentId+"%")
     }

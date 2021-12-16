@@ -10,14 +10,9 @@ import (
 )
 
 func GetStudentsHandler(c *gin.Context) {
-    students := dao.GetStudentsBy(c.Query("student_id"), c.Query("name"),c.Query("class_id"),
+    students, num := dao.GetStudentsBy(c.Query("student_id"), c.Query("name"), c.Query("class_id"),
         utils.Int(c.Query("page_size")), utils.Int(c.Query("page_index")))
-    c.JSON(200, students)
-}
-
-func GetStudentNumHandler(c *gin.Context) {
-    num := dao.GetStudentNumBy(c.Query("student_id"), c.Query("name"),c.Query("class_id"))
-    c.JSON(200, num)
+    c.JSON(200, gin.H{"total": num, "data": students})
 }
 
 func StudentsRegisterHandler(c *gin.Context) {
