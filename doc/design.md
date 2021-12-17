@@ -80,7 +80,8 @@ CREATE TABLE `student`
     `student_id` varchar(10) UNIQUE NOT NULL COMMENT '学号',
     `name`       varchar(50)        NOT NULL COMMENT '姓名',
     `class_id`   varchar(10)        NOT NULL COMMENT '班号',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX (`student_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -96,7 +97,8 @@ CREATE TABLE `teacher`
     `password`   varchar(100)       NOT NULL COMMENT '加盐后的密码',
     `salt`       varchar(50)        NOT NULL COMMENT '盐',
     `is_admin`   bool               NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX (`teacher_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -106,7 +108,7 @@ CREATE TABLE `teacher`
 DROP TABLE IF EXISTS `exam`;
 CREATE TABLE `exam`
 (
-    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `id`                   int(10)              NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10)  NOT NULL COMMENT '发布考试的教师的工号',
     `start_time`           datetime     NOT NULL COMMENT '考试开始时间',
     `end_time`             datetime     NOT NULL COMMENT '考试结束时间',
@@ -155,11 +157,11 @@ CREATE TABLE `mcq`
 (
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)    NOT NULL COMMENT '题干',
-    `choice_1`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_2`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_3`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_4`             text(20)    NOT NULL COMMENT '选项的内容',
+    `stem`                 text(200)   NOT NULL COMMENT '题干',
+    `choice_1`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_2`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_3`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_4`             text(200)   NOT NULL COMMENT '选项的内容',
     `right_answer`         char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -191,14 +193,14 @@ CREATE TABLE `maq`
 (
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)    NOT NULL COMMENT '题干',
-    `choice_1`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_2`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_3`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_4`             text(20)    NOT NULL COMMENT '选项的内容',
-    `choice_5`             text(20)             DEFAULT NULL COMMENT '选项的内容',
-    `choice_6`             text(20)             DEFAULT NULL COMMENT '选项的内容',
-    `choice_7`             text(20)             DEFAULT NULL COMMENT '选项的内容',
+    `stem`                 text(200)   NOT NULL COMMENT '题干',
+    `choice_1`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_2`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_3`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_4`             text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_5`             text(200) DEFAULT NULL COMMENT '选项的内容',
+    `choice_6`             text(200) DEFAULT NULL COMMENT '选项的内容',
+    `choice_7`             text(200) DEFAULT NULL COMMENT '选项的内容',
     `right_answer`         char(7)     NOT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -230,11 +232,11 @@ CREATE TABLE `bfq`
 (
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `stem`                 text(200)   NOT NULL COMMENT '题干',
     `blank_num`            tinyint(1)  NOT NULL COMMENT '要填的空的数目',
-    `answer_1`             text(20)    NOT NULL COMMENT '填空的答案',
-    `answer_2`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    `answer_3`             text(20) DEFAULT NULL COMMENT '填空的答案',
+    `answer_1`             text(50)    NOT NULL COMMENT '填空的答案',
+    `answer_2`             text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_3`             text(50) DEFAULT NULL COMMENT '填空的答案',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -246,12 +248,12 @@ CREATE TABLE `bfq`
 DROP TABLE IF EXISTS `bfq_answer`;
 CREATE TABLE `bfq_answer`
 (
-    `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `bfq_id`           int(10)          NOT NULL COMMENT '连接 bfq',
-    `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
-    `student_answer_1` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_2` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_3` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `id`               int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `bfq_id`           int(10) NOT NULL COMMENT '连接 bfq',
+    `exam_session_id`  int(10) NOT NULL COMMENT '连接 exam_session',
+    `student_answer_1` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_2` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_3` text(50) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`bfq_id`) REFERENCES bfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -266,7 +268,7 @@ CREATE TABLE `tfq`
 (
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `stem`                 text(200)   NOT NULL COMMENT '题干',
     `answer`               bool        NOT NULL COMMENT '正确答案',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -298,14 +300,14 @@ CREATE TABLE `crq`
 (
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)    NOT NULL COMMENT '题干',
+    `stem`                 text(200)   NOT NULL COMMENT '题干',
     `blank_num`            tinyint(1)  NOT NULL COMMENT '要填的空的数目',
-    `answer_1`             text(20)    NOT NULL COMMENT '填空的答案',
-    `answer_2`             text(20) NOT NULL COMMENT '填空的答案',
-    `answer_3`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    `answer_4`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    `answer_5`             text(20) DEFAULT NULL COMMENT '填空的答案',
-    `answer_6`             text(20) DEFAULT NULL COMMENT '填空的答案',
+    `answer_1`             text(50)    NOT NULL COMMENT '填空的答案',
+    `answer_2`             text(50)    NOT NULL COMMENT '填空的答案',
+    `answer_3`             text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_4`             text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_5`             text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_6`             text(50) DEFAULT NULL COMMENT '填空的答案',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -317,15 +319,15 @@ CREATE TABLE `crq`
 DROP TABLE IF EXISTS `crq_answer`;
 CREATE TABLE `crq_answer`
 (
-    `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `crq_id`           int(10)          NOT NULL COMMENT '连接 crq',
-    `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
-    `student_answer_1` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_2` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_3` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_4` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_5` text(20) DEFAULT NULL COMMENT '学生的答案',
-    `student_answer_6` text(20) DEFAULT NULL COMMENT '学生的答案',
+    `id`               int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `crq_id`           int(10) NOT NULL COMMENT '连接 crq',
+    `exam_session_id`  int(10) NOT NULL COMMENT '连接 exam_session',
+    `student_answer_1` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_2` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_3` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_4` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_5` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer_6` text(50) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`crq_id`) REFERENCES crq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -338,9 +340,9 @@ CREATE TABLE `crq_answer`
 DROP TABLE IF EXISTS `cq`;
 CREATE TABLE `cq`
 (
-    `id`                   int(10)      NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(20)     NOT NULL COMMENT '题干',
+    `stem`                 text(200)   NOT NULL COMMENT '题干',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -349,10 +351,10 @@ CREATE TABLE `cq`
 DROP TABLE IF EXISTS `cq_answer`;
 CREATE TABLE `cq_answer`
 (
-    `id`               int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `cq_id`           int(10)          NOT NULL COMMENT '连接 cq',
-    `exam_session_id`  int(10)          NOT NULL COMMENT '连接 exam_session',
-    `student_answer`   text(20)         DEFAULT NULL COMMENT '学生的答案',
+    `id`              int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `cq_id`           int(10) NOT NULL COMMENT '连接 cq',
+    `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
+    `student_answer`  text(200) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`cq_id`) REFERENCES cq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)

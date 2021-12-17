@@ -17,7 +17,7 @@ func GetMcqHandler(c *gin.Context) {
 	teacherId := c.Query("publisher_teacher_id")
 	pageSize := utils.Int(c.Query("page_size"))
 	pageIndex := utils.Int(c.Query("page_index"))
-	mcqs := dao.GetMcqsBy(teacherId, pageSize, pageIndex)
+	mcqs,num := dao.GetMcqsBy(teacherId, pageSize, pageIndex)
 	res := make([]gin.H, len(mcqs))
 	for i, mcq := range mcqs {
 		res[i] = gin.H{
@@ -25,16 +25,10 @@ func GetMcqHandler(c *gin.Context) {
 			"publisher_teacher_id": mcq.PublisherTeacherID,
 			"stem":                 mcq.Stem,
 			"choices":              [4]string{mcq.Choice1, mcq.Choice2, mcq.Choice3, mcq.Choice4},
-			"right_answer":         mcq.RightAnswer,
+			"right_answer":         utils.Int(mcq.RightAnswer),
 		}
 	}
-	c.JSON(200, res)
-}
-
-func GetMcqNumHandler(c *gin.Context) {
-	teacherId := c.Query("publisher_teacher_id")
-	num := dao.GetMcqNumBy(teacherId)
-	c.JSON(200, num)
+    c.JSON(200, gin.H{"total":num,"data":res})
 }
 
 func PostMcqHandler(c *gin.Context) {

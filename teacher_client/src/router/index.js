@@ -48,32 +48,9 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: {title: 'Dashboard', icon: 'dashboard'}
+      meta: {title: '首页', icon: 'dashboard'}
     }]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: {title: 'Example', icon: 'el-icon-s-help'},
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: {title: 'Table', icon: 'table'}
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: {title: 'Tree', icon: 'tree'}
-      }
-    ]
   },
 
   {
@@ -82,9 +59,8 @@ export const constantRoutes = [
     children: [
       {
         path: 'teacher',
-        name: 'Teacher',
-        component: () => import('@/views/teacher/list'),
-        meta: {title: 'Teacher', icon: 'form'}
+        component: () => import('@/views/teacher'),
+        meta: {title: '教师管理', icon: 'form'}
       }
     ]
   },
@@ -93,23 +69,35 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'Student',
-        name: '',
-        component: () => import('@/views/student/list'),
-        meta: {title: 'Student', icon: 'form'}
+        path: 'student',
+        component: () => import('@/views/student'),
+        meta: {title: '学生管理', icon: 'form'}
       }
     ]
   },
-
   {
-    path: '/form',
+    path: '/question',
     component: Layout,
+    meta: {
+      title: '试题管理',
+      icon: 'form'
+    },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: {title: 'Form', icon: 'form'}
+        path: 'mcq',
+        component: () => import('@/views/question/mcq'),
+        meta: {
+          title: '单选题',
+          icon: 'form'
+        },
+      },
+      {
+        path: 'maq',
+        component: () => import('@/views/question/mcq'),
+        meta: {
+          title: '多选题',
+          icon: 'form'
+        },
       }
     ]
   },

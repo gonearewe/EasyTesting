@@ -8,32 +8,29 @@ import (
 )
 
 // GetMcqsBy searches the database for Multiple Choice Question (mcq) whose publisher teacher id (string) starts
-// with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id.
+// with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id,
+// but plus the total number of all filtered.
 // When any error occurs, it panics.
-func GetMcqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Mcq) {
-    var err error
-    if teacherId != "" {
-        err = db.Limit(pageSize).Offset(pageSize*(pageIndex-1)).Find(&ret, "publisher_teacher_id LIKE ?",
-            teacherId+"%").Error
-    } else {
-        err = db.Limit(pageSize).Offset(pageSize * (pageIndex - 1)).Find(&ret).Error
-    }
+func GetMcqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Mcq, num int64) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        err := buildMcqQueryFrom(tx, teacherId).
+            Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
+            Find(&ret).Error
+        if err != nil {
+            return err
+        }
+        return buildMcqQueryFrom(tx, teacherId).Count(&num).Error
+    })
     utils.PanicWhen(err)
     return
 }
 
-// GetMcqNumBy searches the database for the number of Multiple Choice Question (mcq) whose publisher teacher id (
-// string) starts with `teacherId`.
-// When any error occurs, it panics.
-func GetMcqNumBy(teacherId string) (num int64) {
-    var err error
+func buildMcqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
+    var filtered = tx.Model(&models.Mcq{})
     if teacherId != "" {
-        err = db.Model(&models.Mcq{}).Where("publisher_teacher_id LIKE ?", teacherId+"%").Count(&num).Error
-    } else {
-        err = db.Model(&models.Mcq{}).Count(&num).Error
+        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
     }
-    utils.PanicWhen(err)
-    return
+    return filtered
 }
 
 // CreateMcqs stores given Multiple Choice Question (mcq) into the database,
