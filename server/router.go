@@ -29,8 +29,8 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, ad
     teacherAuthRouter.PUT("/maq", handlers.PutMaqHandler)
     teacherAuthRouter.DELETE("/maq", handlers.DeleteMaqHandler)
 
-    teacherAuthRouter.GET("/exam", handlers.GetExamHandler)
-    teacherAuthRouter.POST("/exam", handlers.PostExamHandler)
-    teacherAuthRouter.PUT("/exam", handlers.PutExamHandler)
-    teacherAuthRouter.DELETE("/exam", handlers.DeleteExamHandler)
+    teacherAuthRouter.GET("/exams", handlers.GetExamHandler)
+    teacherAuthRouter.POST("/exams", handlers.PostExamHandler)
+    teacherAuthRouter.PUT("/exams", handlers.PutExamHandler)
+    teacherAuthRouter.DELETE("/exams", handlers.DeleteExamHandler)
 }

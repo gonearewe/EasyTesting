@@ -17,8 +17,8 @@ func GetExamHandler(c *gin.Context) {
 	teacherId := c.Query("publisher_teacher_id")
 	pageSize := utils.Int(c.Query("page_size"))
 	pageIndex := utils.Int(c.Query("page_index"))
-	exams := dao.GetExamsBy(teacherId, pageSize, pageIndex)
-	c.JSON(200, exams)
+	exams,num := dao.GetExamsBy(teacherId, pageSize, pageIndex)
+	c.JSON(200, gin.H{"total":num, "data": exams})
 }
 
 func PostExamHandler(c *gin.Context) {

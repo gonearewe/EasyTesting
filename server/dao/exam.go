@@ -8,16 +8,19 @@ import (
 )
 
 // GetExamsBy searches the database for exam whose publisher teacher id (string) starts
-// with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id.
+// with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id,
+// but plus the total number of all filtered.
 // When any error occurs, it panics.
-func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Exam) {
-    var err error
-    if teacherId != "" {
-        err = db.Limit(pageSize).Offset(pageSize*(pageIndex-1)).Find(&ret, "publisher_teacher_id LIKE ?",
-            teacherId+"%").Error
-    } else {
-        err = db.Limit(pageSize).Offset(pageSize * (pageIndex - 1)).Find(&ret).Error
-    }
+func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Exam,num int64) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        err := buildQueryFrom(tx, teacherId, models.Exam{}).
+            Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
+            Find(&ret).Error
+        if err != nil {
+            return err
+        }
+        return buildQueryFrom(tx, teacherId, models.Exam{}).Count(&num).Error
+    })
     utils.PanicWhen(err)
     return
 }
@@ -64,18 +67,5 @@ func UpdateExams(exams []*models.Exam) {
 // If any id in given `ids` doesn't exist, it refuses to proceed and throws an error.
 // When any error occurs, it panics and none of the given exam will be deleted alone.
 func DeleteExams(ids []int) {
-    err := db.Transaction(func(tx *gorm.DB) error {
-        tmpExam := &models.Exam{}
-        for _, id := range ids {
-            // SELECT FOR UPDATE, make sure all the ids exist
-            err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", id).First(tmpExam).Error
-            if err != nil {
-                return err
-            }
-        }
-        // batch delete
-        return tx.Delete(&models.Exam{}, ids).Error
-    })
-    utils.PanicWhen(err)
+    deleteBy(ids, models.Exam{})
 }

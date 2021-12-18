@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.publisher_teacher_id" class="filter-item" placeholder="出题人工号" style="width: 200px;"
+      <el-input v-model="listQuery.publisher_teacher_id" class="filter-item" placeholder="出题者工号" style="width: 200px;"
                 @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" icon="el-icon-search" type="primary" @click="handleFilter">
         搜索
@@ -16,24 +16,7 @@
           删除
         </el-button>
       </el-tooltip>
-
-      <el-tooltip class="item" content="从 Excel(*.xlsx) 文件中导入数据，文件需遵守文档中的规范" effect="dark" placement="top-start">
-        <el-button v-waves class="filter-item" icon="el-icon-upload" type="primary"
-                   @click="$refs.file_picker.click()">
-          导入
-        </el-button>
-      </el-tooltip>
-
-      <el-tooltip class="item" content="导出满足当前筛选条件的所有数据至一个 Excel(*.xlsx) 文件" effect="dark" placement="top-start">
-        <el-button v-waves :loading="downloadLoading" class="filter-item" icon="el-icon-download" type="success"
-                   @click="handleDownload">
-          导出
-        </el-button>
-      </el-tooltip>
     </div>
-
-    <input ref="file_picker" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden
-           type='file' @change="handleUpload"/>
 
     <el-table
       :key="tableKey"
@@ -56,7 +39,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="出题人工号">
+      <el-table-column align="center" label="出题者工号">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.publisher_teacher_id }}</span>
         </template>
@@ -88,7 +71,8 @@
     <pagination v-show="total>0" :limit.sync="listQuery.page_size" :page.sync="listQuery.page_index" :total="total"
                 align="center" @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%">
+    <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible" width="60%">
       <el-form ref="dataForm" :model="temp" :rules="rules" label-position="left" label-width="100px"
                style="margin-left:50px;">
         <el-form-item label="题干" prop="stem">
@@ -115,11 +99,11 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
+    <el-dialog :close-on-click-modal="false" :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
                :visible.sync="dialogDeleteVisible">
       <el-table :data="rowsToBeDeleted" max-height="800">
         <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>
-        <el-table-column align="center" label="出题人工号" property="publisher_teacher_id" width="150"></el-table-column>
+        <el-table-column align="center" label="出题者工号" property="publisher_teacher_id" width="150"></el-table-column>
         <el-table-column header-align="center" label="题干" property="stem" show-overflow-tooltip
                          width="200"></el-table-column>
       </el-table>
@@ -132,23 +116,6 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :title="'确认添加以下 '+rowsToBeAdded.length+' 条记录？'"
-               :visible.sync="dialogImportVisible">
-      <el-table :data="rowsToBeAdded" max-height="800">
-        <el-table-column align="center" label="出题人工号" property="publisher_teacher_id" width="150"></el-table-column>
-        <el-table-column align="center" label="题干" property="stem" width="200"></el-table-column>
-        <el-table-column label="选项" property="choices" width="150"></el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogImportVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="uploadData">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -157,9 +124,10 @@ import {createQuestions, deleteQuestions, getQuestions, updateQuestion} from '@/
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import MarkdownEditor from "@/components/MarkdownEditor";
+import _ from "lodash"
 
 export default {
-  name: 'StudentList',
+  name: 'McqList',
   components: {MarkdownEditor, Pagination},
   directives: {waves},
   data() {
@@ -180,7 +148,7 @@ export default {
         id: undefined,
         stem: '',
         choices: [],
-        right_answer: 1
+        right_answer: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -196,9 +164,9 @@ export default {
       dialogImportVisible: false,
 
       rules: {
-        publisher_teacher_id: [{required: true, message: '必须填写出题人工号', trigger: 'change'}],
-        stem: [{required: true, message: '必须填写题干', trigger: 'change'}],
-        choices: [{required: true, message: '必须填写选项', trigger: 'change'}]
+        stem: [{required: true, message: '必须填写题干', trigger: 'change'},
+          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
+        right_answer: [{required: true, message: '必须给出正确答案', trigger: 'change'}]
       },
       downloadLoading: false
     }
@@ -222,9 +190,9 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        publisher_teacher_id: '',
         stem: '',
-        choices: ''
+        choices: [],
+        right_answer: undefined
       }
     },
     handleCreate() {
@@ -251,7 +219,8 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      _.merge(this.temp, row)
+      // this.temp = Object.assign({}, row) // NOTICE: shadow copy will cause problems on array
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -299,46 +268,6 @@ export default {
         this.dialogDeleteVisible = false
         this.$message({
           message: '删除成功',
-          showClose: true,
-          type: 'success'
-        })
-        this.getList()
-      })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/utils/Export2Excel').then(excel => {
-        const tHeader = ['publisher_teacher_id', 'stem', 'choices']
-        let queryAll = Object.assign({}, this.listQuery, {page_index: 1, page_size: Math.pow(2, 32)})
-        getQuestions(queryAll).then(body => {
-          excel.export_json_to_excel({
-            header: tHeader,
-            data: body.data.map(mcq => tHeader.map(k => mcq[k])),
-            filename: 'mcqs'
-          })
-          this.downloadLoading = false
-        })
-      })
-    },
-    handleUpload(e) {
-      e.stopPropagation()
-      e.preventDefault()
-      let file = e.target.files[0]
-      // clear input file so that this event can be triggered for multiple times
-      e.target.value = ''
-      import("@/utils/ImportFromExcel").then(xlsx => {
-        xlsx.extract_from_excel(file).then(mcqs => {
-          this.rowsToBeAdded = mcqs
-          this.dialogImportVisible = true
-        })
-      })
-    },
-    uploadData() {
-      console.log(this.rowsToBeAdded)
-      createQuestions('mcq', this.rowsToBeAdded).then(() => {
-        this.dialogImportVisible = false
-        this.$message({
-          message: '批量创建成功',
           showClose: true,
           type: 'success'
         })

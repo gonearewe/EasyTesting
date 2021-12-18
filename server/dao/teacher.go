@@ -4,7 +4,6 @@ import (
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
     "gorm.io/gorm"
-    "gorm.io/gorm/clause"
 )
 
 func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher, num int64) {
@@ -60,17 +59,5 @@ func UpdateTeacherById(t *models.Teacher) {
 }
 
 func DeleteTeachers(ids []int) {
-    err := db.Transaction(func(tx *gorm.DB) error {
-        for _, id := range ids {
-            // SELECT FOR UPDATE, make sure all the ids exist
-            err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", id).First(&models.Teacher{}).Error
-            if err != nil {
-                return err
-            }
-        }
-        // batch delete
-        return tx.Delete(&models.Teacher{}, ids).Error
-    })
-    utils.PanicWhen(err)
+    deleteBy(ids,models.Teacher{})
 }

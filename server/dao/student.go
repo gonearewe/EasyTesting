@@ -4,7 +4,6 @@ import (
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
     "gorm.io/gorm"
-    "gorm.io/gorm/clause"
 )
 
 // GetStudentsBy searches the database for Student whose studentId or classId (string) starts
@@ -60,17 +59,5 @@ func UpdateStudentById(t *models.Student) {
 // If any id in given `ids` doesn't exist, it refuses to proceed and throws an error.
 // When any error occurs, it panics and none of the given student will be deleted alone.
 func DeleteStudents(ids []int) {
-    err := db.Transaction(func(tx *gorm.DB) error {
-        for _, id := range ids {
-            // SELECT FOR UPDATE, make sure all the ids exist
-            err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-                Select("id").Where("id = ?", id).First(&models.Student{}).Error
-            if err != nil {
-                return err
-            }
-        }
-        // batch delete
-        return tx.Delete(&models.Student{}, ids).Error
-    })
-    utils.PanicWhen(err)
+    deleteBy(ids,models.Student{})
 }

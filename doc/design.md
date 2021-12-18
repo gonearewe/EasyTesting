@@ -27,12 +27,12 @@ Markdown 格式。 试题完成后会被提交到数据库成为题库的一部�
 
 ### 考试管理
 
-教师在“考试管理”中创建一个新的考试是学生能参加考试的前提。 教师用户需要根据提示选择考试开始时间、结束时间、答题时间、试卷题量等。
+教师在“考试管理”中创建一个新的考试是学生能参加考试的前提。 教师用户需要根据提示选择考试开始时刻、结束时刻、答题时间、试卷题量等。
 
-> 答题时间不等于结束时间减开始时间，而是应当小于它。
+> 答题时间不等于结束时刻减开始时刻，而是应当小于它。
 >
-> 因为学生参加考试的时间是弹性的，他可以选择在开始时间与结束时间间的任意时刻登录。
-> 每个学生的答题时间都是从各自的登录作答时刻开始计算的。但是结束时间之后服务器将不再接受答卷的提交。
+> 因为学生参加考试的时间是弹性的，他可以选择在开始时刻与结束时刻间的任意时刻登录。
+> 每个学生的答题时间都是从各自的登录作答时刻开始计算的。但是结束时刻之后服务器将不再接受答卷的提交。
 > 教师应当引导学生在考试开始后尽快登录作答。
 
 ![exam_timeline](./img/exam_timeline.svg)
@@ -108,23 +108,23 @@ CREATE TABLE `teacher`
 DROP TABLE IF EXISTS `exam`;
 CREATE TABLE `exam`
 (
-    `id`                   int(10)              NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10)  NOT NULL COMMENT '发布考试的教师的工号',
-    `start_time`           datetime     NOT NULL COMMENT '考试开始时间',
-    `end_time`             datetime     NOT NULL COMMENT '考试结束时间',
-    `time_allowed`         varchar(200) NOT NULL COMMENT '考生答题时间',
-    `mcq_score`            tinyint(1) unsigned  NOT NULL COMMENT '单选题每题分数',
-    `mcq_num`              tinyint(2) unsigned  NOT NULL COMMENT '单选题题数',
-    `maq_score`            tinyint(1) unsigned  NOT NULL COMMENT '多选题每题分数',
-    `maq_num`              tinyint(2) unsigned  NOT NULL COMMENT '多选题题数',
-    `bfq_score`            tinyint(1) unsigned  NOT NULL COMMENT '填空题每题分数',
-    `bfq_num`              tinyint(2) unsigned  NOT NULL COMMENT '填空题题数',
-    `tfq_score`            tinyint(1) unsigned  NOT NULL COMMENT '判断题每题分数',
-    `tfq_num`              tinyint(2) unsigned  NOT NULL COMMENT '判断题题数',
-    `crq_score`            tinyint(1) unsigned  NOT NULL COMMENT '代码阅读题每题分数',
-    `crq_num`              tinyint(1) unsigned  NOT NULL COMMENT '代码阅读题题数',
-    `cq_score`             tinyint(2) unsigned  NOT NULL COMMENT '写代码题每题分数',
-    `cq_num`               tinyint(1) unsigned  NOT NULL COMMENT '写代码题题数',
+    `id`                   int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id` varchar(10)         NOT NULL COMMENT '发布考试的教师的工号',
+    `start_time`           datetime            NOT NULL COMMENT '考试开始时刻',
+    `end_time`             datetime            NOT NULL COMMENT '考试结束时刻',
+    `time_allowed`         tinyint(3)          NOT NULL COMMENT '考生答题时间，单位：分钟',
+    `mcq_score`            tinyint(2) unsigned NOT NULL COMMENT '单选题每题分数',
+    `mcq_num`              tinyint(2) unsigned NOT NULL COMMENT '单选题题数',
+    `maq_score`            tinyint(2) unsigned NOT NULL COMMENT '多选题每题分数',
+    `maq_num`              tinyint(2) unsigned NOT NULL COMMENT '多选题题数',
+    `bfq_score`            tinyint(2) unsigned NOT NULL COMMENT '填空题每题分数',
+    `bfq_num`              tinyint(2) unsigned NOT NULL COMMENT '填空题题数',
+    `tfq_score`            tinyint(2) unsigned NOT NULL COMMENT '判断题每题分数',
+    `tfq_num`              tinyint(2) unsigned NOT NULL COMMENT '判断题题数',
+    `crq_score`            tinyint(2) unsigned NOT NULL COMMENT '代码阅读题每题分数',
+    `crq_num`              tinyint(2) unsigned NOT NULL COMMENT '代码阅读题题数',
+    `cq_score`             tinyint(2) unsigned NOT NULL COMMENT '写代码题每题分数',
+    `cq_num`               tinyint(2) unsigned NOT NULL COMMENT '写代码题题数',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -136,13 +136,13 @@ CREATE TABLE `exam`
 DROP TABLE IF EXISTS `exam_session`;
 CREATE TABLE `exam_session`
 (
-    `id`         int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `exam_id`    int(10)     NOT NULL COMMENT '连接 exam',
-    `student_id` varchar(10) NOT NULL COMMENT '连接 student',
-    `start_time` datetime    NOT NULL COMMENT '作答开始时间',
-    `end_time`   datetime         DEFAULT NULL COMMENT '交卷时间',
-    `answer_sheet` mediumblob  DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
-    `score`      tinyint unsigned DEFAULT NULL COMMENT '最终成绩',
+    `id`           int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `exam_id`      int(10)     NOT NULL COMMENT '连接 exam',
+    `student_id`   varchar(10) NOT NULL COMMENT '连接 student',
+    `start_time`   datetime    NOT NULL COMMENT '作答开始时刻',
+    `end_time`     datetime         DEFAULT NULL COMMENT '交卷时刻',
+    `answer_sheet` mediumblob       DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
+    `score`        tinyint unsigned DEFAULT NULL COMMENT '最终成绩',
     FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -233,7 +233,7 @@ CREATE TABLE `bfq`
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `blank_num`            tinyint(1)  NOT NULL COMMENT '要填的空的数目',
+    `blank_num`            tinyint(2)  NOT NULL COMMENT '要填的空的数目',
     `answer_1`             text(50)    NOT NULL COMMENT '填空的答案',
     `answer_2`             text(50) DEFAULT NULL COMMENT '填空的答案',
     `answer_3`             text(50) DEFAULT NULL COMMENT '填空的答案',
@@ -301,7 +301,7 @@ CREATE TABLE `crq`
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `blank_num`            tinyint(1)  NOT NULL COMMENT '要填的空的数目',
+    `blank_num`            tinyint(2)  NOT NULL COMMENT '要填的空的数目',
     `answer_1`             text(50)    NOT NULL COMMENT '填空的答案',
     `answer_2`             text(50)    NOT NULL COMMENT '填空的答案',
     `answer_3`             text(50) DEFAULT NULL COMMENT '填空的答案',
@@ -415,17 +415,26 @@ VALUES
     ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
      '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
 
+TRUNCATE TABLE `exam`;
+INSERT INTO `exam`
+(`publisher_teacher_id`, `start_time`, `end_time`, `time_allowed`,
+ `mcq_score`, `mcq_num`, `maq_score`, `maq_num`, `bfq_score`, `bfq_num`, `tfq_score`, `tfq_num`,
+ `crq_score`, `crq_num`, `cq_score`, `cq_num`)
+VALUES ('2010301800', SUBTIME(NOW(), '14:00:00'), SUBTIME(NOW(), '11:00:00'), 120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
+       ('2010301800', SUBTIME(NOW(), '07:00:00'), SUBTIME(NOW(), '04:40:00'), 120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
+       ('2010301800', NOW(), ADDTIME(NOW(), '02:00:00'), 90, 3, 15, 3, 5, 3, 4, 3, 4, 6, 1, 5, 2),
+       ('2010301800', ADDTIME(NOW(), '21:00:00'), ADDTIME(NOW(), '24:00:00'), 110, 3, 12, 3, 6, 3, 4, 4, 4, 6, 1, 6, 2);
+
 TRUNCATE TABLE `mcq`;
 INSERT INTO `mcq`
-    (`publisher_teacher_id`, `stem`, `choice_1`, `choice_2`, `choice_3`, `choice_4`, `right_answer`)
-VALUES
-    ('2010301800', '1 + 1 = ?', '2', '3', '4', '5', '1'),
-    ('2010301800', '1 + 2 = ?', '2', '3', '4', '5', '2'),
-    ('2010301800', '2 * 2 = ?', '2', '3', '4', '5', '3'),
-    ('2010301800', '2 - 0 = ?', '2', '3', '4', '5', '1'),
-    ('2010301800', '2 * 1 = ?', '2', '3', '4', '5', '1'),
+(`publisher_teacher_id`, `stem`, `choice_1`, `choice_2`, `choice_3`, `choice_4`, `right_answer`)
+VALUES ('2010301800', '1 + 1 = ?', '2', '3', '4', '5', '1'),
+       ('2010301800', '1 + 2 = ?', '2', '3', '4', '5', '2'),
+       ('2010301800', '2 * 2 = ?', '2', '3', '4', '5', '3'),
+       ('2010301800', '2 - 0 = ?', '2', '3', '4', '5', '1'),
+       ('2010301800', '2 * 1 = ?', '2', '3', '4', '5', '1'),
     ('0', '**红色**的英文是？', 'Red', 'Green', 'Blue', 'Yellow', '1');
-    
+
 SET FOREIGN_KEY_CHECKS = 1;
 ```
 

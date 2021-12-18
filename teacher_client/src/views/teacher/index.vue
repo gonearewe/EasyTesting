@@ -79,7 +79,8 @@
     <pagination v-show="total>0" :limit.sync="listQuery.page_size" :page.sync="listQuery.page_index" :total="total"
                 align="center" @pagination="getList"/>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
+               width="30%">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px"
                style="margin-left:50px;">
         <el-form-item label="工号" prop="teacher_id">
@@ -103,7 +104,7 @@
     </el-dialog>
 
     <el-dialog :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
-               :visible.sync="dialogDeleteVisible">
+               :close-on-click-modal="false" :visible.sync="dialogDeleteVisible">
       <el-table :data="rowsToBeDeleted" max-height="800">
         <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>
         <el-table-column align="center" label="工号" property="teacher_id" width="150"></el-table-column>
@@ -178,8 +179,10 @@ export default {
       dialogDeleteVisible: false,
 
       rules: {
-        teacher_id: [{required: true, message: '必须填写工号', trigger: 'change'}],
-        name: [{required: true, message: '必须填写姓名', trigger: 'change'}]
+        teacher_id: [{required: true, message: '必须填写工号', trigger: 'change'},
+          {max: 10, message: '不得超过 10 个字符', trigger: 'change'}],
+        name: [{required: true, message: '必须填写姓名', trigger: 'change'},
+          {max: 50, message: '不得超过 50 个字符', trigger: 'change'}]
       },
       downloadLoading: false
     }

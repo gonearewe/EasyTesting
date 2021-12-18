@@ -1,11 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.student_id" class="filter-item" placeholder="学号" style="width: 200px;"
-                @keyup.enter.native="handleFilter"/>
-      <el-input v-model="listQuery.name" class="filter-item" placeholder="姓名" style="width: 200px;"
-                @keyup.enter.native="handleFilter"/>
-      <el-input v-model="listQuery.class_id" class="filter-item" placeholder="班号" style="width: 200px;"
+      <el-input v-model="listQuery.publisher_teacher_id" class="filter-item" placeholder="发布者工号" style="width: 200px;"
                 @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" icon="el-icon-search" type="primary" @click="handleFilter">
         搜索
@@ -20,28 +16,11 @@
           删除
         </el-button>
       </el-tooltip>
-
-      <el-tooltip class="item" content="从 Excel(*.xlsx) 文件中导入数据，文件需遵守文档中的规范" effect="dark" placement="top-start">
-        <el-button v-waves class="filter-item" icon="el-icon-upload" type="primary"
-                   @click="$refs.file_picker.click()">
-          导入
-        </el-button>
-      </el-tooltip>
-
-      <el-tooltip class="item" content="导出满足当前筛选条件的所有数据至一个 Excel(*.xlsx) 文件" effect="dark" placement="top-start">
-        <el-button v-waves :loading="downloadLoading" class="filter-item" icon="el-icon-download" type="success"
-                   @click="handleDownload">
-          导出
-        </el-button>
-      </el-tooltip>
     </div>
-
-    <input ref="file_picker" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden
-           type='file' @change="handleUpload"/>
 
     <el-table
       :key="tableKey"
-      ref="studentTable"
+      ref="examTable"
       v-loading="listLoading"
       :data="list"
       border
@@ -60,19 +39,21 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="学号">
+      <el-table-column align="center" label="发布者工号">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.student_id }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.publisher_teacher_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="姓名">
+      <el-table-column align="center" label="开始时刻">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.stem }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="班号">
+      <!--      <el-table-column align="center" label="选项">-->
+      <el-table-column v-for="i in 4" :label="'选项 '+i" align="left" header-align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.class_id }}</span>
+          <el-tag v-show="row.right_answer===i" style="margin-right:10px;" type="success">正解</el-tag>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.choices[i - 1] }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="230">
@@ -90,18 +71,22 @@
     <pagination v-show="total>0" :limit.sync="listQuery.page_size" :page.sync="listQuery.page_index" :total="total"
                 align="center" @pagination="getList"/>
 
-    <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible"
-               width="30%">
+    <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible" width="60%">
       <el-form ref="dataForm" :model="temp" :rules="rules" label-position="left" label-width="100px"
                style="margin-left:50px;">
-        <el-form-item label="学号" prop="student_id">
-          <el-input v-model="temp.student_id"/>
+        <el-form-item label="开始时刻" prop="stem">
+          <markdown-editor v-model="temp.stem"/>
         </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="temp.name"/>
+        <el-form-item label="选项" prop="choices">
+          <markdown-editor v-for="i in 4" v-model="temp.choices[i-1]"/>
         </el-form-item>
-        <el-form-item label="班号" prop="class_id">
-          <el-input v-model="temp.class_id"/>
+        <el-form-item label="正确答案" prop="right_answer">
+          <el-radio-group v-model="temp.right_answer">
+            <el-radio-button v-for="i in 4" :label="i" :value="i">
+              {{ '第' + ['一', '二', '三', '四'][i - 1] + '个选项' }}
+            </el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -114,13 +99,12 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
-               :close-on-click-modal="false" :visible.sync="dialogDeleteVisible">
+    <el-dialog :close-on-click-modal="false" :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
+               :visible.sync="dialogDeleteVisible">
       <el-table :data="rowsToBeDeleted" max-height="800">
         <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>
-        <el-table-column align="center" label="学号" property="student_id" width="150"></el-table-column>
-        <el-table-column align="center" label="姓名" property="name" width="200"></el-table-column>
-        <el-table-column align="center" label="班号" property="class_id" width="150"></el-table-column>
+        <el-table-column align="center" label="发布者工号" property="publisher_teacher_id" width="150"></el-table-column>
+        <el-table-column align="center" label="开始时刻" property="stem" width="200"></el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteVisible = false">
@@ -131,34 +115,19 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :close-on-click-modal="false" :title="'确认添加以下 '+rowsToBeAdded.length+' 条记录？'"
-               :visible.sync="dialogImportVisible">
-      <el-table :data="rowsToBeAdded" max-height="800">
-        <el-table-column align="center" label="学号" property="student_id" width="150"></el-table-column>
-        <el-table-column align="center" label="姓名" property="name" width="200"></el-table-column>
-        <el-table-column align="center" label="班号" property="class_id" width="150"></el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogImportVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="uploadData">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import {createStudents, deleteStudents, getStudents, updateStudent} from '@/api/student'
+import {createExams, deleteExams, getExams, updateExam} from '@/api/exam'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import MarkdownEditor from "@/components/MarkdownEditor";
+import _ from "lodash"
 
 export default {
-  name: 'StudentList',
-  components: {Pagination},
+  name: 'ExamList',
+  components: {MarkdownEditor, Pagination},
   directives: {waves},
   data() {
     return {
@@ -169,18 +138,16 @@ export default {
 
       listLoading: true,
       listQuery: {
-        student_id: '',
-        name: '',
-        class_id: '',
+        publisher_teacher_id: '',
         page_index: 1,
         page_size: 20
       },
 
       temp: {
         id: undefined,
-        student_id: '',
-        name: '',
-        class_id: ''
+        stem: '',
+        choices: [],
+        right_answer: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -196,12 +163,9 @@ export default {
       dialogImportVisible: false,
 
       rules: {
-        student_id: [{required: true, message: '必须填写学号', trigger: 'change'},
-          {max: 10, message: '不得超过 10 个字符', trigger: 'change'}],
-        name: [{required: true, message: '必须填写姓名', trigger: 'change'},
-          {max: 50, message: '不得超过 50 个字符', trigger: 'change'}],
-        class_id: [{required: true, message: '必须填写班号', trigger: 'change'},
-          {max: 10, message: '不得超过 10 个字符', trigger: 'change'}]
+        stem: [{required: true, message: '必须填写开始时刻', trigger: 'change'},
+          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
+        right_answer: [{required: true, message: '必须给出正确答案', trigger: 'change'}]
       },
       downloadLoading: false
     }
@@ -212,7 +176,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getStudents(this.listQuery).then(body => {
+      getExams(this.listQuery).then(body => {
         this.list = body.data
         this.total = body.total
         this.listLoading = false
@@ -225,9 +189,9 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        student_id: '',
-        name: '',
-        class_id: ''
+        stem: '',
+        choices: [],
+        right_answer: undefined
       }
     },
     handleCreate() {
@@ -241,7 +205,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createStudents([this.temp]).then(() => {
+          createExams('exam', [this.temp]).then(() => {
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
@@ -254,7 +218,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      _.merge(this.temp, row)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -265,7 +229,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateStudent(tempData).then(() => {
+          updateExam('exam', tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -279,7 +243,7 @@ export default {
       })
     },
     handleMultiDelete() {
-      let rows = this.$refs.studentTable.selection;
+      let rows = this.$refs.examTable.selection;
       if (rows.length === 0) {
         this.$message({
           message: '没有任何一项被选中，勾选表格左侧以多选',
@@ -298,50 +262,10 @@ export default {
     },
     deleteData() {
       console.log(this.rowsToBeDeleted)
-      deleteStudents(this.rowsToBeDeleted.map(v => v.id)).then(() => {
+      deleteExams('exam', this.rowsToBeDeleted.map(v => v.id)).then(() => {
         this.dialogDeleteVisible = false
         this.$message({
           message: '删除成功',
-          showClose: true,
-          type: 'success'
-        })
-        this.getList()
-      })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/utils/Export2Excel').then(excel => {
-        const tHeader = ['student_id', 'name', 'class_id']
-        let queryAll = Object.assign({}, this.listQuery, {page_index: 1, page_size: Math.pow(2, 32)})
-        getStudents(queryAll).then(body => {
-          excel.export_json_to_excel({
-            header: tHeader,
-            data: body.data.map(student => tHeader.map(k => student[k])),
-            filename: 'students'
-          })
-          this.downloadLoading = false
-        })
-      })
-    },
-    handleUpload(e) {
-      e.stopPropagation()
-      e.preventDefault()
-      let file = e.target.files[0]
-      // clear input file so that this event can be triggered for multiple times
-      e.target.value = ''
-      import("@/utils/ImportFromExcel").then(xlsx => {
-        xlsx.extract_from_excel(file).then(students => {
-          this.rowsToBeAdded = students
-          this.dialogImportVisible = true
-        })
-      })
-    },
-    uploadData() {
-      console.log(this.rowsToBeAdded)
-      createStudents(this.rowsToBeAdded).then(() => {
-        this.dialogImportVisible = false
-        this.$message({
-          message: '批量创建成功',
           showClose: true,
           type: 'success'
         })
