@@ -57,7 +57,7 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是管理员？" class-name="status-col" width="100" align="center">
+      <el-table-column align="center" label="是管理员？" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.is_admin | boolColorFilter">
             {{ row.is_admin | boolFilter }}

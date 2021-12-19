@@ -39,6 +39,25 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="详情" type="expand">
+        <template slot-scope="{row}">
+          <el-form>
+            <el-form-item v-for="q of
+            [['单选题',row.mcq_score,row.mcq_num],['多选题',row.maq_score,row.maq_num],['填空题',row.bfq_score,row.bfq_num],
+            ['判断题',row.tfq_score,row.tfq_num],['代码阅读题',row.crq_score,row.crq_num],['编程题',row.cq_score,row.cq_num]]"
+                          :label="q[0]"><span>
+              {{ '每题 ' + q[1] + ' 分，共 ' + q[2] + ' 题，合计 ' + q[1] * q[2] + ' 分' }}</span></el-form-item>
+          </el-form>
+          <router-link v-if="checkStatus(row)==='已结束'" :to="'/example/edit/'+row.id">
+            <el-button icon="el-icon-info" size="small" type="success">
+              查看考生作答情况
+            </el-button>
+          </router-link>
+          <span v-else-if="checkStatus(row)==='进行中'" class="link-type" @click="handleGetStudentList(row.id)">
+            查看考生名单
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="发布者工号">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.publisher_teacher_id }}</span>
@@ -46,19 +65,25 @@
       </el-table-column>
       <el-table-column align="center" label="开始时刻">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.stem }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.start_time | parseTime }}</span>
         </template>
       </el-table-column>
-      <!--      <el-table-column align="center" label="选项">-->
-      <el-table-column v-for="i in 4" :label="'选项 '+i" align="left" header-align="center" show-overflow-tooltip>
+      <el-table-column align="center" label="结束时刻">
         <template slot-scope="{row}">
-          <el-tag v-show="row.right_answer===i" style="margin-right:10px;" type="success">正解</el-tag>
-          <span class="link-type" @click="handleUpdate(row)">{{ row.choices[i - 1] }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.start_time | parseTime }}</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="状态" width="100">
+        <template slot-scope="{row}">
+          <el-tag :type="new Map([['已结束', 'info'], ['进行中', 'success'], ['未开始', 'primary']]).get(checkStatus(row))">
+            {{ checkStatus(row) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="230">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handleUpdate(row)">
+          <el-button :disabled="checkStatus(row)==='已结束'" size="mini" type="primary" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row)">
@@ -72,21 +97,59 @@
                 align="center" @pagination="getList"/>
 
     <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]"
-               :visible.sync="dialogFormVisible" width="60%">
-      <el-form ref="dataForm" :model="temp" :rules="rules" label-position="left" label-width="100px"
+               :visible.sync="dialogFormVisible" width="30%">
+      <el-form ref="dataForm" :model="temp" :rules="rules" label-position="left" label-width="125px"
                style="margin-left:50px;">
-        <el-form-item label="开始时刻" prop="stem">
-          <markdown-editor v-model="temp.stem"/>
+        <el-form-item label="开始时刻" prop="start_time">
+          <el-date-picker v-model="temp.start_time" align="center" placeholder="选择日期与时刻" type="datetime">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="选项" prop="choices">
-          <markdown-editor v-for="i in 4" v-model="temp.choices[i-1]"/>
+        <el-form-item label="结束时刻" prop="end_time">
+          <el-date-picker v-model="temp.end_time" align="center" placeholder="选择日期与时刻" type="datetime">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="正确答案" prop="right_answer">
-          <el-radio-group v-model="temp.right_answer">
-            <el-radio-button v-for="i in 4" :label="i" :value="i">
-              {{ '第' + ['一', '二', '三', '四'][i - 1] + '个选项' }}
-            </el-radio-button>
-          </el-radio-group>
+        <el-form-item label="考试限时（分钟）" prop="time_allowed">
+          <el-input-number v-model="temp.time_allowed" :max="180" :min="10" :step="10"></el-input-number>
+        </el-form-item>
+        <el-form-item label="单选题分数" prop="mcq_score">
+          <el-input-number v-model="temp.mcq_score" :max="6" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="单选题数目" prop="mcq_num">
+          <el-input-number v-model="temp.mcq_num" :max="50" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="多选题分数" prop="maq_score">
+          <el-input-number v-model="temp.maq_score" :max="6" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="多选题数目" prop="maq_num">
+          <el-input-number v-model="temp.maq_num" :max="30" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="填空题分数" prop="bfq_score">
+          <el-tooltip content="填空题固定为每小题 3 分" effect="dark" placement="top-start">
+            <el-input-number v-model="temp.bfq_score" :max="3" :min="3" disabled></el-input-number>
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item label="填空题数目" prop="bfq_num">
+          <el-input-number v-model="temp.bfq_num" :max="30" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="判断题分数" prop="tfq_score">
+          <el-input-number v-model="temp.tfq_score" :max="5" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="判断题数目" prop="tfq_num">
+          <el-input-number v-model="temp.tfq_num" :max="30" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="代码阅读题分数" prop="crq_score">
+          <el-tooltip content="代码阅读题固定为每小题 6 分" effect="dark" placement="top-start">
+            <el-input-number v-model="temp.bfq_score" :max="6" :min="6" disabled></el-input-number>
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item label="代码阅读题数目" prop="crq_num">
+          <el-input-number v-model="temp.crq_num" :max="5" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="编程题分数" prop="cq_score">
+          <el-input-number v-model="temp.cq_score" :max="20" :min="3"></el-input-number>
+        </el-form-item>
+        <el-form-item label="编程题数目" prop="cq_num">
+          <el-input-number v-model="temp.cq_num" :max="3" :min="1"></el-input-number>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -99,22 +162,22 @@
       </div>
     </el-dialog>
 
-    <el-dialog :close-on-click-modal="false" :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
-               :visible.sync="dialogDeleteVisible">
-      <el-table :data="rowsToBeDeleted" max-height="800">
-        <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>
-        <el-table-column align="center" label="发布者工号" property="publisher_teacher_id" width="150"></el-table-column>
-        <el-table-column align="center" label="开始时刻" property="stem" width="200"></el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDeleteVisible = false">
-          取消
-        </el-button>
-        <el-button type="danger" @click="deleteData">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
+    <!--    <el-dialog :close-on-click-modal="false" :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"-->
+    <!--               :visible.sync="dialogDeleteVisible">-->
+    <!--      <el-table :data="rowsToBeDeleted" max-height="800">-->
+    <!--        <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>-->
+    <!--        <el-table-column align="center" label="发布者工号" property="publisher_teacher_id" width="150"></el-table-column>-->
+    <!--        <el-table-column align="center" label="开始时刻" property="stem" width="200"></el-table-column>-->
+    <!--      </el-table>-->
+    <!--      <div slot="footer" class="dialog-footer">-->
+    <!--        <el-button @click="dialogDeleteVisible = false">-->
+    <!--          取消-->
+    <!--        </el-button>-->
+    <!--        <el-button type="danger" @click="deleteData">-->
+    <!--          确定-->
+    <!--        </el-button>-->
+    <!--      </div>-->
+    <!--    </el-dialog>-->
   </div>
 </template>
 
@@ -124,11 +187,15 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import MarkdownEditor from "@/components/MarkdownEditor";
 import _ from "lodash"
+import {parseTime} from "@/utils/time";
 
 export default {
   name: 'ExamList',
   components: {MarkdownEditor, Pagination},
   directives: {waves},
+  filters: {
+    parseTime
+  },
   data() {
     return {
       tableKey: 0,
@@ -145,9 +212,21 @@ export default {
 
       temp: {
         id: undefined,
-        stem: '',
-        choices: [],
-        right_answer: undefined
+        start_time: new Date(),
+        end_time: new Date(),// TODO
+        time_allowed: 120,
+        mcq_score: 2,
+        mcq_num: 20,
+        maq_score: 3,
+        maq_num: 5,
+        bfq_score: 3,
+        bfq_num: 5,
+        tfq_score: 2,
+        tfq_num: 5,
+        crq_score: 6,
+        crq_num: 2,
+        cq_score: 8,
+        cq_num: 1
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -158,9 +237,6 @@ export default {
 
       rowsToBeDeleted: [],
       dialogDeleteVisible: false,
-
-      rowsToBeAdded: [],
-      dialogImportVisible: false,
 
       rules: {
         stem: [{required: true, message: '必须填写开始时刻', trigger: 'change'},
@@ -174,6 +250,15 @@ export default {
     this.getList()
   },
   methods: {
+    checkStatus(exam) {
+      if (new Date(exam.end_time) <= new Date()) {
+        return '已结束'
+      } else if (new Date() < new Date(exam.start_time)) {
+        return '未开始'
+      } else {
+        return '进行中'
+      }
+    },
     getList() {
       this.listLoading = true
       getExams(this.listQuery).then(body => {
@@ -189,9 +274,21 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        stem: '',
-        choices: [],
-        right_answer: undefined
+        start_time: new Date(),
+        end_time: new Date(),
+        time_allowed: 120,
+        mcq_score: 2,
+        mcq_num: 20,
+        maq_score: 3,
+        maq_num: 5,
+        bfq_score: 3,
+        bfq_num: 5,
+        tfq_score: 2,
+        tfq_num: 5,
+        crq_score: 6,
+        crq_num: 2,
+        cq_score: 8,
+        cq_num: 1
       }
     },
     handleCreate() {
@@ -205,7 +302,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createExams('exam', [this.temp]).then(() => {
+          // TODO: RFC3339
+          createExams([this.temp]).then(() => {
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
@@ -271,6 +369,9 @@ export default {
         })
         this.getList()
       })
+    },
+    handleGetStudentList(examId) {
+
     }
   }
 }

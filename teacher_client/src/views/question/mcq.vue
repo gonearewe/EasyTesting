@@ -83,7 +83,7 @@
         </el-form-item>
         <el-form-item label="正确答案" prop="right_answer">
           <el-radio-group v-model="temp.right_answer">
-            <el-radio-button v-for="i in 4" :label="i" :value="i">
+            <el-radio-button v-for="i in 4" :label="i">
               {{ '第' + ['一', '二', '三', '四'][i - 1] + '个选项' }}
             </el-radio-button>
           </el-radio-group>
@@ -159,9 +159,6 @@ export default {
 
       rowsToBeDeleted: [],
       dialogDeleteVisible: false,
-
-      rowsToBeAdded: [],
-      dialogImportVisible: false,
 
       rules: {
         stem: [{required: true, message: '必须填写题干', trigger: 'change'},
