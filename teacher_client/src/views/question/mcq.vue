@@ -102,7 +102,7 @@
     <el-dialog :close-on-click-modal="false" :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
                :visible.sync="dialogDeleteVisible">
       <el-table :data="rowsToBeDeleted" max-height="800">
-        <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>
+        <el-table-column align="center" label="ID" property="id" width="100"></el-table-column>
         <el-table-column align="center" label="出题者工号" property="publisher_teacher_id" width="150"></el-table-column>
         <el-table-column header-align="center" label="题干" property="stem" show-overflow-tooltip
                          width="200"></el-table-column>

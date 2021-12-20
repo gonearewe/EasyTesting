@@ -106,7 +106,7 @@
     <el-dialog :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
                :close-on-click-modal="false" :visible.sync="dialogDeleteVisible">
       <el-table :data="rowsToBeDeleted" max-height="800">
-        <el-table-column align="center" label="ID" property="id" width="150"></el-table-column>
+        <el-table-column align="center" label="ID" property="id" width="100"></el-table-column>
         <el-table-column align="center" label="工号" property="teacher_id" width="150"></el-table-column>
         <el-table-column align="center" label="姓名" property="name" width="200"></el-table-column>
         <el-table-column align="center" class-name="status-col" label="是管理员？" width="100">

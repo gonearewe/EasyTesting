@@ -4,7 +4,7 @@
              label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">教师登录</h3>
       </div>
 
       <el-form-item prop="teacher_id">
@@ -42,7 +42,7 @@
       </el-form-item>
 
       <el-button :loading="loading" style="width:100%;margin-bottom:30px;" type="primary"
-                 @click.native.prevent="handleLogin">Login
+                 @click.native.prevent="handleLogin">登录
       </el-button>
 
     </el-form>
