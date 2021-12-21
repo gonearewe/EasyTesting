@@ -2248,7 +2248,7 @@ paths:
                           result = [[0,0,0], [0,0,0]]
                           for i in range(len(X)): # 迭代输出行
                               for _1_ in range(len(X[0])): # 迭代输出列
-                                  result[_2_][j] = X[i][j]+Y[i][_3_] 
+                                  result[_2_][j] = X[i][j]+Y[i][_3_]
                           for r in result:
                               print(r) # 打印出结果
                           ```
@@ -2303,7 +2303,7 @@ paths:
                           result = [[0,0,0], [0,0,0]]
                           for i in range(len(X)): # 迭代输出行
                               for _1_ in range(len(X[0])): # 迭代输出列
-                                  result[_2_][j] = X[i][j]+Y[i][_3_] 
+                                  result[_2_][j] = X[i][j]+Y[i][_3_]
                           for r in result:
                               print(r) # 打印出结果
                           ```
@@ -2391,7 +2391,7 @@ paths:
                       result = [[0,0,0], [0,0,0]]
                       for _1_ in range(len(X)): # 迭代输出行
                           for j in range(len(X[0])): # 迭代输出列
-                              result[_2_][j] = X[i][j] _3_ Y[i][j] 
+                              result[_2_][j] = X[i][j] _3_ Y[i][j]
                       for r in result:
                           print(r) # 打印出结果
                       ```
@@ -2459,7 +2459,7 @@ paths:
                     result = [[0,0,0], [0,0,0]]
                     for i in range(len(X)): # 迭代输出行
                         for j in range(len(X[0])): # 迭代输出列
-                            result[_2_][j] = X[i][j] _3_ Y[i][j] 
+                            result[_2_][j] = X[i][j] _3_ Y[i][j]
                     for r in result:
                         print(r) # 打印出结果
                     ```
@@ -2489,6 +2489,231 @@ paths:
           description: 'array of id to be deleted, separated by '','''
       tags:
         - question
+  /exams/enter:
+    post:
+      summary: ''
+      operationId: post-enter
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exam_id:
+                  type: integer
+              required:
+                - exam_id
+      tags:
+        - exam
+    parameters: [ ]
+  /exams/my_questions:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - exam
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mcq:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                        choices:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                        - stem
+                        - choices
+                  maq:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                        choices:
+                          type: array
+                          items:
+                            type: string
+                      required:
+                        - stem
+                        - choices
+                  bfq:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                        blank_num:
+                          type: integer
+                      required:
+                        - stem
+                        - blank_num
+                  tfq:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                      required:
+                        - stem
+                  crq:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        stem:
+                          type: string
+                        blank_num:
+                          type: integer
+                      required:
+                        - stem
+                        - blank_num
+                required:
+                  - mcq
+                  - maq
+                  - bfq
+                  - tfq
+                  - crq
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      operationId: get-exams-my_questions
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: exam_session_id
+  /exams/my_answers:
+    put:
+      summary: ''
+      operationId: put-exams-my_answers
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      tags:
+        - exam
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mcq:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: integer
+                    required:
+                      - id
+                      - answer
+                maq:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: array
+                        items:
+                          type: integer
+                    required:
+                      - id
+                      - answer
+                bfq:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - id
+                      - answer
+                tfq:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: boolean
+                    required:
+                      - id
+                      - answer
+                crq:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      answer:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - id
+                      - answer
+              required:
+                - mcq
+                - maq
+                - bfq
+                - tfq
+                - crq
 components:
   schemas: {}
   securitySchemes:

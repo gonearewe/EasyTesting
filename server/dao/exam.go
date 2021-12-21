@@ -1,6 +1,8 @@
 package dao
 
 import (
+    "time"
+
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
     "gorm.io/gorm"
@@ -11,7 +13,7 @@ import (
 // with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id,
 // but plus the total number of all filtered.
 // When any error occurs, it panics.
-func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Exam,num int64) {
+func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Exam, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
         err := buildQueryFrom(tx, teacherId, models.Exam{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
@@ -82,6 +84,123 @@ func DeleteExams(ids []int) {
         }
         // batch delete
         return tx.Delete(&models.Exam{}, ids).Error
+    })
+    utils.PanicWhen(err)
+}
+
+func EnterExam(studentId string, examId int) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        var exam =models.Exam{}
+        var err error
+
+        // SELECT FOR UPDATE, make sure the exam exists and active
+        err = tx.Clauses(clause.Locking{Strength: "SHARED"}).
+            Select("id").
+            Where("id = ? AND start_time <= CURTIME() AND CURTIME() < end_time", examId).
+            First(&exam).Error
+        if err != nil {
+            return err
+        }
+        var session = models.ExamSession{
+            ExamID:      examId,
+            StudentID:   studentId,
+            StartTime:   time.Now(),
+            EndTime:     time.Time{},
+        }
+        err = tx.Create(&session).Error
+        if err != nil {
+            return err
+        }
+
+        {
+            var mcqs []models.Mcq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.McqNum)).Find(&mcqs).Error
+            if err != nil {
+                return err
+            }
+            for _, mcq := range mcqs {
+                err = tx.Create(models.McqAnswer{
+                    McqID:         mcq.ID,
+                    ExamSessionID: session.ID,
+                    RightAnswer:   mcq.RightAnswer,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
+
+        {
+            var maqs []models.Maq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.MaqNum)).Find(&maqs).Error
+            if err != nil {
+                return err
+            }
+            for _, maq := range maqs {
+                err = tx.Create(models.MaqAnswer{
+                    MaqID:         maq.ID,
+                    ExamSessionID: session.ID,
+                    RightAnswer:   maq.RightAnswer,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
+
+        {
+            var bfqs []models.Bfq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.BfqNum)).Find(&bfqs).Error
+            if err != nil {
+                return err
+            }
+            for _, bfq := range bfqs {
+                err = tx.Create(models.BfqAnswer{
+                    BfqID:         bfq.ID,
+                    ExamSessionID: session.ID,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
+
+        {
+            var tfqs []models.Tfq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.TfqNum)).Find(&tfqs).Error
+            if err != nil {
+                return err
+            }
+            for _, tfq := range tfqs {
+                err = tx.Create(models.TfqAnswer{
+                    TfqID:         tfq.ID,
+                    ExamSessionID: session.ID,
+                    RightAnswer: tfq.Answer,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
+
+        {
+            var crqs []models.Crq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.CrqNum)).Find(&crqs).Error
+            if err != nil {
+                return err
+            }
+            for _, crq := range crqs {
+                err = tx.Create(models.CrqAnswer{
+                    CrqID:         crq.ID,
+                    ExamSessionID: session.ID,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
+
+        return nil
     })
     utils.PanicWhen(err)
 }
