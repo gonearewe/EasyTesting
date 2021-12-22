@@ -7,13 +7,16 @@ import (
 	"gopkg.in/errgo.v2/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
 
 func InitDb() {
 	var err error
-	db, err = gorm.Open(mysql.Open(viper.GetString("dsn")), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(viper.GetString("dsn")), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info), // show basically all sql gorm generated for DEBUG
+	})
 	if err != nil {
 		panic(errors.Because(errors.New("initialization failed"), err, ""))
 	}

@@ -33,4 +33,8 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, ad
     teacherAuthRouter.POST("/exams", handlers.PostExamHandler)
     teacherAuthRouter.PUT("/exams", handlers.PutExamHandler)
     teacherAuthRouter.DELETE("/exams", handlers.DeleteExamHandler)
+
+    unauthRouter.POST("/exams/enter",handlers.EnterExamHandler)
+    teacherAuthRouter.GET("/exams/examinees",handlers.GetExamineeHandler)
+    // unauthRouter.GET("/exams/my_questions",handlers.)
 }

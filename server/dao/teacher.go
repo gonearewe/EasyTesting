@@ -7,12 +7,13 @@ import (
     "gorm.io/gorm/clause"
 )
 
-func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (res []*models.Teacher, num int64) {
+func GetTeachersBy(teacherId string, name string, pageSize int, pageIndex int) (ret []*models.Teacher, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
         err := buildTeacherQueryFrom(tx, teacherId, name).
+            // `password` and `salt` field is excluded because clients don't need it.
             Select("id", "teacher_id", "name", "is_admin").
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
-            Find(&res).Error
+            Find(&ret).Error
         if err != nil {
             return err
         }
@@ -33,6 +34,7 @@ func buildTeacherQueryFrom(tx *gorm.DB, teacherId string, name string) *gorm.DB 
     return filtered
 }
 
+// GetTeacherByTeacherId gets a teacher by the teacher id including `password` and `salt` field.
 func GetTeacherByTeacherId(teacherId string) *models.Teacher {
     var ret models.Teacher
     err := db.Find(&ret, "teacher_id = ?", teacherId).Error

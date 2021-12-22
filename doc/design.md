@@ -174,10 +174,10 @@ CREATE TABLE `mcq`
 DROP TABLE IF EXISTS `mcq_answer`;
 CREATE TABLE `mcq_answer`
 (
-    `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `mcq_id`          int(10)          NOT NULL COMMENT '连接 mcq',
-    `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    char(1)          NOT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
+    `id`              int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `mcq_id`          int(10) NOT NULL COMMENT '连接 mcq',
+    `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
+    `right_answer`    char(1) NOT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
     `student_answer`  char(1) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`mcq_id`) REFERENCES mcq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -213,10 +213,10 @@ CREATE TABLE `maq`
 DROP TABLE IF EXISTS `maq_answer`;
 CREATE TABLE `maq_answer`
 (
-    `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `maq_id`          int(10)          NOT NULL COMMENT '连接 maq',
-    `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    char(7)          NOT NULL COMMENT '正确答案，与 maq 中同名字段保持一致',
+    `id`              int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `maq_id`          int(10) NOT NULL COMMENT '连接 maq',
+    `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
+    `right_answer`    char(7) NOT NULL COMMENT '正确答案，与 maq 中同名字段保持一致',
     `student_answer`  char(7) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`maq_id`) REFERENCES maq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -281,10 +281,10 @@ CREATE TABLE `tfq`
 DROP TABLE IF EXISTS `tfq_answer`;
 CREATE TABLE `tfq_answer`
 (
-    `id`              int(10)          NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `tfq_id`          int(10)          NOT NULL COMMENT '连接 tfq',
-    `exam_session_id` int(10)          NOT NULL COMMENT '连接 exam_session',
-    `right_answer`    bool             NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
+    `id`              int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `tfq_id`          int(10) NOT NULL COMMENT '连接 tfq',
+    `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
+    `right_answer`    bool    NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
     `student_answer`  bool DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -433,7 +433,55 @@ VALUES ('2010301800', '1 + 1 = ?', '2', '3', '4', '5', '1'),
        ('2010301800', '2 * 2 = ?', '2', '3', '4', '5', '3'),
        ('2010301800', '2 - 0 = ?', '2', '3', '4', '5', '1'),
        ('2010301800', '2 * 1 = ?', '2', '3', '4', '5', '1'),
-    ('0', '**红色**的英文是？', 'Red', 'Green', 'Blue', 'Yellow', '1');
+       ('0', '**红色**的英文是？', 'Red', 'Green', 'Blue', 'Yellow', '1');
+
+TRUNCATE TABLE `maq`;
+INSERT INTO `maq`
+(`publisher_teacher_id`, `stem`,
+ `choice_1`, `choice_2`, `choice_3`, `choice_4`, `choice_5`, `choice_6`, `choice_7`, `right_answer`)
+VALUES ('2010301800', '下列哪些数字是偶数?', '2', '3', '4', '5', NULL, NULL, NULL, '13'),
+       ('2010301800', '下列哪些数字是奇数?', '2', '3', '4', '5', NULL, NULL, NULL, '24'),
+       ('2010301800', '四书五经是四书和五经的合称，是中国儒家的经典书籍。其中的**四书**指的是哪四本书？',
+        '《论语》', '《诗经》', '《孟子》', '《大学》', '《尚书》', '《中庸》', '《春秋》', '1346');
+
+TRUNCATE TABLE `bfq`;
+INSERT INTO `bfq`
+(`publisher_teacher_id`, `stem`, `blank_num`, `answer_1`, `answer_2`, `answer_3`)
+VALUES ('2010301800', '中国的首都是', 1, '北京', NULL, NULL),
+       ('2010301800', '小说三要素是什么？', 3, '人物', '情节', '环境'),
+       ('2010301800', 'What\'s the name of the industrial-strength programming language extending the Caml dialect 
+       of ML with object-oriented features, which was created in 1996 by Xavier Leroy, Jérôme Vouillon, Damien 
+       Doligez, Didier Rémy, Ascánder Suárez, and others.', 1, 'OCaml', NULL, NULL),
+       ('2010301800', '第一次鸦片战争（First Opium War）开始于 __ 年）', 1, '1840', NULL, NULL),
+       ('0', '二战的转折点是 __ 战役', 1, '斯大林格勒', NULL, NULL),
+       ('0', '西北工业大学位于 __ 市', 1, '西安', NULL, NULL),
+       ('2010301800', '百年战争的两个参战国是', 2, '英国', '法国', NULL);
+
+TRUNCATE TABLE `tfq`;
+INSERT INTO `tfq`
+    (`publisher_teacher_id`, `stem`, `answer`)
+VALUES ('2010301800', 'AK-74 发射的是 7.62×39 毫米口径子弹', FALSE),
+       ('2010301800', 'AK-74 由 AKM 改良而成', TRUE),
+       ('2010301800', '巴拿马运河位于中美洲的巴拿马，横穿巴拿马地峡，连接太平洋与大西洋', TRUE),
+       ('0', '护法战争（1917年—1922年），又称护法运动、护法之役，是由孙中山领导反对段祺瑞主导的北洋政府，维护《中华民国临时约法》、恢复中华民国国会，在广州建立护法军政府的行动。', TRUE),
+       ('0', '12月21日是印度尼西亚母亲节', FALSE),
+       ('2010301800', '《维罗妮卡·克莱尔》是杰弗里·布卢姆创作的美国犯罪剧情电视剧，1991年7至9月在人生电视网播出一季共九集。', TRUE),
+       ('0', '1964年大科摩罗岛、昂儒昂岛与莫埃利岛在经过公民投票后，决定共同组成独立国家科摩罗。', FALSE),
+       ('2010301800', '西园寺公望是第一代日本内阁总理大臣', FALSE),
+       ('2010301800', '1769年清朝军队和缅甸贡榜王朝军队因为战况拖延而同意签署临时和约，结束清缅战争。', TRUE),
+       ('2010301800', '千禧穹顶（英语：Millennium Dome，有时简称为The 
+       Dome）是位于法国巴黎的多功能活动场地（穹顶体育场），是为了庆祝进入第3个千禧年而建造的，于2000年开幕，由英国建筑师理查德·罗杰斯所设计。', FALSE),
+       ('0', '佛罗伦萨被认为是文艺复兴运动的诞生地', TRUE),
+       ('2010301800', '英国的全称是大不列颠及北爱尔兰联合王国（英语：United Kingdom of Great Britain and Northern Ireland）', TRUE);
+
+
+TRUNCATE TABLE `crq`;
+INSERT INTO `crq`
+(`publisher_teacher_id`, `stem`, `blank_num`, `answer_1`, `answer_2`, `answer_3`, `answer_4`, `answer_5`, `answer_6`)
+VALUES ('2010301800', '下面的代码用于进行矩阵加法，试完成填空，补全代码：\n```py\n# 两个矩阵相加\nX = [[12,7,3], [4 ,5,6], [7 ,8,9]]\nY = [[5,8,1], 
+[6,7,3], [4,5,9]]\n\nresult = [[0,0,0], [0,0,0]]\nfor i in range(len(X)): # 迭代输出行\n    for _1_ in range(len(X[0])): 
+# 迭代输出列\n        result[_2_][j] = X[i][j]+Y[i][_3_]\nfor r in result:\n    print(r) # 打印出结果\n```', 3, 'j', 'i', 'j',
+        NULL, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

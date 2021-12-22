@@ -48,12 +48,13 @@
                           :label="q[0]"><span>
               {{ '每题 ' + q[1] + ' 分，共 ' + q[2] + ' 题，合计 ' + q[1] * q[2] + ' 分' }}</span></el-form-item>
           </el-form>
-          <router-link v-if="checkStatus(row)==='已结束'" :to="'/example/edit/'+row.id">
+          <router-link v-if="checkStatus(row,currentDatetime)==='已结束'" :to="'/example/edit/'+row.id">
             <el-button icon="el-icon-info" size="small" type="success">
               查看考生作答情况
             </el-button>
           </router-link>
-          <span v-else-if="checkStatus(row)==='进行中'" class="link-type" @click="handleGetStudentList(row.id)">
+          <span v-else-if="checkStatus(row,currentDatetime)==='进行中'" class="link-type"
+                @click="handleGetExamineeList(row.id)">
             查看考生名单
           </span>
         </template>
@@ -213,6 +214,20 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :close-on-click-modal="false"
+               :title="'考生名单：共 '+examineeList.length+' 人已进入考试'" :visible.sync="dialogExamineeVisible">
+      <el-table :data="examineeList" max-height="800">
+        <el-table-column align="center" label="学号" property="student_id" width="150"></el-table-column>
+        <el-table-column align="center" label="姓名" property="name" width="200"></el-table-column>
+        <el-table-column align="center" label="班号" property="class_id" width="150"></el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="success">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -305,6 +320,9 @@ export default {
 
       rowsToBeDeleted: [],
       dialogDeleteVisible: false,
+
+      examineeList: [],
+      dialogExamineeVisible: false,
 
       rules: {
         start_time: [{required: true, message: '必须填写开始时刻', trigger: 'change'},
@@ -456,7 +474,7 @@ export default {
         this.getList()
       })
     },
-    handleGetStudentList(examId) {
+    handleGetExamineeList(examId) {
 
     }
   }

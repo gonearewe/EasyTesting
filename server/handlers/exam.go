@@ -78,8 +78,4 @@ func isAnyExamActive() bool {
     return false
 }
 
-func EnterExamHandler(c *gin.Context) {
-    m := utils.MustParseJson(c)
-    dao.EnterExam(jwt.ExtractClaims(c)["id"].(string), m["exam_id"].(int))
-}
 

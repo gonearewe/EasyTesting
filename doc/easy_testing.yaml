@@ -2514,10 +2514,14 @@ paths:
               properties:
                 exam_id:
                   type: integer
+                student_id:
+                  type: string
               required:
                 - exam_id
+                - student_id
       tags:
         - exam
+      security: [ ]
     parameters: [ ]
   /exams/my_questions:
     get:
@@ -2621,6 +2625,7 @@ paths:
             type: integer
           in: query
           name: exam_session_id
+      security: [ ]
   /exams/my_answers:
     put:
       summary: ''
@@ -2714,6 +2719,35 @@ paths:
                 - bfq
                 - tfq
                 - crq
+      security: [ ]
+  /exams/examinees:
+    get:
+      summary: Your GET endpoint
+      tags: [ ]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    student_id:
+                      type: string
+                    start_time:
+                      type: string
+                    end_time:
+                      type: string
+                    score:
+                      type: integer
+      operationId: get-exams-examinees
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: exam_id
 components:
   schemas: {}
   securitySchemes:
