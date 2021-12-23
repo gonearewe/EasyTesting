@@ -21,10 +21,17 @@ func GetStudentsBy(studentId string, name string, classId string,
         if err != nil {
             return err
         }
-        return buildStudentQueryFrom(tx,studentId, name, classId).Count(&num).Error
+        return buildStudentQueryFrom(tx, studentId, name, classId).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
+}
+
+func GetStudentNameBy(studentId string) string {
+    var s models.Student
+    err := db.Select("name").Where("student_id = ?", studentId).First(&s).Error
+    utils.PanicWhen(err)
+    return s.Name
 }
 
 func buildStudentQueryFrom(tx *gorm.DB, studentId string, name string, classId string) *gorm.DB {
@@ -52,7 +59,16 @@ func CreateStudents(students []*models.Student) {
 // the record to be updated will be specified by given student's id.
 // When any error occurs, it panics and the given student will not be updated.
 func UpdateStudentById(t *models.Student) {
-    err := db.Where("id = ?", t.ID).Updates(t).Error
+    err := db.Transaction(func(tx *gorm.DB) error {
+        var err error
+        err = db.Where("id = ?", t.ID).Updates(t).Error
+        if err != nil {
+            return err
+        }
+
+        return db.Model(&models.ExamSession{}).Where("student_id = ?", t.StudentID).
+            Update("student_name", t.Name).Error
+    })
     utils.PanicWhen(err)
 }
 

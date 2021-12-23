@@ -17,9 +17,13 @@
         </el-button>
       </el-tooltip>
     </div>
+    <div>
+      <el-checkbox-group v-model="checkboxGroup1">
+        <el-checkbox-button v-for="city in cities" :key="city" :label="city">{{ city }}</el-checkbox-button>
+      </el-checkbox-group>
+    </div>
 
     <el-table
-      :key="tableKey"
       ref="examTable"
       v-loading="listLoading"
       :data="list"
@@ -102,131 +106,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination v-show="total>0" :limit.sync="listQuery.page_size" :page.sync="listQuery.page_index" :total="total"
-                align="center" @pagination="getList"/>
-
-    <el-dialog :close-on-click-modal="false" :title="textMap[dialogStatus]"
-               :visible.sync="dialogFormVisible" max-height="800" width="30%">
-      <el-form ref="dataForm" :model="temp" :rules="rules" label-position="left" label-width="125px"
-               style="margin-left:50px;">
-        <el-form-item label="开始时刻" prop="start_time">
-          <el-tooltip content="整场考试的开始时刻，在此之后考生才被允许进入考试" effect="dark" placement="right-end">
-            <el-date-picker v-model="temp.start_time" align="center" placeholder="选择日期与时刻" type="datetime">
-            </el-date-picker>
-          </el-tooltip>
-        </el-form-item>
-        <el-form-item label="结束时刻" prop="end_time">
-          <el-tooltip content="整场考试的结束时刻，在此之后所有考生都无法再交卷" effect="dark" placement="right-end">
-            <el-date-picker v-model="temp.end_time" align="center" placeholder="选择日期与时刻" type="datetime">
-            </el-date-picker>
-          </el-tooltip>
-        </el-form-item>
-        <el-form-item label="考试限时（分钟）" prop="time_allowed">
-          <el-tooltip content="考生个人的作答限时，自考生进入考试开始计算" effect="dark" placement="right-end">
-            <el-input-number v-model="temp.time_allowed" :max="180" :min="20" :step="10"></el-input-number>
-          </el-tooltip>
-        </el-form-item>
-        <el-form-item label="单选题分数" prop="mcq_score">
-          <el-input-number v-model="temp.mcq_score" :max="6" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="单选题数目" prop="mcq_num">
-          <el-input-number v-model="temp.mcq_num" :max="50" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="多选题分数" prop="maq_score">
-          <el-input-number v-model="temp.maq_score" :max="6" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="多选题数目" prop="maq_num">
-          <el-input-number v-model="temp.maq_num" :max="30" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="填空题分数" prop="bfq_score">
-          <el-tooltip content="填空题固定为每小题 3 分" effect="dark" placement="right-end">
-            <el-input-number v-model="temp.bfq_score" :max="3" :min="3" disabled></el-input-number>
-          </el-tooltip>
-        </el-form-item>
-        <el-form-item label="填空题数目" prop="bfq_num">
-          <el-input-number v-model="temp.bfq_num" :max="30" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="判断题分数" prop="tfq_score">
-          <el-input-number v-model="temp.tfq_score" :max="5" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="判断题数目" prop="tfq_num">
-          <el-input-number v-model="temp.tfq_num" :max="30" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="代码阅读题分数" prop="crq_score">
-          <el-tooltip content="代码阅读题固定为每小题 6 分" effect="dark" placement="right-end">
-            <el-input-number v-model="temp.bfq_score" :max="6" :min="6" disabled></el-input-number>
-          </el-tooltip>
-        </el-form-item>
-        <el-form-item label="代码阅读题数目" prop="crq_num">
-          <el-input-number v-model="temp.crq_num" :max="5" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="编程题分数" prop="cq_score">
-          <el-input-number v-model="temp.cq_score" :max="20" :min="3"></el-input-number>
-        </el-form-item>
-        <el-form-item label="编程题数目" prop="cq_num">
-          <el-input-number v-model="temp.cq_num" :max="3" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="总分" prop="total_score">
-          <el-input v-model="totalScore" disabled></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog :close-on-click-modal="false" :title="'确认删除以下 '+rowsToBeDeleted.length+' 条记录？'"
-               :visible.sync="dialogDeleteVisible">
-      <el-table :data="rowsToBeDeleted" max-height="800">
-        <el-table-column align="center" label="ID" property="id" width="100"></el-table-column>
-        <el-table-column align="center" label="发布者工号" property="publisher_teacher_id" width="150"></el-table-column>
-        <el-table-column align="center" label="开始时刻" width="200">
-          <template slot-scope="{row}">
-            <span>{{ row.start_time | parseTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="结束时刻" width="200">
-          <template slot-scope="{row}">
-            <span>{{ row.end_time | parseTime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="状态" width="100">
-          <template slot-scope="{row}">
-            <el-tag
-              :type="new Map([['已结束', 'info'], ['进行中', 'success'], ['未开始', 'primary']]).get(checkStatus(row,currentDatetime))">
-              {{ checkStatus(row, currentDatetime) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDeleteVisible = false">
-          取消
-        </el-button>
-        <el-button type="danger" @click="deleteData">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog :close-on-click-modal="false"
-               :title="'考生名单：共 '+examineeList.length+' 人已进入考试'" :visible.sync="dialogExamineeVisible">
-      <el-table :data="examineeList" max-height="800">
-        <el-table-column align="center" label="学号" property="student_id" width="150"></el-table-column>
-        <el-table-column align="center" label="姓名" property="student_name" width="150"></el-table-column>
-        <el-table-column align="center" label="进入考试时刻" width="150">
-          <template slot-scope="{row}">
-            <span>{{ row.start_time | parseTime }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
   </div>
 </template>
 
@@ -239,51 +118,19 @@ import _ from "lodash"
 import {parseTime} from "@/utils/time";
 
 export default {
-  name: 'ExamList',
+  name: 'ResultList',
   components: {MarkdownEditor, Pagination},
   directives: {waves},
   filters: {
     parseTime
   },
-  computed: {
-    totalScore() {
-      let t = this.temp
-      let scoreArray = [t.mcq_num * t.mcq_score, t.maq_num * t.maq_score,
-        t.bfq_num * t.bfq_score, t.tfq_num * t.tfq_score, t.crq_num * t.crq_score, t.cq_num * t.cq_score]
-      return scoreArray.join(' + ') + ' = ' + scoreArray.reduce((a, b) => a + b, 0)
-    }
-  },
+  computed: {},
   data() {
-    const validateStartTime = (rule, value, callback) => {
-      if (value <= this.currentDatetime) {
-        callback(new Error('开始时刻不得早于现在（' + parseTime(this.currentDatetime) + '）'))
-      } else {
-        callback()
-      }
-    }
-    const validateEndTime = (rule, value, callback) => {
-      if (value - this.temp.start_time < (this.temp.time_allowed + 10) * 60 * 1000) {
-        callback(new Error('结束时刻与开始时刻的差必须比考试限时多 10 分钟以上'))
-      } else {
-        callback()
-      }
-    }
-    const validateTotalScore = (rule, value, callback) => {
-      let scoreStr = this.totalScore
-      if (scoreStr.slice(scoreStr.length - 3) !== '100') {
-        callback(new Error('总分必须为 100 分'))
-      } else {
-        callback()
-      }
-    }
-
     return {
-      currentDatetime: new Date(),
-
-      tableKey: 0,
+      selectedExams: [],
+      allExams: [],
 
       list: null,
-      total: 0,
 
       listLoading: true,
       listQuery: {

@@ -81,7 +81,8 @@ CREATE TABLE `student`
     `name`       varchar(50)        NOT NULL COMMENT '姓名',
     `class_id`   varchar(10)        NOT NULL COMMENT '班号',
     PRIMARY KEY (`id`),
-    INDEX (`student_id`)
+    INDEX (`student_id`),
+    INDEX (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -98,7 +99,8 @@ CREATE TABLE `teacher`
     `salt`       varchar(50)        NOT NULL COMMENT '盐',
     `is_admin`   bool               NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员',
     PRIMARY KEY (`id`),
-    INDEX (`teacher_id`)
+    INDEX (`teacher_id`),
+    INDEX (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -139,6 +141,7 @@ CREATE TABLE `exam_session`
     `id`           int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `exam_id`      int(10)     NOT NULL COMMENT '连接 exam',
     `student_id`   varchar(10) NOT NULL COMMENT '连接 student',
+    `student_name` varchar(50) NOT NULL COMMENT '考生的姓名',
     `start_time`   datetime    NOT NULL COMMENT '作答开始时刻',
     `end_time`     datetime         DEFAULT NULL COMMENT '交卷时刻',
     `answer_sheet` mediumblob       DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',

@@ -32,3 +32,11 @@ export function deleteExams(ids) {
     params: {'ids': ids.join(',')}
   })
 }
+
+export function getExaminees(params) {
+  return request({
+    url: '/exams/examinees',
+    method: 'get',
+    params: params
+  })
+}

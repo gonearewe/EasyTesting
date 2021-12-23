@@ -12,7 +12,14 @@ import (
 
 func GetExamSessionsBy(examId int) (ret []*models.ExamSession) {
     // `answer_sheet` field is excluded.
-    db.Select("student_id","start_time","end_time","score").
+    db.Select("student_id","student_name","start_time","end_time","score").
+        Where("exam_id = ?", examId).Find(&ret)
+    return
+}
+
+func GetEndedExamSessionsBy(examId int) (ret []*models.ExamSession) {
+    // `answer_sheet` field is excluded.
+    db.Select("student_id","student_name","start_time","end_time","score").
         Where("exam_id = ?", examId).Find(&ret)
     return
 }
@@ -33,13 +40,16 @@ func EnterExam(studentId string, examId int) {
 
         err = tx.Select("id").Where("exam_id = ?",examId).
             Where("student_id = ?",studentId).First(&models.ExamSession{}).Error
-        if err != nil{
+        if err == nil {
            return  errors.New("specified student already enters this exam")
+        }else if !errors.Is(err,gorm.ErrRecordNotFound) {
+            return err
         }
 
         var session = models.ExamSession{
             ExamID:      examId,
             StudentID:   studentId,
+            StudentName: GetStudentNameBy(studentId),
             StartTime:   time.Now(),
             EndTime:     time.Time{},
         }
