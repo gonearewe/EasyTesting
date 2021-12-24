@@ -9,6 +9,14 @@ export function getExams(params) {
   })
 }
 
+export function getEndedExams(params) {
+  return request({
+    url: '/exams/ended',
+    method: 'get',
+    params: params
+  })
+}
+
 export function createExams(exams) {
   return request({
     url: '/exams',

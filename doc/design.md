@@ -143,9 +143,9 @@ CREATE TABLE `exam_session`
     `student_id`   varchar(10) NOT NULL COMMENT '连接 student',
     `student_name` varchar(50) NOT NULL COMMENT '考生的姓名',
     `start_time`   datetime    NOT NULL COMMENT '作答开始时刻',
-    `end_time`     datetime         DEFAULT NULL COMMENT '交卷时刻',
-    `answer_sheet` mediumblob       DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
-    `score`        tinyint unsigned DEFAULT NULL COMMENT '最终成绩',
+    `end_time`     datetime   DEFAULT NULL COMMENT '交卷时刻',
+    `answer_sheet` mediumblob DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
+    `score`        smallint   DEFAULT NULL COMMENT '最终成绩*10，即保存到小数点后一位',
     FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
@@ -427,6 +427,20 @@ VALUES ('2010301800', SUBTIME(NOW(), '14:00:00'), SUBTIME(NOW(), '11:00:00'), 12
        ('2010301800', SUBTIME(NOW(), '07:00:00'), SUBTIME(NOW(), '04:40:00'), 120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
        ('2010301800', NOW(), ADDTIME(NOW(), '02:00:00'), 90, 3, 15, 3, 5, 3, 4, 3, 4, 6, 1, 5, 2),
        ('2010301800', ADDTIME(NOW(), '21:00:00'), ADDTIME(NOW(), '24:00:00'), 110, 3, 12, 3, 6, 3, 4, 4, 4, 6, 1, 6, 2);
+
+TRUNCATE TABLE `exam_session`;
+INSERT INTO `exam_session`
+(`exam_id`, `student_id`, `student_name`, `start_time`, `end_time`, `answer_sheet`, `score`)
+VALUES (0, '2020501880', '小明', SUBTIME(NOW(), '13:50:00'), SUBTIME(NOW(), '13:00:00'), NULL, 540),
+       (0, '2020501826', '小红', SUBTIME(NOW(), '13:50:00'), SUBTIME(NOW(), '12:40:00'), NULL, 840),
+       (0, '2020501827', '小亮', SUBTIME(NOW(), '13:55:34'), SUBTIME(NOW(), '12:40:00'), NULL, 912),
+       (0, '2020501703', '小唐', SUBTIME(NOW(), '13:50:50'), SUBTIME(NOW(), '12:01:26'), NULL, 905),
+       (1, '2020501700', '小甲', SUBTIME(NOW(), '06:55:50'), SUBTIME(NOW(), '05:01:00'), NULL, 405),
+       (0, '2020501830', '小陆', SUBTIME(NOW(), '13:50:50'), SUBTIME(NOW(), '12:01:26'), NULL, 905),
+       (1, '2020501826', '小红', SUBTIME(NOW(), '06:45:30'), SUBTIME(NOW(), '04:45:51'), NULL, 804),
+       (1, '2020501703', '小唐', SUBTIME(NOW(), '06:07:00'), SUBTIME(NOW(), '04:41:47'), NULL, 50),
+       (1, '2018216386', '小阿', SUBTIME(NOW(), '05:45:03'), SUBTIME(NOW(), '04:43:00'), NULL, 1000),
+       (1, '2016664026', '小韩', SUBTIME(NOW(), '05:45:00'), SUBTIME(NOW(), '05:00:00'), NULL, 0);
 
 TRUNCATE TABLE `mcq`;
 INSERT INTO `mcq`

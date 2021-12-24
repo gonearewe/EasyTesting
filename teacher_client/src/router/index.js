@@ -78,11 +78,18 @@ export const constantRoutes = [
   {
     path: '/exam',
     component: Layout,
+    redirect: '/exam/index',
     children: [
       {
-        path: 'exam',
+        path: 'index',
         component: () => import('@/views/exam'),
         meta: {title: '考试管理', icon: 'form'}
+      },
+      {
+        path: 'detail/:id(\\d+)',
+        component: () => import('@/views/exam/detail'),
+        meta: {title: '考试结果', icon: 'form'},
+        hidden: true
       }
     ]
   },

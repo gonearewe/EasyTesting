@@ -48,7 +48,7 @@
                           :label="q[0]"><span>
               {{ '每题 ' + q[1] + ' 分，共 ' + q[2] + ' 题，合计 ' + q[1] * q[2] + ' 分' }}</span></el-form-item>
           </el-form>
-          <router-link v-if="checkStatus(row,currentDatetime)==='已结束'" :to="'/example/edit/'+row.id">
+          <router-link v-if="checkStatus(row,currentDatetime)==='已结束'" :to="'/exam/detail/'+row.id">
             <el-button icon="el-icon-info" size="small" type="success">
               查看考生作答情况
             </el-button>
@@ -438,7 +438,7 @@ export default {
       })
     },
     handleMultiDelete() {
-      let rows = this.$refs.examTable.selection;
+      let rows = this.$refs.examineeTable.selection;
       if (rows.length === 0) {
         this.$message({
           message: '没有任何一项被选中，勾选表格左侧以多选',

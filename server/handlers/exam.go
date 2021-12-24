@@ -23,6 +23,11 @@ func GetExamHandler(c *gin.Context) {
     c.JSON(200, gin.H{"total": num, "data": exams})
 }
 
+func GetEndedExamHandler(c *gin.Context) {
+    exams := dao.GetEndedExams()
+    c.JSON(200, exams)
+}
+
 func PostExamHandler(c *gin.Context) {
     var exams []*models.Exam
     utils.MustParseJsonTo(c, &exams)
