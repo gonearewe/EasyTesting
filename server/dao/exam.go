@@ -28,7 +28,7 @@ func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Ex
 // GetExams searches the database for all exams.
 // When any error occurs, it panics.
 func GetEndedExams() (ret []models.Exam) {
-    err:= db.Select("publisher_teacher_id","start_time","end_time").
+    err:= db.Select("id","publisher_teacher_id","start_time","end_time").
         Where("CURTIME() >= end_time").Find(&ret).Error
     utils.PanicWhen(err)
     return

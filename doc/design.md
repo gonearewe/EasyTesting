@@ -431,16 +431,16 @@ VALUES ('2010301800', SUBTIME(NOW(), '14:00:00'), SUBTIME(NOW(), '11:00:00'), 12
 TRUNCATE TABLE `exam_session`;
 INSERT INTO `exam_session`
 (`exam_id`, `student_id`, `student_name`, `start_time`, `end_time`, `answer_sheet`, `score`)
-VALUES (0, '2020501880', '小明', SUBTIME(NOW(), '13:50:00'), SUBTIME(NOW(), '13:00:00'), NULL, 540),
-       (0, '2020501826', '小红', SUBTIME(NOW(), '13:50:00'), SUBTIME(NOW(), '12:40:00'), NULL, 840),
-       (0, '2020501827', '小亮', SUBTIME(NOW(), '13:55:34'), SUBTIME(NOW(), '12:40:00'), NULL, 912),
-       (0, '2020501703', '小唐', SUBTIME(NOW(), '13:50:50'), SUBTIME(NOW(), '12:01:26'), NULL, 905),
-       (1, '2020501700', '小甲', SUBTIME(NOW(), '06:55:50'), SUBTIME(NOW(), '05:01:00'), NULL, 405),
-       (0, '2020501830', '小陆', SUBTIME(NOW(), '13:50:50'), SUBTIME(NOW(), '12:01:26'), NULL, 905),
-       (1, '2020501826', '小红', SUBTIME(NOW(), '06:45:30'), SUBTIME(NOW(), '04:45:51'), NULL, 804),
-       (1, '2020501703', '小唐', SUBTIME(NOW(), '06:07:00'), SUBTIME(NOW(), '04:41:47'), NULL, 50),
-       (1, '2018216386', '小阿', SUBTIME(NOW(), '05:45:03'), SUBTIME(NOW(), '04:43:00'), NULL, 1000),
-       (1, '2016664026', '小韩', SUBTIME(NOW(), '05:45:00'), SUBTIME(NOW(), '05:00:00'), NULL, 0);
+VALUES (1, '2020501880', '小明', SUBTIME(NOW(), '13:50:00'), SUBTIME(NOW(), '13:00:00'), NULL, 540),
+       (1, '2020501826', '小红', SUBTIME(NOW(), '13:50:00'), SUBTIME(NOW(), '12:40:00'), NULL, 840),
+       (1, '2020501827', '小亮', SUBTIME(NOW(), '13:55:34'), SUBTIME(NOW(), '12:40:00'), NULL, 912),
+       (1, '2020501703', '小唐', SUBTIME(NOW(), '13:50:50'), SUBTIME(NOW(), '12:01:26'), NULL, 705),
+       (2, '2020501700', '小甲', SUBTIME(NOW(), '06:55:50'), SUBTIME(NOW(), '05:01:00'), NULL, 405),
+       (1, '2020501830', '小陆', SUBTIME(NOW(), '13:50:50'), SUBTIME(NOW(), '12:01:26'), NULL, 905),
+       (2, '2020501826', '小红', SUBTIME(NOW(), '06:45:30'), SUBTIME(NOW(), '04:45:51'), NULL, 804),
+       (2, '2020501703', '小唐', SUBTIME(NOW(), '06:07:00'), SUBTIME(NOW(), '04:41:47'), NULL, 50),
+       (2, '2018216386', '小阿', SUBTIME(NOW(), '05:45:03'), SUBTIME(NOW(), '04:43:00'), NULL, 1000),
+       (2, '2016664026', '小韩', SUBTIME(NOW(), '05:45:00'), SUBTIME(NOW(), '05:00:00'), NULL, 0);
 
 TRUNCATE TABLE `mcq`;
 INSERT INTO `mcq`
