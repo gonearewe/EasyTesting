@@ -69,14 +69,7 @@ export default {
             fontSize: '16'
           }
         },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            textStyle: {
-              color: '#fff'
-            }
-          }
-        },
+        tooltip: {},
         grid: {
           left: '5%',
           right: '5%',
@@ -97,6 +90,13 @@ export default {
         calculable: true,
         xAxis: [{
           type: 'category',
+          name: '分数区间（左闭右开）',
+          nameLocation: 'middle',
+          nameGap: 50,
+          nameTextStyle: {
+            color: '#fff',
+            fontSize: '18'
+          },
           axisLine: {
             lineStyle: {
               color: '#90979c'
@@ -112,72 +112,57 @@ export default {
             show: false
           },
           axisLabel: {
-            interval: 0
-
+            interval: 0,
+            formatter: '{value} 分',
+            textStyle: {
+              color: '#f1f7fc'
+            }
           },
           data: xData
         }],
         yAxis: [{
           type: 'value',
+          name: '区间人数',
+          nameLocation: 'middle',
+          nameGap: 50,
+          nameTextStyle: {
+            color: '#fff',
+            fontSize: '18'
+          },
+          minInterval: 1, // only integers for yAxis
           splitLine: {
             show: false
           },
           axisLine: {
             lineStyle: {
               color: '#90979c'
-            }
+            },
           },
           axisTick: {
             show: false
           },
           axisLabel: {
-            interval: 0
+            interval: 0,
+            formatter: '{value} 人',
+            textStyle: {
+              color: '#f1f7fc'
+            }
           },
           splitArea: {
             show: false
           }
-        }],
-        dataZoom: [{
-          show: true,
-          height: 30,
-          xAxisIndex: [
-            0
-          ],
-          bottom: 30,
-          start: 10,
-          end: 80,
-          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-          handleSize: '110%',
-          handleStyle: {
-            color: '#d3dee5'
-
-          },
-          textStyle: {
-            color: '#fff'
-          },
-          borderColor: '#90979c'
-
-        }, {
-          type: 'inside',
-          show: true,
-          height: 15,
-          start: 1,
-          end: 35
         }]
       }
       this.chart.setOption(this.option)
     },
     setData(list) {
       this.chart.clear()
-      let colors = ['Aquamarine', 'BlueViolet', 'Brown', 'DarkMagenta', 'DeepSkyBlue', 'HotPink', 'NavajoWhite', 'RoyalBlue',
-        'Tan', 'YellowGreen', 'SlateGray', 'SteelBlue', 'Orange', 'LightCyan', 'Indigo', 'FireBrick', 'Lime']
+      let colors = ['Aquamarine', 'DeepSkyBlue', 'HotPink', 'NavajoWhite', 'RoyalBlue',
+        'Tan', 'YellowGreen', 'SlateGray', 'SteelBlue', 'Orange', 'LightCyan']
       this.option.series = list.map(e => {
         return {
           name: e.name,
-          type: 'line',
-          stack: 'total',
-          symbolSize: 10,
-          symbol: 'circle',
+          type: 'bar',
           itemStyle: {
             normal: {
               color: colors[hashCode(e.name) % colors.length],

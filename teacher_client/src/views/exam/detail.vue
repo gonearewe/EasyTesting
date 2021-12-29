@@ -36,10 +36,17 @@
       </el-form-item>
     </el-form>
 
-    <el-tabs @tab-click="refreshChart">
+    <el-tabs>
+      <!--      put chart on the first tab to prevent chart not showing data-->
+      <!--      use `lazy` to avoid echarts displaying in a small size-->
+      <el-tab-pane label="图示" lazy>
+        <div class="chart-container">
+          <chart ref="chart" height="100%" width="100%"/>
+        </div>
+      </el-tab-pane>
+
       <el-tab-pane label="表格">
         <el-table
-          ref="examineeTable"
           v-loading="listLoading"
           :data="list"
           border
@@ -71,13 +78,6 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-
-      <!--      use `lazy` to avoid echarts displaying in a small size-->
-      <el-tab-pane label="图示" lazy>
-        <div class="chart-container">
-          <chart ref="chart" height="100%" width="100%"/>
-        </div>
-      </el-tab-pane>
     </el-tabs>
 
   </div>
@@ -86,12 +86,12 @@
 <script>
 import {getEndedExams, getExaminees} from '@/api/exam'
 import waves from '@/directive/waves' // waves directive
-import Chart from '@/views/exam/Chart'
-import {parseTime} from "@/utils/time";
+import chart from '@/views/exam/chart'
+import {parseTime} from "@/utils/time"
 
 export default {
   name: 'ResultList',
-  components: {Chart},
+  components: {Chart: chart},
   directives: {waves},
   filters: {
     parseTime
@@ -110,41 +110,26 @@ export default {
       },
 
       list: null,
-      listQuery: {
-        student_id: undefined,
-        student_name: ''
-      },
       listLoading: false,
 
       downloadLoading: false,
-
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: '编辑',
-        create: '创建'
-      },
-
-      rowsToBeDeleted: [],
-      dialogDeleteVisible: false,
-
-      dialogExamineeVisible: false,
-
     }
   },
   created() {
     getEndedExams().then(body => {
       this.allExams = body
     })
+
+    if (this.$route.params && this.$route.params.id) {
+      this.selectedExamIds.push(parseInt(this.$route.params.id))
+      this.updateListAndChart()
+    }
   },
   watch: {
     list(newList, oldList) {
       this.statistics.average = newList.reduce((p, c) => p + c.score, 0) / (10 * newList.length)
       this.statistics.max = Math.max(...newList.map(e => e.score)) / 10
       this.statistics.min = Math.min(...newList.map(e => e.score)) / 10
-    },
-    chartData(newData, oldData) {
-      this.refreshChart(newData)
     }
   },
   methods: {
@@ -159,33 +144,31 @@ export default {
         return 'success'
       }
     },
-    updateListAndChart() {
+    async updateListAndChart() {
       this.listLoading = true
       this.list = []
       this.chartData = {}
-      this.selectedExamIds.forEach(exam_id => {
-        if (this.examinees.hasOwnProperty(exam_id)) {
-          this.list.push(...this.examinees[exam_id])
-          this.chartData[exam_id] = this.examinees[exam_id].map(e => e.score / 10)
-        } else {
-          getExaminees({"exam_id": exam_id}).then(body => {
+      for (const exam_id of this.selectedExamIds) {
+        if (!this.examinees.hasOwnProperty(exam_id)) {
+          // lazy, so as to only load necessary Examinees
+          await getExaminees({"exam_id": exam_id}).then(body => {
               this.examinees[exam_id] = body
-              this.list.push(...body)
-              this.chartData[exam_id] = body.map(e => e.score / 10)
             }
           )
         }
-      })
+        this.list.push(...this.examinees[exam_id])
+        this.chartData[exam_id] = this.examinees[exam_id].map(e => e.score / 10)
+      }
+      this.refreshChart()
       this.$nextTick(() => {
         this.listLoading = false
       })
     },
-    refreshChart(data) {
+    refreshChart() {
+      console.log(this.$refs)
       if (this.$refs.chart) {
         let list = []
-        let data = data || this.chartData
-        // console.log(data,data.entries)
-        for (const [key, value] of Object.entries(data)) {
+        for (const [key, value] of Object.entries(this.chartData)) {
           // map everybody's scores into buckets at the interval of 10 points
           let buckets = new Array(10).fill(0)
           for (const score of value) {
@@ -197,23 +180,28 @@ export default {
           }
           list.push({name: 'ID-' + key, data: buckets})
         }
+        console.log(list)
         this.$refs.chart.setData(list)
       }
     },
     handleDownload() {
-      // this.downloadLoading = true
-      // import('@/utils/Export2Excel').then(excel => {
-      //   const tHeader = ['student_id', 'name', 'class_id']
-      //   let queryAll = Object.assign({}, this.listQuery, {page_index: 1, page_size: Math.pow(2, 32)})
-      //   getStudents(queryAll).then(body => {
-      //     excel.export_json_to_excel({
-      //       header: tHeader,
-      //       data: body.data.map(student => tHeader.map(k => student[k])),
-      //       filename: 'students'
-      //     })
-      //     this.downloadLoading = false
-      //   })
-      // })
+      this.downloadLoading = true
+      import('@/utils/Export2Excel').then(excel => {
+        const tHeader = ['考试 ID', '学号', '姓名', '得分', '进入考试时刻', '交卷时刻']
+        let rows = []
+        for (let examId of this.selectedExamIds) {
+          for (let examinee of this.examinees[examId]) {
+            rows.push([examId, examinee.student_id, examinee.student_name,
+              examinee.score / 10, parseTime(examinee.start_time), parseTime(examinee.end_time)])
+          }
+        }
+        excel.export_json_to_excel({
+          header: tHeader,
+          data: rows,
+          filename: 'results'
+        })
+        this.downloadLoading = false
+      })
     }
   }
 }
@@ -221,6 +209,8 @@ export default {
 
 <style scoped>
 .chart-container {
+  margin-top: 40px;
+  margin-bottom: 30px;
   position: relative;
   width: 100%;
   height: calc(100vh - 84px);
