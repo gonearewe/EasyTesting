@@ -69,7 +69,7 @@ func DeleteExamHandler(c *gin.Context) {
 // this usually happens when trying POST, PUT or DELETE exam-related items (such as questions).
 func abortIfAnyExamActive(c *gin.Context) {
     if isAnyExamActive() {
-        c.AbortWithStatus(http.StatusForbidden)
+        c.AbortWithError(http.StatusForbidden,errors.New("action forbidden when any exam is active"))
     }
 }
 

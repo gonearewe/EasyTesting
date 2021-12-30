@@ -3,6 +3,8 @@ package handlers
 // Handlers for multiple choice question (mcq) endpoints, refer to easy_testing.yaml(OpenAPI file) for details.
 
 import (
+	"errors"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -38,6 +40,17 @@ func PostMcqHandler(c *gin.Context) {
 	var mcqs = make([]*models.Mcq, len(reqs))
 	for i, req := range reqs {
 		choices := req["choices"].([]interface{})
+		if len(choices)<4{
+			c.AbortWithError(http.StatusBadRequest,errors.New("length of choices less than 4"))
+			return
+		}
+		for _,choice := range choices{
+			if choice == ""{
+				c.AbortWithError(http.StatusBadRequest,errors.New("empty choice text"))
+				return
+			}
+		}
+
 		mcqs[i] = &models.Mcq{
 			PublisherTeacherID: jwt.ExtractClaims(c)["teacher_id"].(string),
 			Stem:               req["stem"].(string),
@@ -55,6 +68,17 @@ func PutMcqHandler(c *gin.Context) {
 	abortIfAnyExamActive(c)
 	req := utils.MustParseJson(c)
 	choices := req["choices"].([]interface{})
+	if len(choices)<4{
+		c.AbortWithError(http.StatusBadRequest,errors.New("length of choices less than 4"))
+		return
+	}
+	for _,choice := range choices{
+		if choice == ""{
+			c.AbortWithError(http.StatusBadRequest,errors.New("empty choice text"))
+			return
+		}
+	}
+
 	mcq := &models.Mcq{
 		ID:          int(req["id"].(float64)),
 		Stem:        req["stem"].(string),

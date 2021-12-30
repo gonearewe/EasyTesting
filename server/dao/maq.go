@@ -10,16 +10,26 @@ import (
 // GetMaqsBy searches the database for Multiple Answer Question (maq) whose publisher teacher id (string) starts
 // with `teacherId`, it only returns records in given `pageIndex` (1-based) in the increasing order of id.
 // When any error occurs, it panics.
-func GetMaqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Maq) {
-    var err error
-    if teacherId != "" {
-        err = db.Limit(pageSize).Offset(pageSize*(pageIndex-1)).Find(&ret, "publisher_teacher_id LIKE ?",
-            teacherId+"%").Error
-    } else {
-        err = db.Limit(pageSize).Offset(pageSize * (pageIndex - 1)).Find(&ret).Error
-    }
+func GetMaqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Maq, num int64) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        err := buildMaqQueryFrom(tx, teacherId).
+            Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
+            Find(&ret).Error
+        if err != nil {
+            return err
+        }
+        return buildMaqQueryFrom(tx, teacherId).Count(&num).Error
+    })
     utils.PanicWhen(err)
     return
+}
+
+func buildMaqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
+    var filtered = tx.Model(&models.Maq{})
+    if teacherId != "" {
+        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
+    }
+    return filtered
 }
 
 // CreateMaqs stores given Multiple Answer Question (maq) into the database,
@@ -33,7 +43,18 @@ func CreateMaqs(questions []*models.Maq) {
 // the record to be updated will be specified by given maq's id.
 // When any error occurs, it panics and the given maq will not be updated.
 func UpdateMaqById(question *models.Maq) {
-    err := db.Where("id = ?", question.ID).Updates(question).Error
+    err := db.Model(question).Where("id = ?", question.ID).Updates(
+        map[string]interface{}{
+            "stem":question.Stem,
+            "choice_1":question.Choice1,
+            "choice_2":question.Choice2,
+            "choice_3":question.Choice3,
+            "choice_4":question.Choice4,
+            "choice_5":question.Choice5,
+            "choice_6":question.Choice6,
+            "choice_7":question.Choice7,
+            "right_answer":question.RightAnswer,
+        }).Error
     utils.PanicWhen(err)
 }
 

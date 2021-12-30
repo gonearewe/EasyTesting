@@ -111,12 +111,44 @@ export const constantRoutes = [
       },
       {
         path: 'maq',
-        component: () => import('@/views/question/mcq'),
+        component: () => import('@/views/question/maq'),
         meta: {
           title: '多选题',
           icon: 'form'
         },
-      }
+      },
+      // {
+      //   path: 'bfq',
+      //   component: () => import('@/views/question/bfq'),
+      //   meta: {
+      //     title: '填空题',
+      //     icon: 'form'
+      //   },
+      // },
+      // {
+      //   path: 'tfq',
+      //   component: () => import('@/views/question/tfq'),
+      //   meta: {
+      //     title: '判断题',
+      //     icon: 'form'
+      //   },
+      // },
+      // {
+      //   path: 'crq',
+      //   component: () => import('@/views/question/crq'),
+      //   meta: {
+      //     title: '代码阅读题',
+      //     icon: 'form'
+      //   },
+      // },
+      // {
+      //   path: 'cq',
+      //   component: () => import('@/views/question/cq'),
+      //   meta: {
+      //     title: '编程题',
+      //     icon: 'form'
+      //   },
+      // }
     ]
   },
 

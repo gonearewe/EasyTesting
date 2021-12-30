@@ -2,8 +2,10 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,6 +28,18 @@ func Int(num string) int {
 	ret, err := strconv.Atoi(num)
 	PanicWhen(err)
 	return ret
+}
+
+func Join(a []interface{}) string {
+	if len(a) == 0 {
+		return ""
+	}
+
+	b := make([]string, len(a))
+	for i, v := range a {
+		b[i] = fmt.Sprint(v)
+	}
+	return strings.Join(b, "")
 }
 
 func PanicWhen(err error) {
