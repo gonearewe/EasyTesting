@@ -117,22 +117,22 @@ export const constantRoutes = [
           icon: 'form'
         },
       },
-      // {
-      //   path: 'bfq',
-      //   component: () => import('@/views/question/bfq'),
-      //   meta: {
-      //     title: '填空题',
-      //     icon: 'form'
-      //   },
-      // },
-      // {
-      //   path: 'tfq',
-      //   component: () => import('@/views/question/tfq'),
-      //   meta: {
-      //     title: '判断题',
-      //     icon: 'form'
-      //   },
-      // },
+      {
+        path: 'bfq',
+        component: () => import('@/views/question/bfq'),
+        meta: {
+          title: '填空题',
+          icon: 'form'
+        },
+      },
+      {
+        path: 'tfq',
+        component: () => import('@/views/question/tfq'),
+        meta: {
+          title: '判断题',
+          icon: 'form'
+        },
+      },
       // {
       //   path: 'crq',
       //   component: () => import('@/views/question/crq'),

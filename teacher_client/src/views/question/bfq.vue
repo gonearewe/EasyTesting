@@ -20,7 +20,7 @@
 
     <el-table
       :key="tableKey"
-      ref="maqTable"
+      ref="bfqTable"
       v-loading="listLoading"
       :data="list"
       border
@@ -49,11 +49,10 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.stem }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-for="i in 7" :label="'选项 '+i" align="left" header-align="center" show-overflow-tooltip>
+      <el-table-column v-for="i in 3" :label="'答案 '+i" align="left" header-align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <el-tag v-show="row.right_answer.includes(i)" style="margin-right:10px;" type="success">正解</el-tag>
-          <span v-if="i <= row.choices.length" class="link-type" @click="handleUpdate(row)">
-            {{ row.choices[i - 1] }}
+          <span v-if="i <= row.right_answers.length" class="link-type" @click="handleUpdate(row)">
+            {{ row.right_answers[i - 1] }}
           </span>
           <el-tag v-else type="info">无</el-tag>
         </template>
@@ -80,22 +79,15 @@
         <el-form-item label="题干" prop="stem">
           <markdown-editor v-model="temp.stem"/>
         </el-form-item>
-        <el-form-item label="选项数" prop="blank_num">
-          <el-radio-group v-model="temp.choice_num" @change="updateTemp">
-            <el-radio-button v-for="i in 4" :label="i + 3">
-              {{ ['4', '5', '6', '7'][i - 1] + ' 个' }}
+        <el-form-item label="填空数" prop="blank_num">
+          <el-radio-group v-model="temp.blank_num" @change="updateTemp">
+            <el-radio-button v-for="i in 3" :label="i">
+              {{ ['1', '2', '3'][i - 1] + ' 个' }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="选项" prop="choices">
-          <markdown-editor v-for="i in temp.choice_num" v-model="temp.choices[i-1]"/>
-        </el-form-item>
-        <el-form-item label="正确答案" prop="right_answer">
-          <el-checkbox-group v-model="temp.right_answer">
-            <el-checkbox v-for="i in temp.choice_num" :label="i" border>
-              {{ '第' + ['一', '二', '三', '四', '五', '六', '七'][i - 1] + '个选项' }}
-            </el-checkbox>
-          </el-checkbox-group>
+        <el-form-item label="正确答案" prop="right_answers">
+          <markdown-editor v-for="i in temp.blank_num" v-model="temp.right_answers[i-1]"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -136,7 +128,7 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import _ from "lodash"
 
 export default {
-  name: 'MaqList',
+  name: 'BfqList',
   components: {MarkdownEditor, Pagination},
   directives: {waves},
   data() {
@@ -156,9 +148,8 @@ export default {
       temp: {
         id: undefined,
         stem: '',
-        choice_num: 4,
-        choices: [],
-        right_answer: []
+        blank_num: 1,
+        right_answers: []
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -172,8 +163,7 @@ export default {
 
       rules: {
         stem: [{required: true, message: '必须填写题干', trigger: 'change'},
-          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
-        right_answer: [{required: true, message: '必须给出正确答案', trigger: 'change'}]
+          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}]
       },
       downloadLoading: false
     }
@@ -184,7 +174,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getQuestions('maq', this.listQuery).then(body => {
+      getQuestions('bfq', this.listQuery).then(body => {
         this.list = body.data
         this.total = body.total
         this.listLoading = false
@@ -198,14 +188,12 @@ export default {
       this.temp = {
         id: undefined,
         stem: '',
-        blank_num: 4,
-        choices: [],
-        right_answer: []
+        blank_num: 1,
+        right_answers: []
       }
     },
     updateTemp() {
-      this.temp.choices.splice(this.temp.choice_num)
-      this.temp.right_answer = []
+      this.temp.right_answers.splice(this.temp.blank_num)
     },
     handleCreate() {
       this.resetTemp()
@@ -220,7 +208,7 @@ export default {
         if (valid) {
           let req = _.merge({}, this.temp)
           delete req.blank_num
-          createQuestions('maq', [req]).then(() => {
+          createQuestions('bfq', [req]).then(() => {
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
@@ -235,7 +223,7 @@ export default {
     handleUpdate(row) {
       _.merge(this.temp, row)
       // this.temp = Object.assign({}, row) // NOTICE: shadow copy will cause problems on array
-      this.temp.choice_num = row.choices.length
+      this.temp.blank_num = row.right_answers.length
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -247,7 +235,7 @@ export default {
         if (valid) {
           const req = _.merge({}, this.temp)
           delete req.blank_num
-          updateQuestion('maq', req).then(() => {
+          updateQuestion('bfq', req).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, _.merge({}, this.temp)) // remember to copy
             this.dialogFormVisible = false
@@ -261,7 +249,7 @@ export default {
       })
     },
     handleMultiDelete() {
-      let rows = this.$refs.maqTable.selection;
+      let rows = this.$refs.bfqTable.selection;
       if (rows.length === 0) {
         this.$message({
           message: '没有任何一项被选中，勾选表格左侧以多选',
@@ -279,7 +267,7 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
-      deleteQuestions('maq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
+      deleteQuestions('bfq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
         this.dialogDeleteVisible = false
         this.$message({
           message: '删除成功',

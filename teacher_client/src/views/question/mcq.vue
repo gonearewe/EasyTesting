@@ -230,7 +230,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           updateQuestion('mcq', tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+            this.list.splice(index, 1, _.merge({}, this.temp)) // remember to copy
             this.dialogFormVisible = false
             this.$message({
               message: '修改已保存',
@@ -260,7 +260,6 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
-      console.log(this.rowsToBeDeleted)
       deleteQuestions('mcq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
         this.dialogDeleteVisible = false
         this.$message({

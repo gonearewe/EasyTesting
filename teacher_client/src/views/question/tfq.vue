@@ -20,7 +20,7 @@
 
     <el-table
       :key="tableKey"
-      ref="maqTable"
+      ref="tfqTable"
       v-loading="listLoading"
       :data="list"
       border
@@ -49,13 +49,11 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.stem }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-for="i in 7" :label="'选项 '+i" align="left" header-align="center" show-overflow-tooltip>
+      <el-table-column align="center" label="答案" width="100">
         <template slot-scope="{row}">
-          <el-tag v-show="row.right_answer.includes(i)" style="margin-right:10px;" type="success">正解</el-tag>
-          <span v-if="i <= row.choices.length" class="link-type" @click="handleUpdate(row)">
-            {{ row.choices[i - 1] }}
-          </span>
-          <el-tag v-else type="info">无</el-tag>
+          <el-tag :type="row.right_answer | boolColorFilter">
+            {{ row.right_answer }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="230">
@@ -80,22 +78,10 @@
         <el-form-item label="题干" prop="stem">
           <markdown-editor v-model="temp.stem"/>
         </el-form-item>
-        <el-form-item label="选项数" prop="blank_num">
-          <el-radio-group v-model="temp.choice_num" @change="updateTemp">
-            <el-radio-button v-for="i in 4" :label="i + 3">
-              {{ ['4', '5', '6', '7'][i - 1] + ' 个' }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="选项" prop="choices">
-          <markdown-editor v-for="i in temp.choice_num" v-model="temp.choices[i-1]"/>
-        </el-form-item>
         <el-form-item label="正确答案" prop="right_answer">
-          <el-checkbox-group v-model="temp.right_answer">
-            <el-checkbox v-for="i in temp.choice_num" :label="i" border>
-              {{ '第' + ['一', '二', '三', '四', '五', '六', '七'][i - 1] + '个选项' }}
-            </el-checkbox>
-          </el-checkbox-group>
+          <el-radio-group v-model="temp.right_answer">
+            <el-radio-button v-for="i of [true,false]" :label="i"></el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -115,6 +101,13 @@
         <el-table-column align="center" label="出题者工号" property="publisher_teacher_id" width="150"></el-table-column>
         <el-table-column header-align="center" label="题干" property="stem" show-overflow-tooltip
                          width="200"></el-table-column>
+        <el-table-column align="center" label="答案" width="100">
+          <template slot-scope="{row}">
+            <el-tag :type="row.right_answer | boolColorFilter">
+              {{ row.right_answer }}
+            </el-tag>
+          </template>
+        </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteVisible = false">
@@ -136,9 +129,14 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import _ from "lodash"
 
 export default {
-  name: 'MaqList',
+  name: 'TfqList',
   components: {MarkdownEditor, Pagination},
   directives: {waves},
+  filters: {
+    boolColorFilter(bool) {
+      return {true: 'success', false: 'danger'}[bool]
+    }
+  },
   data() {
     return {
       tableKey: 0,
@@ -156,9 +154,7 @@ export default {
       temp: {
         id: undefined,
         stem: '',
-        choice_num: 4,
-        choices: [],
-        right_answer: []
+        right_answer: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -184,7 +180,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getQuestions('maq', this.listQuery).then(body => {
+      getQuestions('tfq', this.listQuery).then(body => {
         this.list = body.data
         this.total = body.total
         this.listLoading = false
@@ -198,14 +194,8 @@ export default {
       this.temp = {
         id: undefined,
         stem: '',
-        blank_num: 4,
-        choices: [],
-        right_answer: []
+        right_answer: undefined
       }
-    },
-    updateTemp() {
-      this.temp.choices.splice(this.temp.choice_num)
-      this.temp.right_answer = []
     },
     handleCreate() {
       this.resetTemp()
@@ -218,9 +208,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          let req = _.merge({}, this.temp)
-          delete req.blank_num
-          createQuestions('maq', [req]).then(() => {
+          createQuestions('tfq', [this.temp]).then(() => {
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
@@ -235,7 +223,6 @@ export default {
     handleUpdate(row) {
       _.merge(this.temp, row)
       // this.temp = Object.assign({}, row) // NOTICE: shadow copy will cause problems on array
-      this.temp.choice_num = row.choices.length
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -245,9 +232,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const req = _.merge({}, this.temp)
-          delete req.blank_num
-          updateQuestion('maq', req).then(() => {
+          updateQuestion('tfq', this.temp).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, _.merge({}, this.temp)) // remember to copy
             this.dialogFormVisible = false
@@ -261,7 +246,7 @@ export default {
       })
     },
     handleMultiDelete() {
-      let rows = this.$refs.maqTable.selection;
+      let rows = this.$refs.tfqTable.selection;
       if (rows.length === 0) {
         this.$message({
           message: '没有任何一项被选中，勾选表格左侧以多选',
@@ -279,7 +264,7 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
-      deleteQuestions('maq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
+      deleteQuestions('tfq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
         this.dialogDeleteVisible = false
         this.$message({
           message: '删除成功',
