@@ -20,7 +20,7 @@
 
     <el-table
       :key="tableKey"
-      ref="mcqTable"
+      ref="cqTable"
       v-loading="listLoading"
       :data="list"
       border
@@ -49,10 +49,26 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.stem }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-for="i in 4" :label="'选项 '+i" align="left" header-align="center" show-overflow-tooltip>
+      <el-table-column align="left" header-align="center" label="输入" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <el-tag v-show="row.right_answer===i" style="margin-right:10px;" type="success">正解</el-tag>
-          <span class="link-type" @click="handleUpdate(row)">{{ row.choices[i - 1] }}</span>
+          <el-tag v-if="row.input === ''" type="info">无</el-tag>
+          <el-tag v-else :type="row.is_input_from_file?'success':'warning'" style="margin-right:10px;">
+            {{ row.is_input_from_file ? '文件' : '命令行' }}
+          </el-tag>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.input }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" header-align="center" label="正确输出" show-overflow-tooltip>
+        <template slot-scope="{row}">
+          <el-tag :type="row.is_output_to_file?'success':'warning'" style="margin-right:10px;">
+            {{ row.is_output_to_file ? '文件' : '命令行' }}
+          </el-tag>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.output }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" header-align="center" label="代码初始模板" show-overflow-tooltip>
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleUpdate(row)">{{ row.template }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="200">
@@ -77,16 +93,34 @@
         <el-form-item label="题干" prop="stem">
           <markdown-editor v-model="temp.stem"/>
         </el-form-item>
-        <el-form-item label="选项" prop="choices">
-          <markdown-editor v-for="i in 4" v-model="temp.choices[i-1]"/>
+        <el-form-item label="需要输入？">
+          <el-checkbox v-model="temp.has_input" border label="需要"/>
         </el-form-item>
-        <el-form-item label="正确答案" prop="right_answer">
-          <el-radio-group v-model="temp.right_answer">
-            <el-radio-button v-for="i in 4" :label="i">
-              {{ '第' + ['一', '二', '三', '四'][i - 1] + '个选项' }}
+        <el-form-item v-show="temp.has_input" label="输入方式">
+          <el-radio-group v-model="temp.is_input_from_file">
+            <el-radio-button v-for="i in 2" :label="[true,false][i-1]">
+              {{ ['从文件中读取', '从命令行读取'][i - 1] }}
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
+        <el-form-item v-show="temp.has_input" label="输入" prop="input">
+          <el-input v-model="temp.input" rows="8" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item label="输出方式">
+          <el-radio-group v-model="temp.is_output_to_file">
+            <el-radio-button v-for="i in 2" :label="[true,false][i-1]">
+              {{ ['写入文件中', '输出到命令行'][i - 1] }}
+            </el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="正确输出" prop="output">
+          <el-input v-model="temp.output" rows="8" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item label="代码初始模板" prop="template">
+          <!--          TODO: Python Highlight-->
+          <el-input v-model="temp.template" rows="8" type="textarea"></el-input>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -126,9 +160,22 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import _ from "lodash"
 
 export default {
-  name: 'McqList',
+  name: 'CqList',
   components: {MarkdownEditor, Pagination},
   directives: {waves},
+  computed: {
+    rules() {
+      const isRequired = this.temp.has_input
+      return {
+        stem: [{required: true, message: '必须填写题干', trigger: 'change'},
+          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
+        input: [{required: isRequired, message: '必须给出输入', trigger: 'change'},
+          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
+        output: [{required: true, message: '必须给出输出', trigger: 'change'},
+          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
+      }
+    }
+  },
   data() {
     return {
       tableKey: 0,
@@ -142,12 +189,16 @@ export default {
         page_index: 1,
         page_size: 20
       },
-
+      code_template: '# 请作答',
       temp: {
         id: undefined,
         stem: '',
-        choices: [],
-        right_answer: undefined
+        has_input: false,
+        input: '',
+        is_input_from_file: true,
+        is_output_to_file: true,
+        output: '',
+        template: this.code_template
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -159,11 +210,6 @@ export default {
       rowsToBeDeleted: [],
       dialogDeleteVisible: false,
 
-      rules: {
-        stem: [{required: true, message: '必须填写题干', trigger: 'change'},
-          {max: 200, message: '不得超过 200 个字符', trigger: 'change'}],
-        right_answer: [{required: true, message: '必须给出正确答案', trigger: 'change'}]
-      },
       downloadLoading: false
     }
   },
@@ -173,7 +219,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getQuestions('mcq', this.listQuery).then(body => {
+      getQuestions('cq', this.listQuery).then(body => {
         this.list = body.data
         this.total = body.total
         this.listLoading = false
@@ -187,8 +233,12 @@ export default {
       this.temp = {
         id: undefined,
         stem: '',
-        choices: [],
-        right_answer: undefined
+        has_input: false,
+        input: '',
+        is_input_from_file: true,
+        is_output_to_file: true,
+        output: '',
+        template: this.code_template
       }
     },
     handleCreate() {
@@ -202,7 +252,12 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createQuestions('mcq', [this.temp]).then(() => {
+          let req = _.merge({}, this.temp)
+          if (!req.has_input) {
+            req.input = ''
+          }
+          delete req.has_input
+          createQuestions('cq', [req]).then(() => {
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
@@ -217,6 +272,7 @@ export default {
     handleUpdate(row) {
       _.merge(this.temp, row)
       // this.temp = Object.assign({}, row) // NOTICE: shadow copy will cause problems on array
+      this.temp.has_input = this.temp.input !== ''
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -226,10 +282,14 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          updateQuestion('mcq', tempData).then(() => {
+          let req = _.merge({}, this.temp)
+          if (!req.has_input) {
+            req.input = ''
+          }
+          delete req.has_input
+          updateQuestion('cq', req).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, _.merge({}, this.temp)) // remember to copy
+            this.list.splice(index, 1, _.merge({}, req)) // remember to copy
             this.dialogFormVisible = false
             this.$message({
               message: '修改已保存',
@@ -241,7 +301,7 @@ export default {
       })
     },
     handleMultiDelete() {
-      let rows = this.$refs.mcqTable.selection;
+      let rows = this.$refs.cqTable.selection;
       if (rows.length === 0) {
         this.$message({
           message: '没有任何一项被选中，勾选表格左侧以多选',
@@ -259,7 +319,7 @@ export default {
       this.dialogDeleteVisible = true
     },
     deleteData() {
-      deleteQuestions('mcq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
+      deleteQuestions('cq', this.rowsToBeDeleted.map(v => v.id)).then(() => {
         this.dialogDeleteVisible = false
         this.$message({
           message: '删除成功',

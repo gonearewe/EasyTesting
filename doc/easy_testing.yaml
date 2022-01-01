@@ -2489,6 +2489,237 @@ paths:
           description: 'array of id to be deleted, separated by '','''
       tags:
         - question
+  /cq:
+    get:
+      summary: ''
+      tags:
+        - question
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    total: 1
+                    data:
+                      - id: 0
+                        publisher_teacher_id: '2010301800'
+                        stem: |-
+                          下面的代码用于进行矩阵加法，试完成填空，补全代码：
+                          ```py
+                          # 两个矩阵相加
+                          X = [[12,7,3], [4 ,5,6], [7 ,8,9]]
+                          Y = [[5,8,1], [6,7,3], [4,5,9]]
+
+                          result = [[0,0,0], [0,0,0]]
+                          for i in range(len(X)): # 迭代输出行
+                              for _1_ in range(len(X[0])): # 迭代输出列
+                                  result[_2_][j] = X[i][j]+Y[i][_3_]
+                          for r in result:
+                              print(r) # 打印出结果
+                          ```
+                        right_answers:
+                          - j
+                          - i
+                          - j
+                properties:
+                  total:
+                    type: integer
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        publisher_teacher_id:
+                          type: string
+                          minLength: 1
+                        stem:
+                          type: string
+                          minLength: 1
+                        input:
+                          type: string
+                        output:
+                          type: string
+                        is_input_from_file:
+                          type: boolean
+                        is_output_to_file:
+                          type: boolean
+                        template:
+                          type: string
+                      required:
+                        - id
+                        - publisher_teacher_id
+                        - stem
+                        - input
+                        - output
+                        - is_input_from_file
+                        - is_output_to_file
+                        - template
+                required:
+                  - total
+                  - data
+              examples: { }
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      operationId: get-cq
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: publisher_teacher_id
+        - schema:
+            type: string
+          in: query
+          name: page_size
+        - schema:
+            type: string
+          in: query
+          name: page_index
+          description: starts with 1
+    post:
+      summary: ''
+      operationId: post-cq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: ''
+              minItems: 1
+              uniqueItems: true
+              x-examples:
+                example-1:
+                  - stem: 2 * 2 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '3'
+                  - stem: 2 - 0 = ?
+                    choice_1: '2'
+                    choice_2: '3'
+                    choice_3: '4'
+                    choice_4: '5'
+                    right_answer: '1'
+              items:
+                type: object
+                properties:
+                  stem:
+                    type: string
+                    minLength: 1
+                  input:
+                    type: string
+                  output:
+                    type: string
+                  is_input_from_file:
+                    type: boolean
+                  is_output_to_file:
+                    type: boolean
+                  template:
+                    type: string
+                required:
+                  - stem
+                  - input
+                  - output
+                  - is_input_from_file
+                  - is_output_to_file
+                  - template
+            examples: { }
+      tags:
+        - question
+    put:
+      summary: ''
+      operationId: put-cq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              x-examples:
+                example-1:
+                  id: 2
+                  stem: 2 * 1 = ?
+                  choice_1: '2'
+                  choice_2: '3'
+                  choice_3: '4'
+                  choice_4: '5'
+                  right_answer: '1'
+              properties:
+                id:
+                  type: integer
+                stem:
+                  type: string
+                  minLength: 1
+                input:
+                  description: ''
+                  type: string
+                output:
+                  type: string
+                is_input_from_file:
+                  type: boolean
+                is_output_to_file:
+                  type: boolean
+                template:
+                  type: string
+              required:
+                - id
+                - stem
+                - input
+                - output
+                - is_input_from_file
+                - is_output_to_file
+                - template
+            examples: { }
+      tags:
+        - question
+    delete:
+      summary: ''
+      operationId: delete-cq
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ids
+          description: 'array of id to be deleted, separated by '','''
+      tags:
+        - question
+    parameters: [ ]
   /exams/enter:
     post:
       summary: ''
@@ -2723,7 +2954,8 @@ paths:
   /exams/examinees:
     get:
       summary: Your GET endpoint
-      tags: [ ]
+      tags:
+        - exam
       responses:
         '200':
           description: OK

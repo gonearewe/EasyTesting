@@ -133,22 +133,22 @@ export const constantRoutes = [
           icon: 'form'
         },
       },
-      // {
-      //   path: 'crq',
-      //   component: () => import('@/views/question/crq'),
-      //   meta: {
-      //     title: '代码阅读题',
-      //     icon: 'form'
-      //   },
-      // },
-      // {
-      //   path: 'cq',
-      //   component: () => import('@/views/question/cq'),
-      //   meta: {
-      //     title: '编程题',
-      //     icon: 'form'
-      //   },
-      // }
+      {
+        path: 'crq',
+        component: () => import('@/views/question/crq'),
+        meta: {
+          title: '代码阅读题',
+          icon: 'form'
+        },
+      },
+      {
+        path: 'cq',
+        component: () => import('@/views/question/cq'),
+        meta: {
+          title: '编程题',
+          icon: 'form'
+        },
+      }
     ]
   },
 

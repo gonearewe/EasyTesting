@@ -346,6 +346,11 @@ CREATE TABLE `cq`
     `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                 text(200)   NOT NULL COMMENT '题干',
+    `is_input_from_file`   bool        NOT NULL COMMENT '程序输入是否从文件读取，若为否，从命令行读取',
+    `is_output_to_file`    bool        NOT NULL COMMENT '程序输出是否写入文件，若为否，输出到命令行',
+    `input`                text(200)   NOT NULL COMMENT '程序的输入',
+    `output`               text(200)   NOT NULL COMMENT '程序的输出',
+    `template`             text(200)   NOT NULL COMMENT '题目的初始模板',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -499,6 +504,12 @@ VALUES ('2010301800', '下面的代码用于进行矩阵加法，试完成填空
 [6,7,3], [4,5,9]]\n\nresult = [[0,0,0], [0,0,0]]\nfor i in range(len(X)): # 迭代输出行\n    for _1_ in range(len(X[0])): 
 # 迭代输出列\n        result[_2_][j] = X[i][j]+Y[i][_3_]\nfor r in result:\n    print(r) # 打印出结果\n```', 3, 'j', 'i', 'j',
         NULL, NULL, NULL);
+
+TRUNCATE TABLE `cq`;
+INSERT INTO `cq`
+(`publisher_teacher_id`, `stem`, `is_input_from_file`, `is_output_to_file`, `input`, `output`, `template`)
+VALUES ('2010301800', '编写程序计算一组整数的和。整数从当前路径下的文件 data.txt 中读取，整数间以空格分隔。向终端（stdout）输出结果。',
+        true, false, '3 4 6 9 66 59 21 300000 41 0 1', '300210', '# 请在此作答\nprint("hello world !")');
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

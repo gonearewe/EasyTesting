@@ -39,7 +39,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="出题者工号">
+      <el-table-column align="center" label="出题者工号" width="150">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.publisher_teacher_id }}</span>
         </template>
@@ -58,7 +58,7 @@
           <el-tag v-else type="info">无</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="230">
+      <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="200">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleUpdate(row)">
             编辑
