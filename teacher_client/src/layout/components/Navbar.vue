@@ -7,24 +7,54 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="'../icons/profile.svg'" class="user-avatar">
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Home
+              首页
             </el-dropdown-item>
           </router-link>
           <a href="https://github.com/gonearewe/EasyTesting" target="_blank">
-            <el-dropdown-item>Docs</el-dropdown-item>
+            <el-dropdown-item>文档</el-dropdown-item>
           </a>
+          <el-dropdown-item @click.native="this.dialogAboutVisible=true">关于</el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+<!--    <el-dialog :close-on-click-modal="false" title="编辑个人信息" :visible.sync="dialogFormVisible"-->
+<!--               width="30%">-->
+<!--      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px"-->
+<!--               style="margin-left:50px;">-->
+<!--        <el-form-item label="工号" prop="teacher_id">-->
+<!--          <el-input v-model="temp.teacher_id"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="姓名" prop="name">-->
+<!--          <el-input v-model="temp.name"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="管理员权限" prop="is_admin">-->
+<!--          <el-checkbox v-model="temp.is_admin" border label="授予"/>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+<!--      <div slot="footer" class="dialog-footer">-->
+<!--        <el-button @click="dialogFormVisible = false">-->
+<!--          取消-->
+<!--        </el-button>-->
+<!--        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">-->
+<!--          确定-->
+<!--        </el-button>-->
+<!--      </div>-->
+<!--    </el-dialog>-->
+
+    <el-dialog :close-on-click-modal="false" title="关于 E-Testing 系统" :visible.sync="dialogAboutVisible"
+               width="30%">
+      E-Testing 系统是一个在线考试系统。
+    </el-dialog>
   </div>
 </template>
 
@@ -41,8 +71,13 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
     ])
+  },
+  data() {
+    return {
+    dialogFormVisible: false,
+      dialogAboutVisible:false
+    }
   },
   methods: {
     toggleSideBar() {

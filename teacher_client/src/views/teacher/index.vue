@@ -248,7 +248,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           updateTeacher(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+            this.list.splice(index, 1, tempData)
             this.dialogFormVisible = false
             this.$message({
               message: '修改已保存',

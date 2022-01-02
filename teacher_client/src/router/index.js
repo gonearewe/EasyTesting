@@ -60,7 +60,7 @@ export const constantRoutes = [
       {
         path: 'teacher',
         component: () => import('@/views/teacher'),
-        meta: {title: '教师管理', icon: 'form'}
+        meta: {title: '教师管理', icon: 'teacher'}
       }
     ]
   },
@@ -71,7 +71,7 @@ export const constantRoutes = [
       {
         path: 'student',
         component: () => import('@/views/student'),
-        meta: {title: '学生管理', icon: 'form'}
+        meta: {title: '学生管理', icon: 'student'}
       }
     ]
   },
@@ -83,12 +83,12 @@ export const constantRoutes = [
       {
         path: 'index',
         component: () => import('@/views/exam'),
-        meta: {title: '考试管理', icon: 'form'}
+        meta: {title: '考试管理', icon: 'exam'}
       },
       {
         path: 'detail/:id(\\d+)',
         component: () => import('@/views/exam/detail'),
-        meta: {title: '考试结果', icon: 'form'},
+        meta: {title: '考试结果', icon: 'analysis'},
         hidden: true
       }
     ]
@@ -98,7 +98,7 @@ export const constantRoutes = [
     component: Layout,
     meta: {
       title: '试题管理',
-      icon: 'form'
+      icon: 'question'
     },
     children: [
       {
@@ -106,7 +106,7 @@ export const constantRoutes = [
         component: () => import('@/views/question/mcq'),
         meta: {
           title: '单选题',
-          icon: 'form'
+          icon: 'mcq'
         },
       },
       {
@@ -114,7 +114,7 @@ export const constantRoutes = [
         component: () => import('@/views/question/maq'),
         meta: {
           title: '多选题',
-          icon: 'form'
+          icon: 'maq'
         },
       },
       {
@@ -122,7 +122,7 @@ export const constantRoutes = [
         component: () => import('@/views/question/bfq'),
         meta: {
           title: '填空题',
-          icon: 'form'
+          icon: 'bfq'
         },
       },
       {
@@ -130,7 +130,7 @@ export const constantRoutes = [
         component: () => import('@/views/question/tfq'),
         meta: {
           title: '判断题',
-          icon: 'form'
+          icon: 'tfq'
         },
       },
       {
@@ -138,7 +138,7 @@ export const constantRoutes = [
         component: () => import('@/views/question/crq'),
         meta: {
           title: '代码阅读题',
-          icon: 'form'
+          icon: 'crq'
         },
       },
       {
@@ -146,7 +146,7 @@ export const constantRoutes = [
         component: () => import('@/views/question/cq'),
         meta: {
           title: '编程题',
-          icon: 'form'
+          icon: 'cq'
         },
       }
     ]
