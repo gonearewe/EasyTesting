@@ -2980,6 +2980,39 @@ paths:
             type: integer
           in: query
           name: exam_id
+  /profile:
+    put:
+      summary: ''
+      operationId: put-profile
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Forbidden
+      tags:
+        - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                teacher_id:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+              required:
+                - id
+                - teacher_id
+                - name
 components:
   schemas: {}
   securitySchemes:

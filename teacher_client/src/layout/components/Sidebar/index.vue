@@ -12,7 +12,8 @@
         :unique-opened="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :base-path="route.path" :item="route"/>
+        <!--really help tips on displaying dynamic routes of sidebar from https://its401.com/article/qq_41773806/121407661-->
+        <sidebar-item v-for="route in permission_routes" :key="route.path" :base-path="route.path" :item="route"/>
       </el-menu>
     </el-scrollbar>
   </div>
@@ -28,7 +29,8 @@ export default {
   components: {SidebarItem, Logo},
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar',
+      'permission_routes'
     ]),
     routes() {
       return this.$router.options.routes

@@ -266,6 +266,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           updateStudent(tempData).then(() => {
+            // rather than `getList` again, we play a trick by inserting the entry directly if the request is successful
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, tempData)
             this.dialogFormVisible = false

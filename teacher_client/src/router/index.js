@@ -52,29 +52,6 @@ export const constantRoutes = [
       meta: {title: '首页', icon: 'dashboard'}
     }]
   },
-
-  {
-    path: '/teacher',
-    component: Layout,
-    children: [
-      {
-        path: 'teacher',
-        component: () => import('@/views/teacher'),
-        meta: {title: '教师管理', icon: 'teacher'}
-      }
-    ]
-  },
-  {
-    path: '/student',
-    component: Layout,
-    children: [
-      {
-        path: 'student',
-        component: () => import('@/views/student'),
-        meta: {title: '学生管理', icon: 'student'}
-      }
-    ]
-  },
   {
     path: '/exam',
     component: Layout,
@@ -151,9 +128,38 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/student',
+    component: Layout,
+    children: [
+      {
+        path: 'student',
+        component: () => import('@/views/student'),
+        meta: {title: '学生管理', icon: 'student'}
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   {path: '*', redirect: '/404', hidden: true}
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+  {
+    path: '/teacher',
+    component: Layout,
+    children: [
+      {
+        path: 'teacher',
+        component: () => import('@/views/teacher'),
+        meta: {title: '教师管理', icon: 'teacher', roles: ['admin']}
+      }
+    ]
+  },
 ]
 
 const createRouter = () => new Router({

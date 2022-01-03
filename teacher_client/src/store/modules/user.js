@@ -1,14 +1,16 @@
-import {getInfo, login, logout} from '@/api/user'
+import {login} from '@/api/user'
 import {getToken, removeToken, setToken} from '@/utils/auth'
 import {resetRouter} from '@/router'
 import jwt_decode from "jwt-decode"
-import {sha256} from "js-sha256";
+import {sha256} from "js-sha256"
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     teacher_id: '',
-    name: ''
+    name: '',
+    id: '',
+    roles: []
   }
 }
 
@@ -27,6 +29,12 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_ID: (state, id) => {
+    state.id = id
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
+  }
 }
 
 const actions = {
@@ -37,14 +45,6 @@ const actions = {
       login({teacher_id: teacher_id.trim(), password: sha256(password)}).then(data => {
         let token = data.token
         commit('SET_TOKEN', token)
-        try {
-          let decoded = jwt_decode(token)
-          commit('SET_TEACHER_ID',decoded.teacher_id)
-          commit('SET_NAME',decoded.name)
-        } catch (error) {
-          // return error in production env
-          console.log( 'error from decoding token: ',error)
-        }
         setToken(token)
         resolve()
       }).catch(error => {
@@ -53,13 +53,32 @@ const actions = {
     })
   },
 
+  // get user info
+  getInfo({commit, state}) {
+    return new Promise((resolve, reject) => {
+      try {
+        let decoded = jwt_decode(state.token)
+        commit('SET_TEACHER_ID', decoded.teacher_id)
+        commit('SET_NAME', decoded.name)
+        commit('SET_ID', decoded.id)
+        commit('SET_ROLES', decoded.is_admin ? ['admin'] : ['teacher'])
+        resolve({roles: decoded.is_admin ? ['admin'] : ['teacher']})
+      } catch (error) {
+        // return error in production env
+        console.log('error from decoding token: ', error)
+        reject(error)
+      }
+    })
+  },
+
   // user logout
   logout({commit, state}) {
     return new Promise((resolve, reject) => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
+      removeToken() // must remove  token  first
+      resetRouter()
+      commit('RESET_STATE')
+      commit('SET_ROLES', [])
+      resolve()
     })
   },
 
@@ -68,6 +87,7 @@ const actions = {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
+      commit('SET_ROLES', [])
       resolve()
     })
   }

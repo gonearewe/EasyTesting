@@ -47,7 +47,7 @@ func CreateTeachers(teachers []*models.Teacher) {
 }
 
 func UpdateTeacherById(t *models.Teacher) {
-    var filtered = db.Model(t).Where("id = ?", t.ID)
+    var filtered = db.Model(t)
     var err error
     if t.Password == "" && t.Salt == "" {
         err = filtered.Updates(
@@ -56,6 +56,21 @@ func UpdateTeacherById(t *models.Teacher) {
     } else {
         err = filtered.Updates(
             map[string]interface{}{"teacher_id": t.TeacherID, "name": t.Name, "is_admin": t.IsAdmin,
+                "password": t.Password, "salt": t.Salt}).Error
+    }
+    utils.PanicWhen(err)
+}
+
+func UpdateTeacherProfileById(t *models.Teacher) {
+    var filtered = db.Model(t)
+    var err error
+    if t.Password == "" && t.Salt == "" {
+        err = filtered.Updates(
+            // Updates with map instead of struct to avoid fields of default value being ignored
+            map[string]interface{}{"teacher_id": t.TeacherID, "name": t.Name}).Error
+    } else {
+        err = filtered.Updates(
+            map[string]interface{}{"teacher_id": t.TeacherID, "name": t.Name,
                 "password": t.Password, "salt": t.Salt}).Error
     }
     utils.PanicWhen(err)

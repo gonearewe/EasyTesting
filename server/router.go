@@ -14,6 +14,8 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, ad
     adminAuthRouter.PUT("/teachers",handlers.PutTeacherHandler)
     adminAuthRouter.DELETE("/teachers",handlers.DeleteTeachersHandler)
 
+    teacherAuthRouter.PUT("/profile",handlers.PutTeacherProfileHandler)
+
     teacherAuthRouter.GET("/students",handlers.GetStudentsHandler)
     teacherAuthRouter.POST("/students", handlers.StudentsRegisterHandler)
     teacherAuthRouter.PUT("/students",handlers.PutStudentHandler)

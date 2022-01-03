@@ -25,7 +25,15 @@ export function updateTeacher(teacher) {
   })
 }
 
-export function deleteTeachers(ids){
+export function updateTeacherProfile(teacher) {
+  return request({
+    url: '/profile',
+    method: 'put',
+    data: teacher
+  })
+}
+
+export function deleteTeachers(ids) {
   return request({
     url: '/teachers',
     method: 'delete',

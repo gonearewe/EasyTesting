@@ -1,7 +1,6 @@
 package handlers
 
 import (
-    "net/http"
     "strings"
 
     jwt "github.com/appleboy/gin-jwt/v2"
@@ -9,6 +8,7 @@ import (
     "github.com/gonearewe/EasyTesting/dao"
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
+    "gopkg.in/errgo.v2/errors"
 )
 
 func TeachersRegisterHandler(c *gin.Context) {
@@ -39,14 +39,30 @@ func PutTeacherHandler(c *gin.Context) {
     dao.UpdateTeacherById(&teacher)
 }
 
+func PutTeacherProfileHandler(c *gin.Context) {
+    var teacher models.Teacher
+    utils.MustParseJsonTo(c, &teacher)
+    if teacher.ID != int(jwt.ExtractClaims(c)["id"].(float64)){
+        c.AbortWithError(401,errors.New("profile endpoint forbids modifying other teacher's profile"))
+        return
+    }
+    if teacher.Password != "" {
+        salt := utils.GenerateSalt()
+        teacher.Salt = string(salt)
+        teacher.Password = string(utils.CalculatePasswordWithSalt(teacher.Password, salt))
+    }
+    dao.UpdateTeacherProfileById(&teacher)
+}
+
 func DeleteTeachersHandler(c *gin.Context) {
     abortIfAnyExamActive(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {
         ids[i] = utils.Int(e)
-        if jwt.ExtractClaims(c)["id"] == ids[i] { // not allowed to delete himself or herself
-            c.AbortWithStatus(http.StatusForbidden)
+        if int(jwt.ExtractClaims(c)["id"].(float64)) == ids[i] {
+            c.AbortWithError(403,errors.New("not allowed to delete himself or herself"))
+            return
         }
     }
     dao.DeleteTeachers(ids)

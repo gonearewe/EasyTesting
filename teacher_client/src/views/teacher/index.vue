@@ -89,6 +89,9 @@
         <el-form-item label="姓名" prop="name">
           <el-input v-model="temp.name"/>
         </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="temp.password" :placeholder="dialogStatus==='update'?'若不修改密码，请留空':''"/>
+        </el-form-item>
         <el-form-item label="管理员权限" prop="is_admin">
           <el-checkbox v-model="temp.is_admin" border label="授予"/>
         </el-form-item>
@@ -134,6 +137,7 @@
 import {createTeachers, deleteTeachers, getTeachers, updateTeacher} from '@/api/teacher'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
+import {sha256} from "js-sha256";
 
 export default {
   name: 'TeacherList',
@@ -145,6 +149,19 @@ export default {
     },
     boolColorFilter(bool) {
       return {true: 'success', false: 'info'}[bool]
+    }
+  },
+  computed: {
+    rules() {
+      const isRequired = this.dialogStatus === 'create'
+      return {
+        teacher_id: [{required: true, message: '必须填写工号', trigger: 'change'},
+          {max: 10, message: '不得超过 10 个字符', trigger: 'change'}],
+        name: [{required: true, message: '必须填写姓名', trigger: 'change'},
+          {max: 50, message: '不得超过 50 个字符', trigger: 'change'}],
+        password: [{required: isRequired, message: '必须填写密码', trigger: 'change'},
+          {max: 50, message: '不得超过 50 个字符', trigger: 'change'}]
+      }
     }
   },
   data() {
@@ -166,6 +183,7 @@ export default {
         id: undefined,
         teacher_id: '',
         name: '',
+        password: '',
         is_admin: false
       },
       dialogFormVisible: false,
@@ -178,12 +196,6 @@ export default {
       rowsToBeDeleted: [],
       dialogDeleteVisible: false,
 
-      rules: {
-        teacher_id: [{required: true, message: '必须填写工号', trigger: 'change'},
-          {max: 10, message: '不得超过 10 个字符', trigger: 'change'}],
-        name: [{required: true, message: '必须填写姓名', trigger: 'change'},
-          {max: 50, message: '不得超过 50 个字符', trigger: 'change'}]
-      },
       downloadLoading: false
     }
   },
@@ -208,6 +220,7 @@ export default {
         id: undefined,
         teacher_id: '',
         name: '',
+        password: '',
         is_admin: false
       }
     },
@@ -222,7 +235,12 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createTeachers([this.temp]).then(() => {
+          const tempData = Object.assign({}, this.temp)
+          // modify the copy instead because `this.temp` is the `model` and any change to it will be shown to user
+          if (tempData.password) { // `if` is needed because empty string can also be encoded by sha256
+            tempData.password = sha256(tempData.password)
+          }
+          createTeachers([tempData]).then(() => {
             this.dialogFormVisible = false
             this.$message({
               message: '创建成功',
@@ -246,8 +264,13 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
+          if (tempData.password) { // `if` is needed because empty string can also be encoded by sha256
+            tempData.password = sha256(tempData.password)
+          }
           updateTeacher(tempData).then(() => {
+            // rather than `getList` again, we play a trick by inserting the entry directly if the request is successful
             const index = this.list.findIndex(v => v.id === this.temp.id)
+            delete tempData.password // must delete field
             this.list.splice(index, 1, tempData)
             this.dialogFormVisible = false
             this.$message({
