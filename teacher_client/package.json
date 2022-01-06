@@ -1,8 +1,8 @@
 {
-  "name": "vue-admin-template",
-  "version": "4.4.0",
-  "description": "A vue admin template with Element UI & axios & iconfont & permission control & lint",
-  "author": "Pan <panfree23@gmail.com>",
+  "name": "easy-testing-teacher",
+  "version": "0.5.0",
+  "description": "Teacher Client of An Easy-to-use Testing System Built with PyQt5, Vue and Go.",
+  "author": "Euan <cristmactavish@outlook.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
@@ -14,6 +14,7 @@
     "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
+    "@octokit/core": "^3.5.1",
     "@toast-ui/editor": "^2.2.0",
     "axios": "0.18.1",
     "codemirror": "^5.64.0",
@@ -68,5 +69,5 @@
     "node": ">=8.9",
     "npm": ">= 3.0.0"
   },
-  "license": "MIT"
+  "license": "Apache-2.0 License"
 }
