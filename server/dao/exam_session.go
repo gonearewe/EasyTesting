@@ -12,14 +12,15 @@ import (
 
 func GetExamSessionsBy(examId int) (ret []*models.ExamSession) {
 	// `answer_sheet` field is excluded.
-	db.Select("student_id", "student_name", "start_time", "end_time", "score").
-		Where("exam_id = ?", examId).Find(&ret)
+	err := db.Select("student_id", "student_name", "start_time", "end_time", "score").
+		Where("exam_id = ?", examId).Find(&ret).Error
+	utils.PanicWhen(err)
 	return
 }
 
-func GetExamSessionBy(studentId string, examId int) (ret *models.ExamSession) {
-	db.Select("id", "student_name").
-		Where("exam_id = ? AND student_id = ?", examId, studentId).First(&ret)
+func GetExamSessionBy(studentId string, examId int) (err error, ret *models.ExamSession) {
+	err = db.Select("id", "student_name").
+		Where("exam_id = ? AND student_id = ?", examId, studentId).First(&ret).Error
 	return
 }
 
@@ -55,7 +56,7 @@ func EnterExam(studentId string, examId int) {
 		var session = models.ExamSession{
 			ExamID:      examId,
 			StudentID:   studentId,
-			StudentName: GetStudentNameBy(studentId),
+			StudentName: GetStudentBy(studentId).Name,
 			StartTime:   time.Now(),
 			EndTime:     time.Time{},
 		}

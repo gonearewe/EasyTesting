@@ -5,7 +5,8 @@ import (
 	"github.com/gonearewe/EasyTesting/handlers"
 )
 
-func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, adminAuthRouter *gin.RouterGroup) {
+func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup,
+	adminAuthRouter *gin.RouterGroup, studentAuthRouter *gin.RouterGroup) {
 	unauthRouter.GET("/ping", handlers.PingHandler)
 	teacherAuthRouter.GET("/hello", handlers.HelloHandler)
 
@@ -57,8 +58,8 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup, ad
 	teacherAuthRouter.PUT("/exams", handlers.PutExamHandler)
 	teacherAuthRouter.DELETE("/exams", handlers.DeleteExamHandler)
 
-	unauthRouter.POST("/exams/enter", handlers.EnterExamHandler)
+	// unauthRouter.POST("/exams/enter", handlers.EnterExamHandler)
 	teacherAuthRouter.GET("/exams/examinees", handlers.GetExamineeHandler)
-	unauthRouter.GET("/exams/my_questions", handlers.GetMyQuestionsHandler)
-	unauthRouter.GET("/exams/my_session", handlers.GetExamSessionHandler)
+	studentAuthRouter.GET("/exams/my_questions", handlers.GetMyQuestionsHandler)
+	// unauthRouter.GET("/exams/my_session", handlers.GetExamSessionHandler)
 }

@@ -20,8 +20,8 @@ func init() {
 
 func main() {
 	r := gin.New()
-	teacherAuthRouter, adminAuthRouter := middlewares.SetupMiddleWares(r)
-	SetupRoute(r, teacherAuthRouter, adminAuthRouter)
+	teacherAuthRouter, adminAuthRouter, studentAuthRouter := middlewares.SetupMiddleWares(r)
+	SetupRoute(r, teacherAuthRouter, adminAuthRouter, studentAuthRouter)
 	if err := http.ListenAndServe(":"+viper.GetString("port"), r); err != nil {
 		log.Fatal(err)
 	}
