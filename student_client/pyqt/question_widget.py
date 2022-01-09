@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from pyqode.python.backend import server
 from pyqode.python.widgets import PyCodeEdit
 
-from student_client.question import *
+from student_client.pyqt.question import *
 
 
 class QuestionWidget(QWidget):

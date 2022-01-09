@@ -27,10 +27,11 @@ func GetStudentsBy(studentId string, name string, classId string,
 	return
 }
 
-func GetStudentBy(studentId string) (ret *models.Student) {
-	err := db.Select("student_id", "name", "class_id").Where("student_id = ?", studentId).First(ret).Error
+func GetStudentBy(studentId string) *models.Student {
+	var ret models.Student
+	err := db.Select("student_id", "name", "class_id").Where("student_id = ?", studentId).First(&ret).Error
 	utils.PanicWhen(err)
-	return
+	return &ret
 }
 
 func buildStudentQueryFrom(tx *gorm.DB, studentId string, name string, classId string) *gorm.DB {

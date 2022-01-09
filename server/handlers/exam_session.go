@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/models"
@@ -21,12 +22,13 @@ func GetExamineeHandler(c *gin.Context) {
 func GetExamSessionHandler(c *gin.Context) {
 	studentId := c.Query("student_id")
 	examId := utils.Int(c.Query("exam_id"))
-	sessions := dao.GetExamSessionBy(studentId, examId)
+	err,sessions := dao.GetExamSessionBy(studentId, examId)
+	utils.PanicWhen(err)
 	c.JSON(200, sessions)
 }
 
 func GetMyQuestionsHandler(c *gin.Context) {
-	id := utils.Int(c.Query("exam_session_id"))
+	id := int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
 	m := dao.GetMyQuestions(id)
 
 	mcqs := m["mcq"].([]*models.Mcq)

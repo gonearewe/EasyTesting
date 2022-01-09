@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 
 from common import network
-from student_client import api
+from student_client.pyqt import api
 
 
 class LoginDialog(QDialog):

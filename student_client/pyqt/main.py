@@ -5,8 +5,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 
-from student_client.question import *
-from student_client.question_widget import QuestionWidget
+from student_client.pyqt.question import *
+from student_client.pyqt.question_widget import QuestionWidget
 
 
 class MainWindow(QMainWindow):
