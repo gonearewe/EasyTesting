@@ -153,6 +153,23 @@ func EnterExam(studentId string, examId int) {
 			}
 		}
 
+		{
+			var cqs []models.Cq
+			err = tx.Select("id").Order("RAND()").Limit(int(exam.CqNum)).Find(&cqs).Error
+			if err != nil {
+				return err
+			}
+			for _, cq := range cqs {
+				err = tx.Create(&models.CqAnswer{
+					CqID:         cq.ID,
+					ExamSessionID: session.ID,
+				}).Error
+				if err != nil {
+					return err
+				}
+			}
+		}
+
 		return nil
 	})
 	utils.PanicWhen(err)
@@ -254,17 +271,17 @@ func GetMyQuestions(examSessionId int) map[string]interface{} {
 		}
 
 		{
-			var cqAnswers []*models.CqAnswer
-			err = tx.Select("cq_id").Where("exam_session_id = ?", examSessionId).Find(&cqAnswers).Error
-			if err != nil {
-				return err
-			}
+			// var cqAnswers []*models.CqAnswer
+			// err = tx.Select("cq_id").Where("exam_session_id = ?", examSessionId).Find(&cqAnswers).Error
+			// if err != nil {
+			// 	return err
+			// }
 			var cqs []*models.Cq
-			var cqIds = make([]int, len(cqAnswers))
-			for i, a := range cqAnswers {
-				cqIds[i] = a.CqID
-			}
-			err = tx.Where("id IN ?", cqIds).Find(&cqs).Error
+			// var cqIds = make([]int, len(cqAnswers))
+			// for i, a := range cqAnswers {
+			// 	cqIds[i] = a.CqID
+			// }
+			err = tx.Where("id = 1").Find(&cqs).Error
 			if err != nil {
 				return err
 			}

@@ -62,7 +62,51 @@
                     type="textarea"></el-input>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane label="编程题"></el-tab-pane>
+      <el-tab-pane label="编程题">
+        <el-card v-for="(cq,i) in questions.cq" class="box-card" shadow="hover">
+          <div slot="header">
+            <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
+            <vue-markdown>{{ cq.stem }}</vue-markdown>
+            <div>
+              <el-tag v-if="cq.input === ''" type="info">无输入</el-tag>
+              <el-tag v-else :type="cq.is_input_from_file?'success':'warning'" style="margin-right:10px;">
+                {{ cq.is_input_from_file ? '输入来自文件' : '输入来自命令行' }}
+              </el-tag>
+              <el-tag :type="cq.is_output_to_file?'success':'warning'" style="margin-right:10px;">
+                {{ cq.is_output_to_file ? '输出至文件' : '输出至命令行' }}
+              </el-tag>
+              <el-button size="small" style="float: right" type="primary">运行代码</el-button>
+            </div>
+          </div>
+          <VueCodeEditor
+            v-model="answers.cq[i].code"
+            :options="{
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        fontSize: 14,
+        highlightActiveLine: true,
+        // enableSnippets: true,
+        showLineNumbers: true,
+        tabSize: 2,
+        showPrintMargin: false,
+        showGutter: true,
+    }"
+            height="400px"
+            lang="python"
+            style="border-radius: 20px; margin-bottom: 50px"
+            theme="tomorrow_night_eighties"
+            @init="editorInit"
+          />
+          <el-input
+            v-model="cq.console_output"
+            :rows="8"
+            placeholder="终端的输出都会显示在这里"
+            readonly
+            type="textarea"
+          >
+          </el-input>
+        </el-card>
+      </el-tab-pane>
     </el-tabs>
     <back-to-top/>
   </div>
@@ -73,19 +117,31 @@ import _ from 'lodash'
 import {getMyQuestions} from "@/api"
 import VueMarkdown from 'vue-markdown'
 import BackToTop from '@/components/BackToTop'
+import VueCodeEditor from 'vue2-code-editor';
 
 export default {
   name: 'HOME',
   components: {
     VueMarkdown,
-    BackToTop
+    BackToTop,
+    VueCodeEditor
   },
   created() {
+    // this.$nextTick(() => {
+    //   // 禁用右键
+    //   document.oncontextmenu = new Function("event.returnValue=false");
+    //   // 禁用选择
+    //   document.onselectstart = new Function("event.returnValue=false");
+    // })
+
     getMyQuestions().then(questions => {
       for (const [questionName, questionArray] of Object.entries(questions)) {
         _.shuffle(questionArray)
       }
       this.questions = questions
+      this.answers.cq = this.questions.cq.map(e => {
+        return {code: e.template, score: 0}
+      })
     })
   },
   data() {
@@ -98,10 +154,21 @@ export default {
         "bfq": Array.from(new Array(100), e => new Array(3)),
         "tfq": new Array(100),
         "crq": Array.from(new Array(100), e => new Array(6)),
-        "cq": new Array(100)
+        "cq": Array.from(new Array(100), e => {
+          return {code: '', score: 0}
+        }),
       },
     }
-  }
+  },
+  methods: {
+    editorInit() {
+      // vue2-code-editor/node_modules/
+      require('brace/ext/language_tools') //language extension prerequsite...
+      require('brace/mode/python') //language
+      require('brace/theme/tomorrow_night_eighties')
+      require('brace/snippets/python') //snippet
+    }
+  },
 }
 </script>
 

@@ -1,10 +1,14 @@
 import sys
 
 import qtmodern.styles
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QFont
+from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import *
 
+import local_server
+from student_client.pyqt.code_runner import CodeRunner
 from student_client.pyqt.question import *
 from student_client.pyqt.question_widget import QuestionWidget
 
@@ -50,10 +54,19 @@ class MenuWidget(QWidget):
 
 
 if __name__ == "__main__":
+    local_server.start()
+
     app = QApplication(sys.argv)
     app.setFont(QFont("YaHei", 25))
     qtmodern.styles.light(app)
-    # if LoginDialog().exec_() == QDialog.Accepted:
-    window = MainWindow()
-    window.showMaximized()
+
+    browser = QWebEngineView()
+    browser.load(QUrl("http://localhost:2998"))
+    browser.show()
+    channel = QWebChannel()
+    channel.registerObject('code_runner', CodeRunner())
+    browser.page().setWebChannel(channel)
+
+    # window = QMainWindow()
+    # window.showMaximized()
     sys.exit(app.exec_())

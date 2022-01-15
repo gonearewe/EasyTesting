@@ -508,7 +508,7 @@ VALUES ('2010301800', '下面的代码用于进行矩阵加法，试完成填空
 TRUNCATE TABLE `cq`;
 INSERT INTO `cq`
 (`publisher_teacher_id`, `stem`, `is_input_from_file`, `is_output_to_file`, `input`, `output`, `template`)
-VALUES ('2010301800', '编写程序计算一组整数的和。整数从当前路径下的文件 data.txt 中读取，整数间以空格分隔。向终端（stdout）输出结果。',
+VALUES ('2010301800', '编写程序计算一组整数的和。整数从当前路径下的文件 input.txt 中读取，整数间以空格分隔。向终端（stdout）输出结果。',
         true, false, '3 4 6 9 66 59 21 300000 41 0 1', '300210', '# 请在此作答\nprint("hello world !")');
 
 SET FOREIGN_KEY_CHECKS = 1;
