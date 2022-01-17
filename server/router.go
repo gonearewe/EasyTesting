@@ -7,6 +7,8 @@ import (
 
 func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup,
 	adminAuthRouter *gin.RouterGroup, studentAuthRouter *gin.RouterGroup) {
+	unauthRouter.StaticFile("/","../student_client/vue/dist/index.html")
+	unauthRouter.Static("/static/","../student_client/vue/dist/static")
 	unauthRouter.GET("/ping", handlers.PingHandler)
 	teacherAuthRouter.GET("/hello", handlers.HelloHandler)
 

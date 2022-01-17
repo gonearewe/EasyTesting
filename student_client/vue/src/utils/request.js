@@ -4,14 +4,22 @@ import store from '@/store'
 import {getToken} from '@/utils/auth'
 
 // create an axios instance
-const service = axios.create({
+export const remoteService = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
 
+export const localService = axios.create({
+  baseURL: process.env.STATIC_URL, // url = base url + request url
+  timeout: 5000 // request timeout
+})
+
+const services = [remoteService, localService]
+
 // request interceptor
-service.interceptors.request.use(
+services.forEach(service => {
+  service.interceptors.request.use(
     config => {
       // do something before request is sent
 
@@ -26,10 +34,12 @@ service.interceptors.request.use(
       console.log(error) // for debug
       return Promise.reject(error)
     }
-)
+  )
+})
 
 // response interceptor
-service.interceptors.response.use(
+services.forEach(service => {
+  service.interceptors.response.use(
     /**
      * If you want to get http information such as headers or status
      * Please return  response => response
@@ -39,12 +49,11 @@ service.interceptors.response.use(
       console.log(response)
       if (response.status !== 200) {
         Message({
-          message: 'Error',
+          message: '网络错误',
           type: 'error',
           showClose: true,
-          duration: 5 * 1000
         })
-        return Promise.reject(new Error('Error'))
+        return Promise.reject(new Error('网络错误'))
       } else {
         return response.data
       }
@@ -55,10 +64,8 @@ service.interceptors.response.use(
         message: error.message,
         type: 'error',
         showClose: true,
-        duration: 5 * 1000
       })
       return Promise.reject(error)
     }
-)
-
-export default service
+  )
+})

@@ -8,11 +8,6 @@ import (
 	"github.com/gonearewe/EasyTesting/utils"
 )
 
-func EnterExamHandler(c *gin.Context) {
-	m := utils.MustParseJson(c)
-	dao.EnterExam(m["student_id"].(string), int(m["exam_id"].(float64)))
-}
-
 func GetExamineeHandler(c *gin.Context) {
 	examId := utils.Int(c.Query("exam_id"))
 	sessions := dao.GetExamSessionsBy(examId)

@@ -1,6 +1,7 @@
 import {login} from '@/api'
 import {getToken, removeToken, setToken} from '@/utils/auth'
 import jwt_decode from "jwt-decode"
+import {parseTime} from "@/utils/time";
 
 const getDefaultState = () => {
   return {
@@ -8,7 +9,8 @@ const getDefaultState = () => {
     name: '',
     class_id: 0,
     token: getToken(),
-    exam_session_id: 0
+    exam_session_id: 0,
+    exam_deadline: '',
   }
 }
 
@@ -32,7 +34,10 @@ const mutations = {
   },
   SET_EXAM_SESSION_ID: (state, exam_session_id) => {
     state.exam_session_id = exam_session_id
-  }
+  },
+  SET_EXAM_DEADLINE: (state, exam_deadline) => {
+    state.exam_deadline = exam_deadline
+  },
 }
 
 const actions = {
@@ -50,6 +55,7 @@ const actions = {
           commit('SET_NAME', decoded.name)
           commit('SET_CLASS_ID', decoded.class_id)
           commit('SET_EXAM_SESSION_ID', decoded.exam_session_id)
+          commit('SET_EXAM_DEADLINE', parseTime(decoded.exam_deadline))
           resolve()
         } catch (error) {
           // return error in production env

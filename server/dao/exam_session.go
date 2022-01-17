@@ -19,7 +19,7 @@ func GetExamSessionsBy(examId int) (ret []*models.ExamSession) {
 }
 
 func GetExamSessionBy(studentId string, examId int) (err error, ret *models.ExamSession) {
-	err = db.Select("id", "student_name").
+	err = db.Select("id", "student_name", "start_time", "time_allowed").
 		Where("exam_id = ? AND student_id = ?", examId, studentId).First(&ret).Error
 	return
 }
@@ -38,7 +38,7 @@ func EnterExam(studentId string, examId int) {
 
 		// SELECT FOR SHARE, make sure the exam exists and active
 		err = tx.Clauses(clause.Locking{Strength: "SHARE"}).
-			Select("id").
+			Select("id","time_allowed").
 			Where("id = ? AND start_time <= CURTIME() AND CURTIME() < end_time", examId).
 			First(&exam).Error
 		if err != nil {
@@ -57,6 +57,7 @@ func EnterExam(studentId string, examId int) {
 			ExamID:      examId,
 			StudentID:   studentId,
 			StudentName: GetStudentBy(studentId).Name,
+			TimeAllowed: exam.TimeAllowed,
 			StartTime:   time.Now(),
 			EndTime:     time.Time{},
 		}

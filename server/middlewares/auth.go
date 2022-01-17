@@ -94,12 +94,13 @@ func studentAuthenticator(c *gin.Context) (user interface{}, err error) {
 		// first time get exam_session, we enter exam first and succeed
 	}
 	// else we've already entered the exam, and can get exam_session directly
-
+ 
 	return jwt.MapClaims{
 		"student_id":      studentId,
 		"name":            student.Name,
 		"class_id":        student.ClassID,
 		"exam_session_id": session.ID,
+		"exam_deadline": session.StartTime.Add(time.Duration(session.TimeAllowed) * time.Minute),
 	}, nil
 }
 
