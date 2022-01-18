@@ -1,3 +1,0 @@
-dsn: "root:password@tcp(127.0.0.1:3306)/easy_testing?charset=utf8mb4&parseTime=True&loc=Local"
-port: 443
-jwt_secret_key: "4xg8jlAh8s00KR1Fdc6mY"
