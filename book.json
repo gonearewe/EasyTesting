@@ -1,0 +1,19 @@
+{
+	"title": "Easy Testing Documentation",
+	"plugins" : [
+		"github",
+		"zealar",
+		"bootstrap-callout",
+		"highlight",
+		"-lunr", 
+		"-search", 
+		"search-pro",
+		"splitter"
+	],
+	"pluginsConfig": {
+		"github": {
+            "url": "https://github.com/gonearewe/EasyTesting"
+        }
+	},
+	"ignores" : ["node_modules"]
+}	
