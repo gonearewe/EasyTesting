@@ -1,4 +1,8 @@
 import {localService, remoteService} from '@/utils/request'
+import axios from "axios";
+import store from "@/store";
+import {getToken} from "@/utils/auth";
+import {Message} from "element-ui";
 
 export function login(params) {
   return remoteService({
@@ -31,13 +35,40 @@ export function submitMyAnswers(body) {
   })
 }
 
-export function saveMyAnswersLocal(body, key) {
-  return localService({
-    url: '/my_answers',
+export function saveMyAnswerModels(body) {
+  return remoteService({
+    url: '/cache',
     method: 'put',
-    data: {...body, key: key}
+    data: JSON.stringify(body)
   })
 }
 
+export function loadMyAnswerModels() {
+  let service = axios.create({
+    baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  })
+  service.interceptors.request.use(
+    config => {
+      if (store.getters.token) {
+        config.headers['AUTHORIZATION'] = 'Bearer ' + getToken()
+      }
+      return config
+    }
+  )
+  service.interceptors.response.use(
+    response => {
+      console.log(response)
+      if (response.status === 200) {
+        return JSON.parse(response.data)
+      } else {
+        Promise.reject(new Error("expected err"))
+      }
+    }
+  )
+  return service({
+    url: '/cache',
+    method: 'get',
+  })
+}
 
 

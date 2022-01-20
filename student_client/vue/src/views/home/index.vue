@@ -121,7 +121,7 @@
 
 <script>
 import _ from 'lodash'
-import {getMyQuestions, runCode, saveMyAnswersLocal, submitMyAnswers} from "@/api"
+import {getMyQuestions, loadMyAnswerModels, runCode, saveMyAnswerModels, submitMyAnswers} from "@/api"
 import VueMarkdown from 'vue-markdown'
 import BackToTop from '@/components/BackToTop'
 import VueCodeEditor from 'vue2-code-editor'
@@ -137,12 +137,12 @@ export default {
     FlipCountdown
   },
   created() {
-    // this.$nextTick(() => {
-    //   // 禁用右键
-    //   document.oncontextmenu = new Function("event.returnValue=false");
-    //   // 禁用选择
-    //   document.onselectstart = new Function("event.returnValue=false");
-    // })
+    this.$nextTick(() => {
+      // 禁用右键
+      document.oncontextmenu = new Function("event.returnValue=false");
+      // 禁用选择
+      document.onselectstart = new Function("event.returnValue=false");
+    })
 
     getMyQuestions().then(questions => {
       for (const [questionName, questionArray] of Object.entries(questions)) {
@@ -152,6 +152,17 @@ export default {
       this.answers.cq = this.questions.cq.map(e => {
         return {code: e.template, console_output: '', right: false}
       })
+
+      // try loading models, may not succeed if we're starting the client for the first time
+      loadMyAnswerModels().then(body=>{
+        this.$message({
+          message: '已恢复你的作答至上一次保存时的状态',
+          showClose: true,
+          type: 'success'
+        })
+        this.answers = body
+        }
+      )
     })
 
     setInterval(() => this.saveAnswers(), 2 * 60 * 1000) // auto-save every 2 minutes
@@ -192,9 +203,7 @@ export default {
     saveAnswers() {
       const questions = _.merge({}, this.questions)
       const answers = _.merge({}, this.answers)
-      let encryptionKey =
-        sha256(this.$store.getters.student_id + this.$store.getters.exam_session_id + this.$store.getters.class_id)
-      saveMyAnswersLocal(answers, encryptionKey)
+      saveMyAnswerModels(answers)
       let req
       req.mcq = questions.mcq.map((e, i) => {
         return {id: e.id, answer: answers.mcq[i]}
