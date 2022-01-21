@@ -11,6 +11,8 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup,
 	unauthRouter.Static("/static/","../student_client/vue/dist/static")
 	unauthRouter.GET("/ping", handlers.PingHandler)
 	teacherAuthRouter.GET("/hello", handlers.HelloHandler)
+	studentAuthRouter.GET("/cache",handlers.GetCacheHandler)
+	studentAuthRouter.PUT("/cache",handlers.PutCacheHandler)
 
 	adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
 	adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)

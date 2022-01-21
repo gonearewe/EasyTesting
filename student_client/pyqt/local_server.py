@@ -10,6 +10,7 @@ server = Flask(__name__)
 
 def start():
     thr = threading.Thread(target=server.run, kwargs={'port': 2998})
+    thr.daemon = True  # local server will exit automatically after main thread exits
     thr.start()
 
 

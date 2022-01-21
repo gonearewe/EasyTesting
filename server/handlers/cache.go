@@ -12,18 +12,21 @@ import (
 )
 
 func GetCacheHandler(c *gin.Context) {
-    key := strconv.Itoa(jwt.ExtractClaims(c)["exam_session_id"].(int))
+    key := strconv.Itoa(int(jwt.ExtractClaims(c)["exam_session_id"].(float64)))
     var ret string
     err := middlewares.MemoryStore.Get(key, &ret)
     utils.PanicWhen(err)
-    c.String(200,ret)
+    c.String(200, ret)
 }
 
 func PutCacheHandler(c *gin.Context) {
-    key := strconv.Itoa(jwt.ExtractClaims(c)["exam_session_id"].(int))
-    var body,err = ioutil.ReadAll(c.Request.Body)
+    key := strconv.Itoa(int(jwt.ExtractClaims(c)["exam_session_id"].(float64)))
+    var body, err = ioutil.ReadAll(c.Request.Body)
     utils.PanicWhen(err)
     s := string(body)
-    err = middlewares.MemoryStore.Add(key, &s, 3*time.Hour)
-    utils.PanicWhen(err)
+    err = middlewares.MemoryStore.Set(key, s, 3*time.Hour)
+    if err != nil {
+        err = middlewares.MemoryStore.Add(key, s, 3*time.Hour)
+        utils.PanicWhen(err)
+    }
 }

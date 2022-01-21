@@ -69,4 +69,5 @@ if __name__ == "__main__":
 
     # window = QMainWindow()
     # window.showMaximized()
-    sys.exit(app.exec_())
+    code = app.exec_()
+    sys.exit(code)

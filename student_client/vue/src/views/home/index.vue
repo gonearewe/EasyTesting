@@ -204,7 +204,7 @@ export default {
       const questions = _.merge({}, this.questions)
       const answers = _.merge({}, this.answers)
       saveMyAnswerModels(answers)
-      let req
+      let req = {}
       req.mcq = questions.mcq.map((e, i) => {
         return {id: e.id, answer: answers.mcq[i]}
       })

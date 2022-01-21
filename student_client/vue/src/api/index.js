@@ -59,7 +59,7 @@ export function loadMyAnswerModels() {
     response => {
       console.log(response)
       if (response.status === 200) {
-        return JSON.parse(response.data)
+        return response.data
       } else {
         Promise.reject(new Error("expected err"))
       }
