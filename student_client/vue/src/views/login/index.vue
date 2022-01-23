@@ -12,12 +12,24 @@
           <svg-icon icon-class="user"/>
         </span>
         <el-input
-          ref="username"
           v-model="loginForm.student_id"
           auto-complete="on"
           name="学号"
           placeholder="例如：2020204520"
           tabindex="1"
+          type="text"
+        />
+      </el-form-item>
+
+      <el-form-item prop="name">
+        <span class="svg-container">
+          <svg-icon icon-class="user"/>
+        </span>
+        <el-input
+          v-model="loginForm.name"
+          name="姓名"
+          placeholder="例如：王小明"
+          tabindex="2"
           type="text"
         />
       </el-form-item>
@@ -31,7 +43,7 @@
           v-model="loginForm.exam_id"
           auto-complete="on"
           name="考试号"
-          tabindex="2"
+          tabindex="3"
           @keyup.enter.native="dialogVisible=true"
         />
       </el-form-item>
@@ -69,6 +81,7 @@ export default {
     return {
       loginForm: {
         student_id: '2020501880',
+        name: '小明',
         exam_id: '3'
       },
       loading: false,

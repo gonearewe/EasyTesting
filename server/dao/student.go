@@ -27,9 +27,10 @@ func GetStudentsBy(studentId string, name string, classId string,
 	return
 }
 
-func GetStudentBy(studentId string) *models.Student {
+func GetStudentBy(studentId string,name string) *models.Student {
 	var ret models.Student
-	err := db.Select("student_id", "name", "class_id").Where("student_id = ?", studentId).First(&ret).Error
+	err := db.Select("student_id", "name", "class_id").
+		Where("student_id = ? AND name = ?", studentId,name).First(&ret).Error
 	utils.PanicWhen(err)
 	return &ret
 }

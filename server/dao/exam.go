@@ -1,6 +1,9 @@
 package dao
 
 import (
+    "errors"
+    "time"
+
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
     "gorm.io/gorm"
@@ -28,7 +31,7 @@ func GetExamsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Ex
 // GetExams searches the database for all exams.
 // When any error occurs, it panics.
 func GetEndedExams() (ret []models.Exam) {
-    err:= db.Select("id","publisher_teacher_id","start_time","end_time").
+    err := db.Select("id", "publisher_teacher_id", "start_time", "end_time").
         Where("CURTIME() >= end_time").Find(&ret).Error
     utils.PanicWhen(err)
     return
@@ -93,4 +96,17 @@ func DeleteExams(ids []int) {
         return tx.Delete(&models.Exam{}, ids).Error
     })
     utils.PanicWhen(err)
+}
+
+func IsExamActive(examId int) bool {
+    var exam models.Exam
+    err := db.Select("start_time", "end_time", "time_allowed").Where("id = ?", examId).First(&exam).Error
+    if err == nil {
+        now := time.Now()
+        return now.After(exam.StartTime)  && now.Before(exam.EndTime)
+    }
+    if errors.Is(err, gorm.ErrRecordNotFound) {
+        return false
+    }
+    panic(err)
 }

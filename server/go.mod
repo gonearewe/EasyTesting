@@ -6,11 +6,11 @@ require (
 	github.com/appleboy/gin-jwt/v2 v2.7.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.4
-	github.com/gin-contrib/cache v1.1.0
 	github.com/spf13/viper v1.9.0
 	gopkg.in/errgo.v2 v2.1.0
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/gorm v1.22.3
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 )
 
 require (

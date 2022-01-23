@@ -502,7 +502,7 @@ VALUES ('2010301800', '1 + 1 = ?', '2', '3', '4', '5', '1'),
        ('2012550921', '欧洲最长的河流是', '伏尔加河', '多瑙河', '鄂毕河', '莱茵河', '4'),
        ('2012550921', '____是玉米的原产地，因此被称为“玉米之乡”。', '巴西', '美国', '印度', '墨西哥', '2'),
        ('2012550921', '安多气象站被誉为“天下第一气象站”是因为它坐落在”。', '乞力马扎罗山', '青藏高原', '安第斯山', '巴西高原', '1'),
-       ('2012550921', '盐度最低的海区是”。', '死海', '波罗的海', '红海', '地中海', '3');
+       ('2012550921', '盐度最低的海区是', '死海', '波罗的海', '红海', '地中海', '3');
 
 TRUNCATE TABLE `maq`;
 INSERT INTO `maq`
@@ -583,6 +583,13 @@ VALUES ('2010301800', '编写程序计算一组整数的和。整数从当前路
         true, false, '3 4 6 9 66 59 21 300000 41 0 1', '300210', '# 请在此作答\nprint("hello world !")'),
        ('0', '请从终端读取字符串并将其写入到当前路径下的文件 output.txt 中',
          false,true, 'hello world !', 'hello world !', '# 请在此作答\n');
+
+TRUNCATE TABLE `mcq_answer`;
+TRUNCATE TABLE `maq_answer`;
+TRUNCATE TABLE `bfq_answer`;
+TRUNCATE TABLE `tfq_answer`;
+TRUNCATE TABLE `crq_answer`;
+TRUNCATE TABLE `cq_answer`;
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

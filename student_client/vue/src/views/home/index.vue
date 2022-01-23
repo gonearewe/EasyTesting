@@ -75,7 +75,8 @@
               <el-tag :type="cq.is_output_to_file?'success':'warning'" style="margin-right:10px;">
                 {{ cq.is_output_to_file ? '输出至文件' : '输出至命令行' }}
               </el-tag>
-              <el-button size="small" style="float: right" type="primary" @click="runStudentCode(cq,answers.cq[i])">
+              <el-button :loading="runningCode" size="small" style="float: right" type="primary"
+                         @click="runStudentCode(cq,answers.cq[i])" icon="el-icon-time">
                 运行代码
               </el-button>
             </div>
@@ -113,7 +114,9 @@
     <div class="fixed-box">
       <flip-countdown :deadline="deadline" :showDays="false" countdownSize="x-large" labelSize="small"
                       @timeElapsed="saveAnswers"></flip-countdown>
-      <el-button size="medium" type="warning" @click="saveAnswers">提交答卷</el-button>
+      <el-button icon="el-icon-upload" size="medium" type="warning" :loading="submitting" @click="saveAnswers">
+        提交答卷
+      </el-button>
     </div>
     <back-to-top/>
   </div>
@@ -127,6 +130,7 @@ import BackToTop from '@/components/BackToTop'
 import VueCodeEditor from 'vue2-code-editor'
 import {sha256} from "js-sha256"
 import FlipCountdown from 'vue2-flip-countdown'
+import {shuffle} from "@/utils/random"
 
 export default {
   name: 'HOME',
@@ -145,8 +149,8 @@ export default {
     })
 
     getMyQuestions().then(questions => {
-      for (const [questionName, questionArray] of Object.entries(questions)) {
-        _.shuffle(questionArray)
+      for (const questionName in questions) {
+        shuffle(questions[questionName],this.$store.getters.exam_session_id)
       }
       this.questions = questions
       this.answers.cq = this.questions.cq.map(e => {
@@ -154,13 +158,13 @@ export default {
       })
 
       // try loading models, may not succeed if we're starting the client for the first time
-      loadMyAnswerModels().then(body=>{
-        this.$message({
-          message: '已恢复你的作答至上一次保存时的状态',
-          showClose: true,
-          type: 'success'
-        })
-        this.answers = body
+      loadMyAnswerModels().then(body => {
+          this.$message({
+            message: '已恢复你的作答至上一次保存时的状态',
+            showClose: true,
+            type: 'success'
+          })
+          this.answers = body
         }
       )
     })
@@ -169,6 +173,8 @@ export default {
   },
   data() {
     return {
+      runningCode: false,
+      submitting: false,
       questions: {},
       answers: {
         // HACK: for we can't bind v-model to attributes later added in `created` hook
@@ -193,14 +199,19 @@ export default {
       require('brace/snippets/python') //snippet
     },
     runStudentCode(cq, answer) {
+      this.runningCode = true
       let tmp = _.merge({}, cq)
       tmp.code = answer.code
       runCode(tmp).then(body => {
         answer.console_output = body.console_output
         answer.right = body.pass
+        this.runningCode = false
+      }).catch(() => {
+        this.runningCode=false
       })
     },
     saveAnswers() {
+      this.submitting = true
       const questions = _.merge({}, this.questions)
       const answers = _.merge({}, this.answers)
       saveMyAnswerModels(answers)
@@ -224,11 +235,14 @@ export default {
         return {id: e.id, answer: answers.cq[i].code, right: answers.cq[i].right}
       })
       submitMyAnswers(req).then(() => {
+        this.submitting = false
         this.$message({
           message: '你的作答已自动保存',
           showClose: true,
           type: 'success'
         })
+      }).catch(()=>{
+        this.submitting=false
       })
     }
   },

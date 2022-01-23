@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"errors"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -80,13 +81,17 @@ func studentAuthenticator(c *gin.Context) (user interface{}, err error) {
 	}()
 
 	studentId := c.Query("student_id")
+	name := c.Query("name")
 	examId := utils.Int(c.Query("exam_id"))
-	student := dao.GetStudentBy(studentId)
+	if !dao.IsExamActive(examId){
+		return nil,errors.New("exam not active")
+	}
+	student := dao.GetStudentBy(studentId,name)
 
 	var session *models.ExamSession
 	if err, session = dao.GetExamSessionBy(studentId, examId); err != nil {
 		// try entering exam first
-		dao.EnterExam(studentId, examId)
+		dao.EnterExam(studentId,name, examId)
 		if err, session = dao.GetExamSessionBy(studentId, examId); err != nil {
 			// still fail
 			utils.PanicWhen(err)

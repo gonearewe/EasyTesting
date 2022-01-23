@@ -31,14 +31,13 @@ func GetEndedExamSessionsBy(examId int) (ret []*models.ExamSession) {
 	return
 }
 
-func EnterExam(studentId string, examId int) {
+func EnterExam(studentId string,studentName string, examId int) {
 	err := db.Transaction(func(tx *gorm.DB) error {
 		var exam = models.Exam{}
 		var err error
 
 		// SELECT FOR SHARE, make sure the exam exists and active
 		err = tx.Clauses(clause.Locking{Strength: "SHARE"}).
-			Select("id","time_allowed").
 			Where("id = ? AND start_time <= CURTIME() AND CURTIME() < end_time", examId).
 			First(&exam).Error
 		if err != nil {
@@ -56,7 +55,7 @@ func EnterExam(studentId string, examId int) {
 		var session = models.ExamSession{
 			ExamID:      examId,
 			StudentID:   studentId,
-			StudentName: GetStudentBy(studentId).Name,
+			StudentName: studentName,
 			TimeAllowed: exam.TimeAllowed,
 			StartTime:   time.Now(),
 			EndTime:     time.Time{},
