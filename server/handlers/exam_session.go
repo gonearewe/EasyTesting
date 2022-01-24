@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"strconv"
+	"strings"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/dao"
@@ -107,4 +110,100 @@ func GetMyQuestionsHandler(c *gin.Context) {
 		"crq": crqMaps,
 		"cq":  cqMaps,
 	})
+}
+
+func PutMyAnswersHandler(c *gin.Context)  {
+	var myAnswers models.MyAnswers
+	utils.MustParseJsonTo(c,&myAnswers)
+
+	var mcqs= make([]*models.McqAnswer, 0)
+	for _,m :=range myAnswers.Mcq{
+		if m["answer"] == nil{
+			continue
+		}
+		mcqs = append(mcqs, &models.McqAnswer{
+			McqID: int(m["id"].(float64)),
+			StudentAnswer: strconv.Itoa(int(m["answer"].(float64)))})
+	}
+
+	// if maq answer is none(no choice selected), then it won't be recorded
+	var maqs= make([]*models.MaqAnswer, 0)
+	for _,m :=range myAnswers.Maq{
+		answer:=m["answer"].([]interface{})
+		if len(answer) == 0 {
+			continue
+		}
+		var tmp = make([]string,len(answer))
+		for i,e:=range answer{
+			tmp[i] = strconv.Itoa(int(e.(float64)))
+		}
+		maqs = append(maqs, &models.MaqAnswer{
+			MaqID:         int(m["id"].(float64)),
+			StudentAnswer: strings.Join(tmp, ""),
+		})
+	}
+
+	var bfqs= make([]*models.BfqAnswer, 0)
+	for _,m :=range myAnswers.Bfq{
+		answer:=m["answer"].([]interface{})
+		tmp:= &models.BfqAnswer{
+			BfqID:         int(m["id"].(float64)),
+			StudentAnswer1: answer[0].(string),
+		}
+		if len(answer) > 1{
+			tmp.StudentAnswer2 = answer[1].(string)
+		}
+		if len(answer) > 2{
+			tmp.StudentAnswer3 = answer[2].(string)
+		}
+		bfqs = append(bfqs,tmp)
+	}
+
+	var tfqs= make([]*models.TfqAnswer, 0)
+	for _,m :=range myAnswers.Tfq{
+		if m["answer"] == nil{
+			continue
+		}
+		tfqs = append(tfqs, &models.TfqAnswer{
+			TfqID: int(m["id"].(float64)),
+			StudentAnswer: m["answer"].(bool),
+		})
+	}
+
+	var crqs= make([]*models.CrqAnswer, 0)
+	for _,m :=range myAnswers.Crq{
+		answer:=m["answer"].([]interface{})
+		tmp:= &models.CrqAnswer{
+			CrqID:         int(m["id"].(float64)),
+			StudentAnswer1: answer[0].(string),
+		}
+		if len(answer) > 1{
+			tmp.StudentAnswer2 = answer[1].(string)
+		}
+		if len(answer) > 2{
+			tmp.StudentAnswer3 = answer[2].(string)
+		}
+		if len(answer) > 3{
+			tmp.StudentAnswer4 = answer[3].(string)
+		}
+		if len(answer) > 4{
+			tmp.StudentAnswer5 = answer[4].(string)
+		}
+		if len(answer) > 5{
+			tmp.StudentAnswer6 = answer[5].(string)
+		}
+		crqs = append(crqs,tmp)
+	}
+
+	var cqs= make([]*models.CqAnswer, 0)
+	for _,m :=range myAnswers.Cq{
+		cqs = append(cqs, &models.CqAnswer{
+			CqID: int(m["id"].(float64)),
+			StudentAnswer: m["answer"].(string),
+			IsAnswerRight: m["right"].(bool),
+		})
+	}
+
+	examSessionId:=int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
+	dao.SubmitMyAnswers(examSessionId,mcqs,maqs,bfqs,tfqs,crqs,cqs)
 }

@@ -1,7 +1,7 @@
 <template>
   <transition :name="transitionName">
     <div v-show="visible" :style="customStyle" class="back-to-ceiling">
-      <el-button circle icon="el-icon-arrow-up" type="success" @click="backToTop"></el-button>
+      <el-button circle icon="el-icon-arrow-up" type="primary" @click="backToTop"></el-button>
     </div>
   </transition>
 </template>

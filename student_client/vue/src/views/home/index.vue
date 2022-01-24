@@ -150,7 +150,10 @@ export default {
 
     getMyQuestions().then(questions => {
       for (const questionName in questions) {
+        // shuffle question array, but with `exam_session_id` as the random seed
+        // so that the question array is in the same order every time the student enters this page
         shuffle(questions[questionName],this.$store.getters.exam_session_id)
+        // TODO: shuffle choice array of mcq and maq for anti-cheating
       }
       this.questions = questions
       this.answers.cq = this.questions.cq.map(e => {
@@ -169,7 +172,9 @@ export default {
       )
     })
 
-    setInterval(() => this.saveAnswers(), 2 * 60 * 1000) // auto-save every 2 minutes
+    // auto-save every x seconds, x <- [120,180), interval includes random to avoid flush to server
+    setInterval(() => this.saveAnswers(),
+      (2 * 60 + Math.floor(Math.random()*60)) * 1000 )
   },
   data() {
     return {
@@ -220,24 +225,24 @@ export default {
         return {id: e.id, answer: answers.mcq[i]}
       })
       req.maq = questions.maq.map((e, i) => {
-        return {id: e, answer: answers.maq[i]}
+        return {id: e.id, answer: answers.maq[i]}
       })
       req.bfq = questions.bfq.map((e, i) => {
-        return {id: e.id, answer: answers.bfq[i].slice(0, e.blank_num)}
+        return {id: e.id, answer: answers.bfq[i].slice(0, e.blank_num).map(e => e===null?'':e)}
       })
       req.tfq = questions.tfq.map((e, i) => {
         return {id: e.id, answer: answers.tfq[i]}
       })
       req.crq = questions.crq.map((e, i) => {
-        return {id: e.id, answer: answers.crq[i].slice(0, e.blank_num)}
+        return {id: e.id, answer: answers.crq[i].slice(0, e.blank_num).map(e => e||'')}
       })
       req.cq = questions.cq.map((e, i) => {
-        return {id: e.id, answer: answers.cq[i].code, right: answers.cq[i].right}
+        return {id: e.id, answer: answers.cq[i].code||'', right: answers.cq[i].right}
       })
       submitMyAnswers(req).then(() => {
         this.submitting = false
         this.$message({
-          message: '你的作答已自动保存',
+          message: '你的作答已保存',
           showClose: true,
           type: 'success'
         })

@@ -1,294 +1,358 @@
 package dao
 
 import (
-	"errors"
-	"time"
+    "errors"
+    "time"
 
-	"github.com/gonearewe/EasyTesting/models"
-	"github.com/gonearewe/EasyTesting/utils"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
+    "github.com/gonearewe/EasyTesting/models"
+    "github.com/gonearewe/EasyTesting/utils"
+    "gorm.io/gorm"
+    "gorm.io/gorm/clause"
 )
 
 func GetExamSessionsBy(examId int) (ret []*models.ExamSession) {
-	// `answer_sheet` field is excluded.
-	err := db.Select("student_id", "student_name", "start_time", "end_time", "score").
-		Where("exam_id = ?", examId).Find(&ret).Error
-	utils.PanicWhen(err)
-	return
+    // `answer_sheet` field is excluded.
+    err := db.Select("student_id", "student_name", "start_time", "end_time", "score").
+        Where("exam_id = ?", examId).Find(&ret).Error
+    utils.PanicWhen(err)
+    return
 }
 
 func GetExamSessionBy(studentId string, examId int) (err error, ret *models.ExamSession) {
-	err = db.Select("id", "student_name", "start_time", "time_allowed").
-		Where("exam_id = ? AND student_id = ?", examId, studentId).First(&ret).Error
-	return
+    err = db.Select("id", "student_name", "start_time", "time_allowed").
+        Where("exam_id = ? AND student_id = ?", examId, studentId).First(&ret).Error
+    return
 }
 
 func GetEndedExamSessionsBy(examId int) (ret []*models.ExamSession) {
-	// `answer_sheet` field is excluded.
-	db.Select("student_id", "student_name", "start_time", "end_time", "score").
-		Where("exam_id = ?", examId).Find(&ret)
-	return
+    // `answer_sheet` field is excluded.
+    db.Select("student_id", "student_name", "start_time", "end_time", "score").
+        Where("exam_id = ?", examId).Find(&ret)
+    return
 }
 
-func EnterExam(studentId string,studentName string, examId int) {
-	err := db.Transaction(func(tx *gorm.DB) error {
-		var exam = models.Exam{}
-		var err error
+func EnterExam(studentId string, studentName string, examId int) {
+    err := db.Transaction(func(tx *gorm.DB) error {
+        var exam = models.Exam{}
+        var err error
 
-		// SELECT FOR SHARE, make sure the exam exists and active
-		err = tx.Clauses(clause.Locking{Strength: "SHARE"}).
-			Where("id = ? AND start_time <= CURTIME() AND CURTIME() < end_time", examId).
-			First(&exam).Error
-		if err != nil {
-			return errors.New("specified exam not exists or not active")
-		}
+        // SELECT FOR SHARE, make sure the exam exists and active
+        err = tx.Clauses(clause.Locking{Strength: "SHARE"}).
+            Where("id = ? AND start_time <= CURTIME() AND CURTIME() < end_time", examId).
+            First(&exam).Error
+        if err != nil {
+            return errors.New("specified exam not exists or not active")
+        }
 
-		err = tx.Select("id").Where("exam_id = ?", examId).
-			Where("student_id = ?", studentId).First(&models.ExamSession{}).Error
-		if err == nil {
-			return errors.New("specified student already enters this exam")
-		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return err
-		}
+        err = tx.Select("id").Where("exam_id = ?", examId).
+            Where("student_id = ?", studentId).First(&models.ExamSession{}).Error
+        if err == nil {
+            return errors.New("specified student already enters this exam")
+        } else if !errors.Is(err, gorm.ErrRecordNotFound) {
+            return err
+        }
 
-		var session = models.ExamSession{
-			ExamID:      examId,
-			StudentID:   studentId,
-			StudentName: studentName,
-			TimeAllowed: exam.TimeAllowed,
-			StartTime:   time.Now(),
-			EndTime:     time.Time{},
-		}
-		err = tx.Create(&session).Error
-		if err != nil {
-			return err
-		}
+        var session = models.ExamSession{
+            ExamID:      examId,
+            StudentID:   studentId,
+            StudentName: studentName,
+            TimeAllowed: exam.TimeAllowed,
+            StartTime:   time.Now(),
+            EndTime:     time.Time{},
+        }
+        err = tx.Create(&session).Error
+        if err != nil {
+            return err
+        }
 
-		{
-			var mcqs []models.Mcq
-			err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.McqNum)).Find(&mcqs).Error
-			if err != nil {
-				return err
-			}
-			for _, mcq := range mcqs {
-				err = tx.Create(&models.McqAnswer{
-					McqID:         mcq.ID,
-					ExamSessionID: session.ID,
-					RightAnswer:   mcq.RightAnswer,
-				}).Error
-				if err != nil {
-					return err
-				}
-			}
-		}
+        {
+            var mcqs []models.Mcq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.McqNum)).Find(&mcqs).Error
+            if err != nil {
+                return err
+            }
+            for _, mcq := range mcqs {
+                err = tx.Create(&models.McqAnswer{
+                    McqID:         mcq.ID,
+                    ExamSessionID: session.ID,
+                    RightAnswer:   mcq.RightAnswer,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
 
-		{
-			var maqs []models.Maq
-			err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.MaqNum)).Find(&maqs).Error
-			if err != nil {
-				return err
-			}
-			for _, maq := range maqs {
-				err = tx.Create(&models.MaqAnswer{
-					MaqID:         maq.ID,
-					ExamSessionID: session.ID,
-					RightAnswer:   maq.RightAnswer,
-				}).Error
-				if err != nil {
-					return err
-				}
-			}
-		}
+        {
+            var maqs []models.Maq
+            err = tx.Select("id", "right_answer").Order("RAND()").Limit(int(exam.MaqNum)).Find(&maqs).Error
+            if err != nil {
+                return err
+            }
+            for _, maq := range maqs {
+                err = tx.Create(&models.MaqAnswer{
+                    MaqID:         maq.ID,
+                    ExamSessionID: session.ID,
+                    RightAnswer:   maq.RightAnswer,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
 
-		{
-			var bfqs []models.Bfq
-			err = tx.Select("id").Order("RAND()").Limit(int(exam.BfqNum)).Find(&bfqs).Error
-			if err != nil {
-				return err
-			}
-			for _, bfq := range bfqs {
-				err = tx.Create(&models.BfqAnswer{
-					BfqID:         bfq.ID,
-					ExamSessionID: session.ID,
-				}).Error
-				if err != nil {
-					return err
-				}
-			}
-		}
+        {
+            var bfqs []models.Bfq
+            err = tx.Select("id").Order("RAND()").Limit(int(exam.BfqNum)).Find(&bfqs).Error
+            if err != nil {
+                return err
+            }
+            for _, bfq := range bfqs {
+                err = tx.Create(&models.BfqAnswer{
+                    BfqID:         bfq.ID,
+                    ExamSessionID: session.ID,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
 
-		{
-			var tfqs []models.Tfq
-			err = tx.Select("id", "answer").Order("RAND()").Limit(int(exam.TfqNum)).Find(&tfqs).Error
-			if err != nil {
-				return err
-			}
-			for _, tfq := range tfqs {
-				err = tx.Create(&models.TfqAnswer{
-					TfqID:         tfq.ID,
-					ExamSessionID: session.ID,
-					RightAnswer:   tfq.Answer,
-				}).Error
-				if err != nil {
-					return err
-				}
-			}
-		}
+        {
+            var tfqs []models.Tfq
+            err = tx.Select("id", "answer").Order("RAND()").Limit(int(exam.TfqNum)).Find(&tfqs).Error
+            if err != nil {
+                return err
+            }
+            for _, tfq := range tfqs {
+                err = tx.Create(&models.TfqAnswer{
+                    TfqID:         tfq.ID,
+                    ExamSessionID: session.ID,
+                    RightAnswer:   tfq.Answer,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
 
-		{
-			var crqs []models.Crq
-			err = tx.Select("id").Order("RAND()").Limit(int(exam.CrqNum)).Find(&crqs).Error
-			if err != nil {
-				return err
-			}
-			for _, crq := range crqs {
-				err = tx.Create(&models.CrqAnswer{
-					CrqID:         crq.ID,
-					ExamSessionID: session.ID,
-				}).Error
-				if err != nil {
-					return err
-				}
-			}
-		}
+        {
+            var crqs []models.Crq
+            err = tx.Select("id").Order("RAND()").Limit(int(exam.CrqNum)).Find(&crqs).Error
+            if err != nil {
+                return err
+            }
+            for _, crq := range crqs {
+                err = tx.Create(&models.CrqAnswer{
+                    CrqID:         crq.ID,
+                    ExamSessionID: session.ID,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
 
-		{
-			var cqs []models.Cq
-			err = tx.Select("id").Order("RAND()").Limit(int(exam.CqNum)).Find(&cqs).Error
-			if err != nil {
-				return err
-			}
-			for _, cq := range cqs {
-				err = tx.Create(&models.CqAnswer{
-					CqID:         cq.ID,
-					ExamSessionID: session.ID,
-				}).Error
-				if err != nil {
-					return err
-				}
-			}
-		}
+        {
+            var cqs []models.Cq
+            err = tx.Select("id").Order("RAND()").Limit(int(exam.CqNum)).Find(&cqs).Error
+            if err != nil {
+                return err
+            }
+            for _, cq := range cqs {
+                err = tx.Create(&models.CqAnswer{
+                    CqID:          cq.ID,
+                    ExamSessionID: session.ID,
+                }).Error
+                if err != nil {
+                    return err
+                }
+            }
+        }
 
-		return nil
-	})
-	utils.PanicWhen(err)
+        return nil
+    })
+    utils.PanicWhen(err)
 }
 
 func GetMyQuestions(examSessionId int) map[string]interface{} {
-	var m = map[string]interface{}{}
-	err := db.Transaction(func(tx *gorm.DB) error {
-		var err error
+    var m = map[string]interface{}{}
+    err := db.Transaction(func(tx *gorm.DB) error {
+        var err error
 
-		{
-			var mcqAnswers []*models.McqAnswer
-			err = tx.Select("mcq_id").Where("exam_session_id = ?", examSessionId).Find(&mcqAnswers).Error
-			if err != nil {
-				return err
-			}
-			var mcqs []*models.Mcq
-			var mcqIds = make([]int, len(mcqAnswers))
-			for i, a := range mcqAnswers {
-				mcqIds[i] = a.McqID
-			}
-			err = tx.Where("id IN ?", mcqIds).Find(&mcqs).Error
-			if err != nil {
-				return err
-			}
-			m["mcq"] = mcqs
-		}
+        {
+            var mcqAnswers []*models.McqAnswer
+            err = tx.Select("mcq_id").Where("exam_session_id = ?", examSessionId).Find(&mcqAnswers).Error
+            if err != nil {
+                return err
+            }
+            var mcqs []*models.Mcq
+            var mcqIds = make([]int, len(mcqAnswers))
+            for i, a := range mcqAnswers {
+                mcqIds[i] = a.McqID
+            }
+            err = tx.Where("id IN ?", mcqIds).Find(&mcqs).Error
+            if err != nil {
+                return err
+            }
+            m["mcq"] = mcqs
+        }
 
-		{
-			var maqAnswers []*models.MaqAnswer
-			err = tx.Select("maq_id").Where("exam_session_id = ?", examSessionId).Find(&maqAnswers).Error
-			if err != nil {
-				return err
-			}
-			var maqs []*models.Maq
-			var maqIds = make([]int, len(maqAnswers))
-			for i, a := range maqAnswers {
-				maqIds[i] = a.MaqID
-			}
-			err = tx.Where("id IN ?", maqIds).Find(&maqs).Error
-			if err != nil {
-				return err
-			}
-			m["maq"] = maqs
-		}
+        {
+            var maqAnswers []*models.MaqAnswer
+            err = tx.Select("maq_id").Where("exam_session_id = ?", examSessionId).Find(&maqAnswers).Error
+            if err != nil {
+                return err
+            }
+            var maqs []*models.Maq
+            var maqIds = make([]int, len(maqAnswers))
+            for i, a := range maqAnswers {
+                maqIds[i] = a.MaqID
+            }
+            err = tx.Where("id IN ?", maqIds).Find(&maqs).Error
+            if err != nil {
+                return err
+            }
+            m["maq"] = maqs
+        }
 
-		{
-			var bfqAnswers []*models.BfqAnswer
-			err = tx.Select("bfq_id").Where("exam_session_id = ?", examSessionId).Find(&bfqAnswers).Error
-			if err != nil {
-				return err
-			}
-			var bfqs []*models.Bfq
-			var bfqIds = make([]int, len(bfqAnswers))
-			for i, a := range bfqAnswers {
-				bfqIds[i] = a.BfqID
-			}
-			err = tx.Where("id IN ?", bfqIds).Find(&bfqs).Error
-			if err != nil {
-				return err
-			}
-			m["bfq"] = bfqs
-		}
+        {
+            var bfqAnswers []*models.BfqAnswer
+            err = tx.Select("bfq_id").Where("exam_session_id = ?", examSessionId).Find(&bfqAnswers).Error
+            if err != nil {
+                return err
+            }
+            var bfqs []*models.Bfq
+            var bfqIds = make([]int, len(bfqAnswers))
+            for i, a := range bfqAnswers {
+                bfqIds[i] = a.BfqID
+            }
+            err = tx.Where("id IN ?", bfqIds).Find(&bfqs).Error
+            if err != nil {
+                return err
+            }
+            m["bfq"] = bfqs
+        }
 
-		{
-			var tfqAnswers []*models.TfqAnswer
-			err = tx.Select("tfq_id").Where("exam_session_id = ?", examSessionId).Find(&tfqAnswers).Error
-			if err != nil {
-				return err
-			}
-			var tfqs []*models.Tfq
-			var tfqIds = make([]int, len(tfqAnswers))
-			for i, a := range tfqAnswers {
-				tfqIds[i] = a.TfqID
-			}
-			err = tx.Where("id IN ?", tfqIds).Find(&tfqs).Error
-			if err != nil {
-				return err
-			}
-			m["tfq"] = tfqs
-		}
+        {
+            var tfqAnswers []*models.TfqAnswer
+            err = tx.Select("tfq_id").Where("exam_session_id = ?", examSessionId).Find(&tfqAnswers).Error
+            if err != nil {
+                return err
+            }
+            var tfqs []*models.Tfq
+            var tfqIds = make([]int, len(tfqAnswers))
+            for i, a := range tfqAnswers {
+                tfqIds[i] = a.TfqID
+            }
+            err = tx.Where("id IN ?", tfqIds).Find(&tfqs).Error
+            if err != nil {
+                return err
+            }
+            m["tfq"] = tfqs
+        }
 
-		{
-			var crqAnswers []*models.CrqAnswer
-			err = tx.Select("crq_id").Where("exam_session_id = ?", examSessionId).Find(&crqAnswers).Error
-			if err != nil {
-				return err
-			}
-			var crqs []*models.Crq
-			var crqIds = make([]int, len(crqAnswers))
-			for i, a := range crqAnswers {
-				crqIds[i] = a.CrqID
-			}
-			err = tx.Where("id IN ?", crqIds).Find(&crqs).Error
-			if err != nil {
-				return err
-			}
-			m["crq"] = crqs
-		}
+        {
+            var crqAnswers []*models.CrqAnswer
+            err = tx.Select("crq_id").Where("exam_session_id = ?", examSessionId).Find(&crqAnswers).Error
+            if err != nil {
+                return err
+            }
+            var crqs []*models.Crq
+            var crqIds = make([]int, len(crqAnswers))
+            for i, a := range crqAnswers {
+                crqIds[i] = a.CrqID
+            }
+            err = tx.Where("id IN ?", crqIds).Find(&crqs).Error
+            if err != nil {
+                return err
+            }
+            m["crq"] = crqs
+        }
 
-		{
-			// var cqAnswers []*models.CqAnswer
-			// err = tx.Select("cq_id").Where("exam_session_id = ?", examSessionId).Find(&cqAnswers).Error
-			// if err != nil {
-			// 	return err
-			// }
-			var cqs []*models.Cq
-			// var cqIds = make([]int, len(cqAnswers))
-			// for i, a := range cqAnswers {
-			// 	cqIds[i] = a.CqID
-			// }
-			err = tx.Where("id = 1").Find(&cqs).Error
-			if err != nil {
-				return err
-			}
-			m["cq"] = cqs
-		}
-		return nil
-	})
-	utils.PanicWhen(err)
-	return m
+        {
+            var cqAnswers []*models.CqAnswer
+            err = tx.Select("cq_id").Where("exam_session_id = ?", examSessionId).Find(&cqAnswers).Error
+            if err != nil {
+                return err
+            }
+            var cqs []*models.Cq
+            var cqIds = make([]int, len(cqAnswers))
+            for i, a := range cqAnswers {
+                cqIds[i] = a.CqID
+            }
+            err = tx.Where("id IN ?", cqIds).Find(&cqs).Error
+            if err != nil {
+                return err
+            }
+            m["cq"] = cqs
+        }
+        return nil
+    })
+    utils.PanicWhen(err)
+    return m
+}
+
+func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer,maqs []*models.MaqAnswer,bfqs []*models.BfqAnswer,
+    tfqs []*models.TfqAnswer,crqs []*models.CrqAnswer,cqs []*models.CqAnswer) {
+    errOccured := false
+    for _, mcq := range mcqs {
+        err := db.Model(&models.McqAnswer{}).Where("mcq_id = ?", mcq.McqID).
+            Where("exam_session_id = ?",examSessionId).Update("student_answer", mcq.StudentAnswer).Error
+        errOccured = err != nil
+    }
+
+    for _, maq := range maqs {
+        err := db.Model(&models.MaqAnswer{}).Where("maq_id = ?", maq.MaqID).
+            Where("exam_session_id = ?",examSessionId).Update("student_answer", maq.StudentAnswer).Error
+        errOccured = err != nil
+    }
+
+    for _, bfq := range bfqs {
+        err := db.Model(&models.BfqAnswer{}).Where("bfq_id = ?", bfq.BfqID).
+            Where("exam_session_id = ?",examSessionId).Updates(
+            map[string]interface{}{
+                "student_answer_1": bfq.StudentAnswer1,
+                "student_answer_2": bfq.StudentAnswer2,
+                "student_answer_3": bfq.StudentAnswer3,
+            },
+        ).Error
+        errOccured = err != nil
+    }
+
+    for _, tfq := range tfqs {
+        err := db.Model(&models.TfqAnswer{}).Where("tfq_id = ?", tfq.TfqID).
+            Where("exam_session_id = ?",examSessionId).Update("student_answer", tfq.StudentAnswer).Error
+        errOccured = err != nil
+    }
+
+    for _, crq := range crqs {
+        err := db.Model(&models.CrqAnswer{}).Where("crq_id = ?", crq.CrqID).
+            Where("exam_session_id = ?",examSessionId).Updates(
+            map[string]interface{}{
+                "student_answer_1": crq.StudentAnswer1,
+                "student_answer_2": crq.StudentAnswer2,
+                "student_answer_3": crq.StudentAnswer3,
+                "student_answer_4": crq.StudentAnswer4,
+                "student_answer_5": crq.StudentAnswer5,
+                "student_answer_6": crq.StudentAnswer6,
+            },
+        ).Error
+        errOccured = err != nil
+    }
+
+    for _, cq := range cqs {
+        err := db.Model(&models.CqAnswer{}).Where("cq_id = ?", cq.CqID).
+            Where("exam_session_id = ?",examSessionId).Updates(
+            map[string]interface{}{
+                "student_answer": cq.StudentAnswer,
+                "is_answer_right":cq.IsAnswerRight,
+            }).Error
+        errOccured = err != nil
+    }
+
+    // TODO: log errors
+    if errOccured{
+        panic(errors.New("some error occur when submitting answers"))
+    }
 }

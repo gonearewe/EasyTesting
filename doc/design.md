@@ -363,7 +363,8 @@ CREATE TABLE `cq_answer`
     `id`              int(10) NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `cq_id`           int(10) NOT NULL COMMENT '连接 cq',
     `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
-    `student_answer`  text(200) DEFAULT NULL COMMENT '学生的答案',
+    `student_answer`  text(200) DEFAULT NULL COMMENT '学生的答案，即代码',
+    `is_answer_right` bool DEFAULT FALSE COMMENT '学生的代码是否正确',
     FOREIGN KEY (`cq_id`) REFERENCES cq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
