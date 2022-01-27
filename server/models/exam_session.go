@@ -14,7 +14,7 @@ type ExamSession struct {
 	TimeAllowed int8      `gorm:"column:time_allowed;type:tinyint(3);not null" json:"time_allowed"`  
 	EndTime     time.Time `gorm:"column:end_time;type:datetime" json:"end_time"`              // 交卷时刻
 	AnswerSheet []byte    `gorm:"column:answer_sheet;type:mediumblob" json:"-"`               // 包括考试试题与作答情况的pdf，用于存档
-	Score       *int16    `gorm:"column:score;type:smallint" json:"score"`                    // 最终成绩*10，即保存到小数点后一位
+	Score       int16    `gorm:"column:score;type:smallint" json:"score"`                    // 最终成绩*10，即保存到小数点后一位
 }
 
 // TableName get sql table name.获取数据库表名

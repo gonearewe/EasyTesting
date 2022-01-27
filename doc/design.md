@@ -112,6 +112,7 @@ CREATE TABLE `exam`
 (
     `id`                   int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10)         NOT NULL COMMENT '发布考试的教师的工号',
+    `scores_calculated`    bool                NOT NULL COMMENT '参加这场考试的人的成绩是否已被计算过',
     `start_time`           datetime            NOT NULL COMMENT '考试开始时刻',
     `end_time`             datetime            NOT NULL COMMENT '考试结束时刻',
     `time_allowed`         tinyint(3)          NOT NULL COMMENT '考生答题时间，单位：分钟',
@@ -146,7 +147,7 @@ CREATE TABLE `exam_session`
     `time_allowed` tinyint(3)  NOT NULL COMMENT '考生答题时间，单位：分钟',
     `end_time`     datetime   DEFAULT NULL COMMENT '交卷时刻',
     `answer_sheet` mediumblob DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
-    `score`        smallint   DEFAULT NULL COMMENT '最终成绩*10，即保存到小数点后一位',
+    `score`        smallint  NOT NULL COMMENT '最终成绩*10，即保存到小数点后一位',
     FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -46,4 +47,21 @@ func PanicWhen(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func IsAnagram(str1 string,str2 string)bool{
+	array1 := []rune(str1)
+	array2 := []rune(str2)
+	sort.Slice(array1, func(i int, j int) bool {
+		return array1[i] < array1[j]
+	})
+	sort.Slice(array2, func(i int, j int) bool {
+		return array2[i] < array2[j]
+	})
+	for i := range array1 {
+		if array1[i] != array2[i] {
+			return false
+		}
+	}
+	return true
 }

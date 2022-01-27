@@ -100,13 +100,22 @@ func DeleteExams(ids []int) {
 
 func IsExamActive(examId int) bool {
     var exam models.Exam
-    err := db.Select("start_time", "end_time", "time_allowed").Where("id = ?", examId).First(&exam).Error
+    err := db.Select("start_time", "end_time").Where("id = ?", examId).First(&exam).Error
     if err == nil {
         now := time.Now()
         return now.After(exam.StartTime)  && now.Before(exam.EndTime)
     }
     if errors.Is(err, gorm.ErrRecordNotFound) {
         return false
+    }
+    panic(err)
+}
+
+func IsExamEndedAndScoresNotCalculated(examId int) bool {
+    var exam models.Exam
+    err := db.Select( "end_time" ,"scores_calculated").Where("id = ?", examId).First(&exam).Error
+    if err == nil {
+        return time.Now().After(exam.EndTime) && !exam.ScoresCalculated
     }
     panic(err)
 }

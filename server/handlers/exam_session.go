@@ -13,6 +13,9 @@ import (
 
 func GetExamineeHandler(c *gin.Context) {
 	examId := utils.Int(c.Query("exam_id"))
+	if dao.IsExamEndedAndScoresNotCalculated(examId) {
+		dao.CalculateScores(examId)
+	}
 	sessions := dao.GetExamSessionsBy(examId)
 	c.JSON(200, sessions)
 }
@@ -207,3 +210,4 @@ func PutMyAnswersHandler(c *gin.Context)  {
 	examSessionId:=int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
 	dao.SubmitMyAnswers(examSessionId,mcqs,maqs,bfqs,tfqs,crqs,cqs)
 }
+

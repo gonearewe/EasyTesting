@@ -2,6 +2,7 @@ package dao
 
 import (
     "errors"
+    "strconv"
     "time"
 
     "github.com/gonearewe/EasyTesting/models"
@@ -293,24 +294,24 @@ func GetMyQuestions(examSessionId int) map[string]interface{} {
     return m
 }
 
-func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer,maqs []*models.MaqAnswer,bfqs []*models.BfqAnswer,
-    tfqs []*models.TfqAnswer,crqs []*models.CrqAnswer,cqs []*models.CqAnswer) {
+func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models.MaqAnswer, bfqs []*models.BfqAnswer,
+    tfqs []*models.TfqAnswer, crqs []*models.CrqAnswer, cqs []*models.CqAnswer) {
     errOccured := false
     for _, mcq := range mcqs {
         err := db.Model(&models.McqAnswer{}).Where("mcq_id = ?", mcq.McqID).
-            Where("exam_session_id = ?",examSessionId).Update("student_answer", mcq.StudentAnswer).Error
+            Where("exam_session_id = ?", examSessionId).Update("student_answer", mcq.StudentAnswer).Error
         errOccured = err != nil
     }
 
     for _, maq := range maqs {
         err := db.Model(&models.MaqAnswer{}).Where("maq_id = ?", maq.MaqID).
-            Where("exam_session_id = ?",examSessionId).Update("student_answer", maq.StudentAnswer).Error
+            Where("exam_session_id = ?", examSessionId).Update("student_answer", maq.StudentAnswer).Error
         errOccured = err != nil
     }
 
     for _, bfq := range bfqs {
         err := db.Model(&models.BfqAnswer{}).Where("bfq_id = ?", bfq.BfqID).
-            Where("exam_session_id = ?",examSessionId).Updates(
+            Where("exam_session_id = ?", examSessionId).Updates(
             map[string]interface{}{
                 "student_answer_1": bfq.StudentAnswer1,
                 "student_answer_2": bfq.StudentAnswer2,
@@ -322,13 +323,13 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer,maqs []*models.
 
     for _, tfq := range tfqs {
         err := db.Model(&models.TfqAnswer{}).Where("tfq_id = ?", tfq.TfqID).
-            Where("exam_session_id = ?",examSessionId).Update("student_answer", tfq.StudentAnswer).Error
+            Where("exam_session_id = ?", examSessionId).Update("student_answer", tfq.StudentAnswer).Error
         errOccured = err != nil
     }
 
     for _, crq := range crqs {
         err := db.Model(&models.CrqAnswer{}).Where("crq_id = ?", crq.CrqID).
-            Where("exam_session_id = ?",examSessionId).Updates(
+            Where("exam_session_id = ?", examSessionId).Updates(
             map[string]interface{}{
                 "student_answer_1": crq.StudentAnswer1,
                 "student_answer_2": crq.StudentAnswer2,
@@ -343,16 +344,127 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer,maqs []*models.
 
     for _, cq := range cqs {
         err := db.Model(&models.CqAnswer{}).Where("cq_id = ?", cq.CqID).
-            Where("exam_session_id = ?",examSessionId).Updates(
+            Where("exam_session_id = ?", examSessionId).Updates(
             map[string]interface{}{
-                "student_answer": cq.StudentAnswer,
-                "is_answer_right":cq.IsAnswerRight,
+                "student_answer":  cq.StudentAnswer,
+                "is_answer_right": cq.IsAnswerRight,
             }).Error
         errOccured = err != nil
     }
 
     // TODO: log errors
-    if errOccured{
+    if errOccured {
         panic(errors.New("some error occur when submitting answers"))
     }
+}
+
+func CalculateScores(examId int) {
+    err := db.Transaction(func(tx *gorm.DB) (err error) {
+        defer func() {
+            if e := recover(); e != nil {
+                err = e.(error)
+            }
+        }()
+        var exam models.Exam
+        utils.PanicWhen(tx.Where("id = ?", examId).Clauses(clause.Locking{Strength: "SHARE"}).First(&exam).Error)
+        if exam.EndTime.Before(time.Now()) || exam.ScoresCalculated{
+            return errors.New("scores of this exam needn't be calculated: "+strconv.Itoa(examId))
+        }
+
+        var examinees []models.ExamSession
+        utils.PanicWhen(tx.Select("id").Where("exam_id = ?", examId).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&examinees).Error)
+        ids := make([]int, len(examinees))
+        var idScoreMap map[int]int
+        for i, e := range examinees {
+            ids[i] = e.ID
+            idScoreMap[e.ID] = 0
+        }
+
+        var mcqAns []*models.McqAnswer
+        utils.PanicWhen(tx.Select("exam_session_id", "right_answer", "student_answer").Where("exam_session_id IN ?", ids).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&mcqAns).Error)
+
+        var maqAns []*models.MaqAnswer
+        utils.PanicWhen(tx.Select("exam_session_id", "right_answer", "student_answer").Where("exam_session_id IN ?", ids).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&maqAns).Error)
+
+        var bfqAns []*models.BfqAnswer
+        utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&bfqAns).Error)
+
+        var tfqAns []*models.TfqAnswer
+        utils.PanicWhen(tx.Select("exam_session_id", "right_answer", "student_answer").Where("exam_session_id IN ?", ids).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&tfqAns).Error)
+
+        var crqAns []*models.CrqAnswer
+        utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&crqAns).Error)
+
+        var cqAns []*models.CqAnswer
+        utils.PanicWhen(tx.Select("exam_session_id", "is_answer_right").Where("exam_session_id IN ?", ids).
+            Clauses(clause.Locking{Strength: "SHARE"}).Find(&cqAns).Error)
+
+        for _, e := range mcqAns {
+            if e.StudentAnswer == e.RightAnswer {
+                idScoreMap[e.ExamSessionID] += int(exam.McqScore)
+            }
+        }
+        for _, e := range maqAns {
+            if utils.IsAnagram(e.StudentAnswer, e.RightAnswer) {
+                idScoreMap[e.ExamSessionID] += int(exam.MaqScore)
+            }
+        }
+        for _, e := range bfqAns {
+            var bfq models.Bfq
+            utils.PanicWhen(tx.Select("blank_num", "answer_1", "answer_2", "answer_3").
+                Where("id = ?", e.BfqID).First(&bfq).Error)
+            for i, ans := range [][]string{
+                []string{e.StudentAnswer1, bfq.Answer1}, []string{e.StudentAnswer2, bfq.Answer2},
+                []string{e.StudentAnswer3, bfq.Answer3},
+            } {
+                if i >= int(bfq.BlankNum) {
+                    break
+                }
+                if ans[0] == ans[1] {
+                    idScoreMap[e.ExamSessionID] += int(exam.BfqScore) / int(bfq.BlankNum)
+                }
+            }
+        }
+        for _,e:=range tfqAns{
+            if e.StudentAnswer == e.RightAnswer {
+                idScoreMap[e.ExamSessionID] += int(exam.TfqScore)
+            }
+        }
+        for _, e := range crqAns {
+            var crq models.Crq
+            utils.PanicWhen(tx.Select(
+                "blank_num", "answer_1", "answer_2", "answer_3","answer_4","answer_5","answer_6",
+                ).Where("id = ?", e.CrqID).First(&crq).Error)
+            for i, ans := range [][]string{
+                []string{e.StudentAnswer1, crq.Answer1}, []string{e.StudentAnswer2, crq.Answer2},
+                []string{e.StudentAnswer3, crq.Answer3},[]string{e.StudentAnswer4, crq.Answer4},
+                []string{e.StudentAnswer5, crq.Answer5},[]string{e.StudentAnswer6, crq.Answer6},
+            } {
+                if i >= int(crq.BlankNum) {
+                    break
+                }
+                if ans[0] == ans[1] {
+                    idScoreMap[e.ExamSessionID] += int(exam.CrqScore) / int(crq.BlankNum)
+                }
+            }
+        }
+        for _,e:=range cqAns{
+            if e.IsAnswerRight {
+                idScoreMap[e.ExamSessionID] += int(exam.CqScore)
+            }
+        }
+
+        for id,score := range idScoreMap{
+            utils.PanicWhen(tx.Model(&models.ExamSession{}).Where("id = ?",id).Update("score",score).Error)
+        }
+        utils.PanicWhen(tx.Model(&models.Exam{}).Where("id = ?",examId).Update("scores_calculated",true).Error)
+        return nil
+    })
+    utils.PanicWhen(err)
 }
