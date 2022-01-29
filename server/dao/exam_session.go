@@ -296,17 +296,21 @@ func GetMyQuestions(examSessionId int) map[string]interface{} {
 
 func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models.MaqAnswer, bfqs []*models.BfqAnswer,
     tfqs []*models.TfqAnswer, crqs []*models.CrqAnswer, cqs []*models.CqAnswer) {
-    errOccured := false
+    // it's not necessary to execute UPDATE operations in a transaction,
+    // since there's no data consistency constrain between different type of answers
+
+    errOccurred := false
+
     for _, mcq := range mcqs {
         err := db.Model(&models.McqAnswer{}).Where("mcq_id = ?", mcq.McqID).
             Where("exam_session_id = ?", examSessionId).Update("student_answer", mcq.StudentAnswer).Error
-        errOccured = err != nil
+        errOccurred = errOccurred || err != nil
     }
 
     for _, maq := range maqs {
         err := db.Model(&models.MaqAnswer{}).Where("maq_id = ?", maq.MaqID).
             Where("exam_session_id = ?", examSessionId).Update("student_answer", maq.StudentAnswer).Error
-        errOccured = err != nil
+        errOccurred = errOccurred || err != nil
     }
 
     for _, bfq := range bfqs {
@@ -318,13 +322,13 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models
                 "student_answer_3": bfq.StudentAnswer3,
             },
         ).Error
-        errOccured = err != nil
+        errOccurred = errOccurred || err != nil
     }
 
     for _, tfq := range tfqs {
         err := db.Model(&models.TfqAnswer{}).Where("tfq_id = ?", tfq.TfqID).
             Where("exam_session_id = ?", examSessionId).Update("student_answer", tfq.StudentAnswer).Error
-        errOccured = err != nil
+        errOccurred = errOccurred || err != nil
     }
 
     for _, crq := range crqs {
@@ -339,7 +343,7 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models
                 "student_answer_6": crq.StudentAnswer6,
             },
         ).Error
-        errOccured = err != nil
+        errOccurred = errOccurred || err != nil
     }
 
     for _, cq := range cqs {
@@ -349,11 +353,14 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models
                 "student_answer":  cq.StudentAnswer,
                 "is_answer_right": cq.IsAnswerRight,
             }).Error
-        errOccured = err != nil
+        errOccurred = errOccurred || err != nil
     }
 
+    // record answer submitting time
+    err := db.Model(&models.ExamSession{}).Where("id = ?", examSessionId).Update("end_time", time.Now())
+    errOccurred = errOccurred || err != nil
     // TODO: log errors
-    if errOccured {
+    if errOccurred {
         panic(errors.New("some error occur when submitting answers"))
     }
 }
@@ -365,17 +372,19 @@ func CalculateScores(examId int) {
                 err = e.(error)
             }
         }()
+
         var exam models.Exam
         utils.PanicWhen(tx.Where("id = ?", examId).Clauses(clause.Locking{Strength: "SHARE"}).First(&exam).Error)
-        if exam.EndTime.Before(time.Now()) || exam.ScoresCalculated{
-            return errors.New("scores of this exam needn't be calculated: "+strconv.Itoa(examId))
+        if exam.EndTime.After(time.Now()) || exam.ScoresCalculated {
+            return errors.New("scores of this exam have already been calculated or can only be calculated later: " +
+                strconv.Itoa(examId))
         }
 
         var examinees []models.ExamSession
         utils.PanicWhen(tx.Select("id").Where("exam_id = ?", examId).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&examinees).Error)
         ids := make([]int, len(examinees))
-        var idScoreMap map[int]int
+        var idScoreMap = map[int]int{}
         for i, e := range examinees {
             ids[i] = e.ID
             idScoreMap[e.ID] = 0
@@ -407,12 +416,12 @@ func CalculateScores(examId int) {
 
         for _, e := range mcqAns {
             if e.StudentAnswer == e.RightAnswer {
-                idScoreMap[e.ExamSessionID] += int(exam.McqScore)
+                idScoreMap[e.ExamSessionID] += int(exam.McqScore) * 10
             }
         }
         for _, e := range maqAns {
             if utils.IsAnagram(e.StudentAnswer, e.RightAnswer) {
-                idScoreMap[e.ExamSessionID] += int(exam.MaqScore)
+                idScoreMap[e.ExamSessionID] += int(exam.MaqScore) * 10
             }
         }
         for _, e := range bfqAns {
@@ -427,43 +436,43 @@ func CalculateScores(examId int) {
                     break
                 }
                 if ans[0] == ans[1] {
-                    idScoreMap[e.ExamSessionID] += int(exam.BfqScore) / int(bfq.BlankNum)
+                    idScoreMap[e.ExamSessionID] += int(exam.BfqScore) * 10 / int(bfq.BlankNum)
                 }
             }
         }
-        for _,e:=range tfqAns{
+        for _, e := range tfqAns {
             if e.StudentAnswer == e.RightAnswer {
-                idScoreMap[e.ExamSessionID] += int(exam.TfqScore)
+                idScoreMap[e.ExamSessionID] += int(exam.TfqScore) * 10
             }
         }
         for _, e := range crqAns {
             var crq models.Crq
             utils.PanicWhen(tx.Select(
-                "blank_num", "answer_1", "answer_2", "answer_3","answer_4","answer_5","answer_6",
-                ).Where("id = ?", e.CrqID).First(&crq).Error)
+                "blank_num", "answer_1", "answer_2", "answer_3", "answer_4", "answer_5", "answer_6",
+            ).Where("id = ?", e.CrqID).First(&crq).Error)
             for i, ans := range [][]string{
                 []string{e.StudentAnswer1, crq.Answer1}, []string{e.StudentAnswer2, crq.Answer2},
-                []string{e.StudentAnswer3, crq.Answer3},[]string{e.StudentAnswer4, crq.Answer4},
-                []string{e.StudentAnswer5, crq.Answer5},[]string{e.StudentAnswer6, crq.Answer6},
+                []string{e.StudentAnswer3, crq.Answer3}, []string{e.StudentAnswer4, crq.Answer4},
+                []string{e.StudentAnswer5, crq.Answer5}, []string{e.StudentAnswer6, crq.Answer6},
             } {
                 if i >= int(crq.BlankNum) {
                     break
                 }
                 if ans[0] == ans[1] {
-                    idScoreMap[e.ExamSessionID] += int(exam.CrqScore) / int(crq.BlankNum)
+                    idScoreMap[e.ExamSessionID] += int(exam.CrqScore) * 10 / int(crq.BlankNum)
                 }
             }
         }
-        for _,e:=range cqAns{
+        for _, e := range cqAns {
             if e.IsAnswerRight {
-                idScoreMap[e.ExamSessionID] += int(exam.CqScore)
+                idScoreMap[e.ExamSessionID] += int(exam.CqScore) * 10
             }
         }
 
-        for id,score := range idScoreMap{
-            utils.PanicWhen(tx.Model(&models.ExamSession{}).Where("id = ?",id).Update("score",score).Error)
+        for id, score := range idScoreMap {
+            utils.PanicWhen(tx.Model(&models.ExamSession{}).Where("id = ?", id).Update("score", score).Error)
         }
-        utils.PanicWhen(tx.Model(&models.Exam{}).Where("id = ?",examId).Update("scores_calculated",true).Error)
+        utils.PanicWhen(tx.Model(&models.Exam{}).Where("id = ?", examId).Update("scores_calculated", true).Error)
         return nil
     })
     utils.PanicWhen(err)

@@ -5,12 +5,16 @@
         <el-card v-for="(mcq,i) in questions.mcq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-            <vue-markdown>{{ mcq.stem }}</vue-markdown>
+<!--            NOTICE: Instead of code below, moving model into `source` can prevent-->
+<!--            an event called `rendered` triggered every time user presses a key which results-->
+<!--            in a significant performance loss.-->
+<!--            <vue-markdown :source="mcq.stem"></vue-markdown>-->
+            <vue-markdown :source="mcq.stem"></vue-markdown>
           </div>
           <el-radio-group v-model="answers.mcq[i]">
             <div v-for="j in 4">
               <el-radio :label="j">
-                <vue-markdown>{{ mcq.choices[j - 1] }}</vue-markdown>
+                <vue-markdown :source="mcq.choices[j - 1]"></vue-markdown>
               </el-radio>
             </div>
           </el-radio-group>
@@ -20,12 +24,12 @@
         <el-card v-for="(maq,i) in questions.maq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-            <vue-markdown>{{ maq.stem }}</vue-markdown>
+            <vue-markdown :source="maq.stem"></vue-markdown>
           </div>
           <el-checkbox-group v-model="answers.maq[i]">
             <div v-for="(c,j) in maq.choices">
               <el-checkbox :label="j+1">
-                <vue-markdown>{{ c }}</vue-markdown>
+                <vue-markdown :source="c"></vue-markdown>
               </el-checkbox>
             </div>
           </el-checkbox-group>
@@ -35,7 +39,7 @@
         <el-card v-for="(bfq,i) in questions.bfq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-            <vue-markdown>{{ bfq.stem }}</vue-markdown>
+            <vue-markdown :source="bfq.stem"></vue-markdown>
           </div>
           <el-input v-for="j in bfq.blank_num" v-model="answers.bfq[i][j-1]" autosize style="margin: 10px"
                     type="textarea"></el-input>
@@ -45,7 +49,7 @@
         <el-card v-for="(tfq,i) in questions.tfq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-            <vue-markdown>{{ tfq.stem }}</vue-markdown>
+            <vue-markdown :source="tfq.stem"></vue-markdown>
           </div>
           <el-radio-group v-model="answers.tfq[i]">
             <el-radio-button v-for="j in 2" :label="[true,false][j-1]"></el-radio-button>
@@ -56,7 +60,7 @@
         <el-card v-for="(crq,i) in questions.crq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-            <vue-markdown>{{ crq.stem }}</vue-markdown>
+            <vue-markdown :source="crq.stem"></vue-markdown>
           </div>
           <el-input v-for="j in crq.blank_num" v-model="answers.crq[i][j-1]" autosize style="margin: 10px"
                     type="textarea"></el-input>
@@ -66,7 +70,7 @@
         <el-card v-for="(cq,i) in questions.cq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-            <vue-markdown>{{ cq.stem }}</vue-markdown>
+            <vue-markdown :source="cq.stem"></vue-markdown>
             <div>
               <el-tag v-if="cq.input === ''" type="info">无输入</el-tag>
               <el-tag v-else :type="cq.is_input_from_file?'success':'warning'" style="margin-right:10px;">
@@ -128,7 +132,6 @@ import {getMyQuestions, loadMyAnswerModels, runCode, saveMyAnswerModels, submitM
 import VueMarkdown from 'vue-markdown'
 import BackToTop from '@/components/BackToTop'
 import VueCodeEditor from 'vue2-code-editor'
-import {sha256} from "js-sha256"
 import FlipCountdown from 'vue2-flip-countdown'
 import {shuffle} from "@/utils/random"
 
@@ -156,6 +159,9 @@ export default {
         // TODO: shuffle choice array of mcq and maq for anti-cheating
       }
       this.questions = questions
+      Object.entries(this.questions).forEach(([key,arr])=>{
+        this.answers[key].splice(arr.length)
+      })
       this.answers.cq = this.questions.cq.map(e => {
         return {code: e.template, console_output: '', right: false}
       })
@@ -178,17 +184,18 @@ export default {
   },
   data() {
     return {
+      kkk:'',
       runningCode: false,
       submitting: false,
       questions: {},
       answers: {
         // HACK: for we can't bind v-model to attributes later added in `created` hook
-        "mcq": new Array(100),
-        "maq": Array.from(new Array(100), e => []),
-        "bfq": Array.from(new Array(100), e => new Array(3)),
-        "tfq": new Array(100),
-        "crq": Array.from(new Array(100), e => new Array(6)),
-        "cq": Array.from(new Array(100), e => {
+        "mcq": new Array(80),
+        "maq": Array.from(new Array(60), e => []),
+        "bfq": Array.from(new Array(60), e => new Array(3)),
+        "tfq": new Array(60),
+        "crq": Array.from(new Array(15), e => new Array(6)),
+        "cq": Array.from(new Array(10), e => {
           return {code: '', console_output: '', right: false}
         }),
       },

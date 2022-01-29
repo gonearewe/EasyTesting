@@ -112,7 +112,7 @@ CREATE TABLE `exam`
 (
     `id`                   int(10)             NOT NULL AUTO_INCREMENT COMMENT '用作主键',
     `publisher_teacher_id` varchar(10)         NOT NULL COMMENT '发布考试的教师的工号',
-    `scores_calculated`    bool                NOT NULL COMMENT '参加这场考试的人的成绩是否已被计算过',
+    `scores_calculated`    bool                DEFAULT FALSE COMMENT '参加这场考试的人的成绩是否已被计算过',
     `start_time`           datetime            NOT NULL COMMENT '考试开始时刻',
     `end_time`             datetime            NOT NULL COMMENT '考试结束时刻',
     `time_allowed`         tinyint(3)          NOT NULL COMMENT '考生答题时间，单位：分钟',
@@ -426,18 +426,24 @@ VALUES
     ('2010301800', '张三', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
      '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE),
     -- client should input password 'K_On' and hash its utf-8 encoding with sha256   
-    ('2012550921', '李四', '$2a$10$P6PdjzzbwmK0wSJHhUNxAuRyWzJnpxK5TeB94r0iqKuOONB2tbqti',
-     '2OfDasSpr8alYCFxcKE6buYpmL74rvUfcZ3TYEIW', FALSE);
+    ('2012550921', '李四', '$2a$10$haOGBQkjF5zOKfgT5mLSeuLb83o5F.Hage4MmrzZp.RMnSZozKRIa',
+     'AjRyvj2iCkyM9oZeGzgxjdG8Dajq2Mgg4e5F5Fsa', FALSE);
 
 TRUNCATE TABLE `exam`;
 INSERT INTO `exam`
-(`publisher_teacher_id`, `start_time`, `end_time`, `time_allowed`,
+(`publisher_teacher_id`, `scores_calculated`, `start_time`, `end_time`, `time_allowed`,
  `mcq_score`, `mcq_num`, `maq_score`, `maq_num`, `bfq_score`, `bfq_num`, `tfq_score`, `tfq_num`,
  `crq_score`, `crq_num`, `cq_score`, `cq_num`)
-VALUES ('2010301800', SUBTIME(NOW(), '14:00:00'), SUBTIME(NOW(), '11:00:00'), 120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
-       ('2010301800', SUBTIME(NOW(), '07:00:00'), SUBTIME(NOW(), '04:40:00'), 120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
-       ('2010301800', NOW(), ADDTIME(NOW(), '02:00:00'), 90, 3, 15, 3, 5, 3, 4, 3, 4, 6, 1, 5, 2),
-       ('2010301800', ADDTIME(NOW(), '21:00:00'), ADDTIME(NOW(), '24:00:00'), 110, 3, 12, 3, 6, 3, 4, 4, 4, 6, 1, 6, 2);
+VALUES ('2010301800', TRUE, SUBTIME(NOW(), '14:00:00'), SUBTIME(NOW(), '11:00:00'), 
+        120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
+       ('2010301800', TRUE, SUBTIME(NOW(), '07:00:00'), SUBTIME(NOW(), '04:40:00'),
+        120, 2, 20, 3, 5, 3, 5, 2, 5, 6, 2, 8, 1),
+       ('2010301800', FALSE, SUBTIME(NOW(), '01:37:00'), ADDTIME(NOW(), '00:03:00'),
+        90, 3, 15, 3, 5, 3, 4, 3, 4, 6, 1, 5, 2),
+       ('2010301800', FALSE, NOW(), ADDTIME(NOW(), '02:00:00'),
+        90, 3, 15, 3, 5, 3, 4, 3, 4, 6, 1, 5, 2),
+       ('2010301800', FALSE, ADDTIME(NOW(), '21:00:00'), ADDTIME(NOW(), '24:00:00'),
+        110, 3, 12, 3, 6, 3, 4, 4, 4, 6, 1, 6, 2);
 
 TRUNCATE TABLE `exam_session`;
 INSERT INTO `exam_session`
@@ -451,7 +457,10 @@ VALUES (1, '2020501880', '小明', SUBTIME(NOW(), '13:50:00'), 120, SUBTIME(NOW(
        (2, '2020501826', '小红', SUBTIME(NOW(), '06:45:30'), 120, SUBTIME(NOW(), '04:45:51'), NULL, 804),
        (2, '2020501703', '小唐', SUBTIME(NOW(), '06:07:00'), 120, SUBTIME(NOW(), '04:41:47'), NULL, 50),
        (2, '2018216386', '小阿', SUBTIME(NOW(), '05:45:03'), 120, SUBTIME(NOW(), '04:43:00'), NULL, 1000),
-       (2, '2016664026', '小韩', SUBTIME(NOW(), '05:45:00'), 120, SUBTIME(NOW(), '05:00:00'), NULL, 0);
+       (2, '2016664026', '小韩', SUBTIME(NOW(), '05:45:00'), 120, SUBTIME(NOW(), '05:00:00'), NULL, 0),
+       -- only these two rows are referred by answers(`mcq_answer` and so on)
+       (3, '2020501880', '小明', SUBTIME(NOW(), '01:26:00'), 90, NOW(), NULL, 0),
+       (3, '2020501826', '小红', SUBTIME(NOW(), '01:20:00'), 90, NOW(), NULL, 0);
 
 TRUNCATE TABLE `mcq`;
 INSERT INTO `mcq`
@@ -506,6 +515,39 @@ VALUES ('2010301800', '1 + 1 = ?', '2', '3', '4', '5', '1'),
        ('2012550921', '安多气象站被誉为“天下第一气象站”是因为它坐落在”。', '乞力马扎罗山', '青藏高原', '安第斯山', '巴西高原', '1'),
        ('2012550921', '盐度最低的海区是', '死海', '波罗的海', '红海', '地中海', '3');
 
+TRUNCATE TABLE `mcq_answer`;
+INSERT INTO mcq_answer (mcq_id, exam_session_id, right_answer, student_answer)
+VALUES  (24, 11, '3', '4'),
+        (31, 11, '3', '3'),
+        (4, 11, '1', '1'),
+        (15, 11, '2', '1'),
+        (1, 11, '1', '1'),
+        (14, 11, '2', ''),
+        (19, 11, '3', '1'),
+        (28, 11, '1', '1'),
+        (34, 11, '2', '2'),
+        (26, 11, '1', '1'),
+        (2, 11, '2', '2'),
+        (5, 11, '1', '1'),
+        (36, 11, '3', '3'),
+        (10, 11, '3', '3'),
+        (17, 11, '2', '2'),
+        (4, 12, '1', ''),
+        (28, 12, '1', '4'),
+        (30, 12, '2', ''),
+        (6, 12, '1', ''),
+        (22, 12, '3', '1'),
+        (34, 12, '2', '2'),
+        (14, 12, '2', ''),
+        (15, 12, '2', ''),
+        (35, 12, '1', ''),
+        (2, 12, '2', ''),
+        (21, 12, '2', ''),
+        (17, 12, '2', ''),
+        (18, 12, '3', ''),
+        (16, 12, '4', ''),
+        (20, 12, '3', '');
+
 TRUNCATE TABLE `maq`;
 INSERT INTO `maq`
 (`publisher_teacher_id`, `stem`,
@@ -530,6 +572,19 @@ VALUES ('2010301800', '下列哪些数字是偶数?', '2', '3', '4', '5', NULL, 
         '该类实例中只包含`__dir__()`，不包含`__hash__()`', 
         '该类没有定义任何方法，所以该实例中没有包含任何方法', NULL,NULL,NULL,'34');
 
+TRUNCATE TABLE `maq_answer`;
+INSERT INTO maq_answer (maq_id, exam_session_id, right_answer, student_answer)
+VALUES  (4, 11, '12345', '12345'),
+        (9, 11, '1246', '1246'),
+        (2, 11, '24', ''),
+        (1, 11, '13', '24'),
+        (8, 11, '2345', '176'),
+        (3, 12, '1246', '12643'),
+        (7, 12, '1346', '4'),
+        (4, 12, '12345', ''),
+        (11, 12, '34', '4'),
+        (8, 12, '2345', '1234');
+
 TRUNCATE TABLE `bfq`;
 INSERT INTO `bfq`
 (`publisher_teacher_id`, `stem`, `blank_num`, `answer_1`, `answer_2`, `answer_3`)
@@ -549,6 +604,17 @@ VALUES ('2010301800', '中国的首都是', 1, '北京', NULL, NULL),
        ('2012550921', '唐初统治者调整统治政策，客观上最能体现儒家“仁政”思想的是：zu___、jun___', 2, '租庸调制', '均田制', NULL),
        ('2012550921', '**西汉**与**东汉**时期，两次大规模治理黄河，当时在位的皇帝分别是', 2, '汉武帝', '汉明帝', NULL);
 
+TRUNCATE TABLE `bfq_answer`;
+INSERT INTO bfq_answer (bfq_id, exam_session_id, student_answer_1, student_answer_2, student_answer_3)
+VALUES  (12, 11, '我不知道', '', ''),
+        (1, 11, '北京', '', ''),
+        (2, 11, '情节', '人物', '环境'),
+        (11, 11, '', '', ''),
+        (9, 12, '45', '', ''),
+        (6, 12, '合肥', '', ''),
+        (7, 12, '法国', '英国', ''),
+        (13, 12, '', '', '');
+
 TRUNCATE TABLE `tfq`;
 INSERT INTO `tfq`
     (`publisher_teacher_id`, `stem`, `answer`)
@@ -566,6 +632,16 @@ VALUES ('2010301800', 'AK-74 发射的是 7.62×39 毫米口径子弹', FALSE),
        ('0', '佛罗伦萨被认为是文艺复兴运动的诞生地', TRUE),
        ('2010301800', '英国的全称是大不列颠及北爱尔兰联合王国（英语：United Kingdom of Great Britain and Northern Ireland）', TRUE);
 
+TRUNCATE TABLE `tfq_answer`;
+INSERT INTO tfq_answer (tfq_id, exam_session_id, right_answer, student_answer)
+VALUES  (9, 11, 1, 0),
+        (5, 11, 0, 1),
+        (3, 11, 1, 1),
+        (2, 11, 1, 0),
+        (3, 12, 1, 1),
+        (6, 12, 1, 0),
+        (1, 12, 0, 0),
+        (12, 12, 1, 1);
 
 TRUNCATE TABLE `crq`;
 INSERT INTO `crq`
@@ -578,20 +654,30 @@ VALUES ('2010301800', '下面的代码用于进行矩阵加法，试完成填空
 调用：\n```py\nstrs =["1","2"]\nchangeList(strs)\nprint("strs",strs)\n```\n请填写程序输出。（每空一行）', 
         2, 'list [\'1\',\'2\',\'end\']','strs [\'1\',\'2\',\'end\']',NULL,NULL, NULL, NULL);
 
+INSERT INTO crq_answer (crq_id, exam_session_id, student_answer_1, student_answer_2, student_answer_3, student_answer_4, student_answer_5, student_answer_6)
+VALUES  (1, 11, 'j', '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 'i', '', '', ''),
+        (2, 12, 'list [\\\'1\\\',\\\'2\\\',\\\'end\\\']', 'strs [\'1\',\'2\',\'end\']', '', '', '', '');
+
+TRUNCATE TABLE `crq_answer`;
 TRUNCATE TABLE `cq`;
 INSERT INTO `cq`
 (`publisher_teacher_id`, `stem`, `is_input_from_file`, `is_output_to_file`, `input`, `output`, `template`)
 VALUES ('2010301800', '编写程序计算一组整数的和。整数从当前路径下的文件 input.txt 中读取，整数间以空格分隔。向终端（stdout）输出结果。',
-        true, false, '3 4 6 9 66 59 21 300000 41 0 1', '300210', '# 请在此作答\nprint("hello world !")'),
+        TRUE, FALSE, '3 4 6 9 66 59 21 300000 41 0 1', '300210', '# 请在此作答\nprint("hello world !")'),
        ('0', '请从终端读取字符串并将其写入到当前路径下的文件 output.txt 中',
-         false,true, 'hello world !', 'hello world !', '# 请在此作答\n');
+         FALSE,TRUE, 'hello world !', 'hello world !', '# 请在此作答\n');
 
-TRUNCATE TABLE `mcq_answer`;
-TRUNCATE TABLE `maq_answer`;
-TRUNCATE TABLE `bfq_answer`;
-TRUNCATE TABLE `tfq_answer`;
-TRUNCATE TABLE `crq_answer`;
 TRUNCATE TABLE `cq_answer`;
+INSERT INTO cq_answer (cq_id, exam_session_id, student_answer, is_answer_right)
+VALUES  (2, 11, 'print(input())', FALSE),
+        (1, 11, '# 请在此作答
+with open(\'./input.txt\') as f:
+  s = f.read()
+  print(sum(int(c) for c in s.split(\' \')))', TRUE),
+        (2, 12, '# 请在此作答
+', FALSE),
+        (1, 12, '# 请在此作答
+print("hello world !")', FALSE);
 
 SET FOREIGN_KEY_CHECKS = 1;
 ```

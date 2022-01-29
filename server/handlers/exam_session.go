@@ -151,12 +151,14 @@ func PutMyAnswersHandler(c *gin.Context)  {
 		answer:=m["answer"].([]interface{})
 		tmp:= &models.BfqAnswer{
 			BfqID:         int(m["id"].(float64)),
-			StudentAnswer1: answer[0].(string),
 		}
-		if len(answer) > 1{
+		if answer[0]!=nil{
+			tmp.StudentAnswer1= answer[0].(string)
+		}
+		if len(answer) > 1 && answer[1]!=nil{
 			tmp.StudentAnswer2 = answer[1].(string)
 		}
-		if len(answer) > 2{
+		if len(answer) > 2 && answer[2]!=nil {
 			tmp.StudentAnswer3 = answer[2].(string)
 		}
 		bfqs = append(bfqs,tmp)
@@ -178,21 +180,23 @@ func PutMyAnswersHandler(c *gin.Context)  {
 		answer:=m["answer"].([]interface{})
 		tmp:= &models.CrqAnswer{
 			CrqID:         int(m["id"].(float64)),
-			StudentAnswer1: answer[0].(string),
 		}
-		if len(answer) > 1{
+		if answer[0]!=nil{
+			tmp.StudentAnswer1= answer[0].(string)
+		}
+		if len(answer) > 1 && answer[1]!=nil{
 			tmp.StudentAnswer2 = answer[1].(string)
 		}
-		if len(answer) > 2{
+		if len(answer) > 2 && answer[2]!=nil{
 			tmp.StudentAnswer3 = answer[2].(string)
 		}
-		if len(answer) > 3{
+		if len(answer) > 3 && answer[3]!=nil{
 			tmp.StudentAnswer4 = answer[3].(string)
 		}
-		if len(answer) > 4{
+		if len(answer) > 4 && answer[4]!=nil{
 			tmp.StudentAnswer5 = answer[4].(string)
 		}
-		if len(answer) > 5{
+		if len(answer) > 5 && answer[5]!=nil{
 			tmp.StudentAnswer6 = answer[5].(string)
 		}
 		crqs = append(crqs,tmp)

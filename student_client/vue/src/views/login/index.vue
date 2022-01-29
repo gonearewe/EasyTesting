@@ -82,7 +82,7 @@ export default {
       loginForm: {
         student_id: '2020501880',
         name: '小明',
-        exam_id: '3'
+        exam_id: '4'
       },
       loading: false,
       redirect: undefined,
