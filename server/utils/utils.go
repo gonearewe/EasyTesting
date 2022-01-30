@@ -50,6 +50,9 @@ func PanicWhen(err error) {
 }
 
 func IsAnagram(str1 string,str2 string)bool{
+	if len(str1) != len(str2){
+		return false
+	}
 	array1 := []rune(str1)
 	array2 := []rune(str2)
 	sort.Slice(array1, func(i int, j int) bool {

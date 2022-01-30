@@ -159,6 +159,7 @@ export default {
         // TODO: shuffle choice array of mcq and maq for anti-cheating
       }
       this.questions = questions
+      // trim the length of answers
       Object.entries(this.questions).forEach(([key,arr])=>{
         this.answers[key].splice(arr.length)
       })
@@ -246,6 +247,7 @@ export default {
       req.cq = questions.cq.map((e, i) => {
         return {id: e.id, answer: answers.cq[i].code||'', right: answers.cq[i].right}
       })
+      this.notifyProcess(req)
       submitMyAnswers(req).then(() => {
         this.submitting = false
         this.$message({
@@ -255,6 +257,29 @@ export default {
         })
       }).catch(()=>{
         this.submitting=false
+      })
+    },
+    notifyProcess(answers){
+      let mcqCompletedCnt = answers.mcq.filter(e=>e.answer).length
+      let maqCompletedCnt = answers.maq.filter(e=>e.answer.length>0).length
+      let bfqCompletedCnt = answers.bfq.filter(e=>e.answer.every(a=>a)).length
+      let tfqCompletedCnt = answers.tfq.filter(e=>e.answer !==null).length
+      let crqCompletedCnt = answers.crq.filter(e=>e.answer.every(a=>a)).length
+      let uncompletedCnt = Object.values(answers).map(e=>e.length).reduce((a,b)=>a+b) -
+        mcqCompletedCnt - maqCompletedCnt - bfqCompletedCnt - tfqCompletedCnt - crqCompletedCnt - answers.cq.length
+      this.$notify({
+        title: uncompletedCnt === 0 ?'你已完成所有试题':'你还有 '+uncompletedCnt+' 道小题未完成',
+        type: uncompletedCnt === 0 ?'success':'warning',
+        dangerouslyUseHTMLString: true,
+        message: [
+          '已完成 <strong>'+mcqCompletedCnt+'/'+answers.mcq.length+' 的单选题</strong>',
+          '已完成 <strong>'+maqCompletedCnt+'/'+answers.maq.length+' 的多选题</strong>',
+          '已完成 <strong>'+bfqCompletedCnt+'/'+answers.bfq.length+' 的填空题</strong>',
+          '已完成 <strong>'+tfqCompletedCnt+'/'+answers.tfq.length+' 的判断题</strong>',
+          '已完成 <strong>'+crqCompletedCnt+'/'+answers.crq.length+' 的代码阅读题</strong>',
+          '<strong>注意：'+answers.cq.length+' 道编程题的进度无法统计</strong>',
+        ].join('<hr/>'),
+        duration: 8000
       })
     }
   },

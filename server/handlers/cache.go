@@ -8,6 +8,7 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/gonearewe/EasyTesting/middlewares"
     "github.com/gonearewe/EasyTesting/utils"
+    "github.com/google/logger"
     "github.com/patrickmn/go-cache"
 )
 
@@ -17,14 +18,14 @@ func GetCacheHandler(c *gin.Context) {
     if ret,found := middlewares.MemoryStore.Get(key);found{
         c.String(200, ret.(string))
     }else {
-        panic("no cache found for exam_session_id: "+key)
+        logger.Info("no cache found for exam_session_id: "+key)
     }
 }
 
 func PutCacheHandler(c *gin.Context) {
     key := strconv.Itoa(int(jwt.ExtractClaims(c)["exam_session_id"].(float64)))
-    var body, found = ioutil.ReadAll(c.Request.Body)
-    utils.PanicWhen(found)
+    var body, err = ioutil.ReadAll(c.Request.Body)
+    utils.PanicWhen(err)
     s := string(body)
     middlewares.MemoryStore.Set(key, s,cache.DefaultExpiration)
 }

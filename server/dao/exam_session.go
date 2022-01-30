@@ -357,7 +357,7 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models
     }
 
     // record answer submitting time
-    err := db.Model(&models.ExamSession{}).Where("id = ?", examSessionId).Update("end_time", time.Now())
+    err := db.Model(&models.ExamSession{}).Where("id = ?", examSessionId).Update("end_time", time.Now()).Error
     errOccurred = errOccurred || err != nil
     // TODO: log errors
     if errOccurred {
@@ -416,6 +416,8 @@ func CalculateScores(examId int) {
 
         for _, e := range mcqAns {
             if e.StudentAnswer == e.RightAnswer {
+                // score stored in `exam` table is integer, but that in `exam_session` table is decimal,
+                // so a factor of 10 is needed.
                 idScoreMap[e.ExamSessionID] += int(exam.McqScore) * 10
             }
         }

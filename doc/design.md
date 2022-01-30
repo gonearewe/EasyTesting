@@ -634,14 +634,14 @@ VALUES ('2010301800', 'AK-74 发射的是 7.62×39 毫米口径子弹', FALSE),
 
 TRUNCATE TABLE `tfq_answer`;
 INSERT INTO tfq_answer (tfq_id, exam_session_id, right_answer, student_answer)
-VALUES  (9, 11, 1, 0),
-        (5, 11, 0, 1),
-        (3, 11, 1, 1),
-        (2, 11, 1, 0),
-        (3, 12, 1, 1),
-        (6, 12, 1, 0),
-        (1, 12, 0, 0),
-        (12, 12, 1, 1);
+VALUES  (9, 11, True, False),
+        (5, 11, False, True),
+        (3, 11, True, True),
+        (2, 11, True, False),
+        (3, 12, True, True),
+        (6, 12, True, False),
+        (1, 12, False, False),
+        (12, 12, True, True);
 
 TRUNCATE TABLE `crq`;
 INSERT INTO `crq`
@@ -654,11 +654,11 @@ VALUES ('2010301800', '下面的代码用于进行矩阵加法，试完成填空
 调用：\n```py\nstrs =["1","2"]\nchangeList(strs)\nprint("strs",strs)\n```\n请填写程序输出。（每空一行）', 
         2, 'list [\'1\',\'2\',\'end\']','strs [\'1\',\'2\',\'end\']',NULL,NULL, NULL, NULL);
 
+TRUNCATE TABLE `crq_answer`;
 INSERT INTO crq_answer (crq_id, exam_session_id, student_answer_1, student_answer_2, student_answer_3, student_answer_4, student_answer_5, student_answer_6)
 VALUES  (1, 11, 'j', '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 'i', '', '', ''),
         (2, 12, 'list [\\\'1\\\',\\\'2\\\',\\\'end\\\']', 'strs [\'1\',\'2\',\'end\']', '', '', '', '');
 
-TRUNCATE TABLE `crq_answer`;
 TRUNCATE TABLE `cq`;
 INSERT INTO `cq`
 (`publisher_teacher_id`, `stem`, `is_input_from_file`, `is_output_to_file`, `input`, `output`, `template`)
