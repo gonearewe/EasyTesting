@@ -3,7 +3,8 @@ import threading
 
 from flask import Flask
 
-from student_client.pyqt.code_runner import CodeRunner
+from code_runner import CodeRunner
+from config import INDEX_HTML_PATH
 
 server = Flask(__name__)
 
@@ -24,7 +25,7 @@ def run():
 
 @server.route('/', methods=['GET'])
 def index():
-    with open(os.path.join(os.getcwd(), 'index.html')) as f:
+    with open(INDEX_HTML_PATH) as f:
         return f.read()
 
 

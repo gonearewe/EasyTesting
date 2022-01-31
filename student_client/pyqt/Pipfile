@@ -5,14 +5,13 @@ name = "pypi"
 
 [packages]
 pyqt5 = "5.15.5"
-qtmodern = "0.2.0"
-"pyqode.core" = "2.12.1"
-"pyqode.python" = "2.12.1"
+# QtWebEngine lays in a different dependency
+PyQtWebEngine =	"5.15.5"
 requests = "==2.26.0"
 flask = "2.0.2"
-flask-restful = "*"
 
 [dev-packages]
+pyinstaller = "4.8"
 
 [requires]
 python_version = "3.7"

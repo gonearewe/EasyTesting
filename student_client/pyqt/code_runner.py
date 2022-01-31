@@ -5,6 +5,7 @@ import sys
 import tempfile
 
 from PyQt5.QtCore import QObject
+from config import PYTHON_RUNNER_EXE_PATH
 
 
 class CodeRunner(QObject):
@@ -19,15 +20,13 @@ class CodeRunner(QObject):
 
         error_header = "\n Error Running Your Code: "
         result = None
-        # sys.executable is the absolute path to the Python executable that your program was originally invoked with,
-        # for example, sys.executable might be a path like /usr/local/bin/python
         # The -c component is a python command line option that allows passing a string to execute.
         # We also change the working directory
         # Max execution time is 3 seconds
         # Stdout and stderr will be captured into result, and we combine both streams into one.
         # A possible stdin is supplied
         try:
-            result = subprocess.run([sys.executable, "-c", code], cwd=dir_path, timeout=3,
+            result = subprocess.run([PYTHON_RUNNER_EXE_PATH, "-c", code], cwd=dir_path, timeout=3,
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, input=std_in, text=True)
         except subprocess.TimeoutExpired:
             return error_header + "timeout, check if there's any endless loop or recursion", False
