@@ -1,6 +1,6 @@
 # 目录
 
-* [Welcome!](README.md)
+* [Welcome!](welcome.md)
 
 ## 教师使用手册
 
