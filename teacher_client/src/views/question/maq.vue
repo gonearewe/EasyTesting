@@ -18,10 +18,11 @@
       </el-tooltip>
     </div>
 
+    <el-skeleton v-if="listLoading" :rows="6" animated/>
     <el-table
       :key="tableKey"
       ref="maqTable"
-      v-loading="listLoading"
+      v-else
       :data="list"
       border
       fit
@@ -63,9 +64,17 @@
           <el-button size="mini" type="primary" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row)">
-            删除
-          </el-button>
+          <el-popconfirm
+            confirm-button-type="danger"
+            icon-color="red"
+            style="margin-left: 10px"
+            title="确定删除吗？"
+            @confirm="handleDelete(row)"
+          >
+            <el-button slot="reference" size="mini" type="danger">
+              删除
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -276,7 +285,7 @@ export default {
     handleDelete(row) {
       this.rowsToBeDeleted = []
       this.rowsToBeDeleted[0] = Object.assign({}, row)
-      this.dialogDeleteVisible = true
+      this.deleteData()
     },
     deleteData() {
       deleteQuestions('maq', this.rowsToBeDeleted.map(v => v.id)).then(() => {

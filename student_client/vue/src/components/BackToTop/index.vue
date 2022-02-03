@@ -1,7 +1,7 @@
 <template>
   <transition :name="transitionName">
     <div v-show="visible" :style="customStyle" class="back-to-ceiling">
-      <el-button circle icon="el-icon-arrow-up" type="primary" @click="backToTop"></el-button>
+      <el-button circle class="btn" icon="el-icon-arrow-up" type="primary" @click="backToTop"></el-button>
     </div>
   </transition>
 </template>
@@ -89,13 +89,7 @@ export default {
   cursor: pointer;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity .5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0
+.btn:hover {
+  box-shadow: 3px 3px 5px grey;
 }
 </style>
