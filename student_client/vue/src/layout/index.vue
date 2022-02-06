@@ -16,7 +16,7 @@ export default {
   mixins: [ResizeMixin],
   computed: {
     device() {
-      return this.$store.state.app.device
+      return 'desktop'
     },
   },
 }

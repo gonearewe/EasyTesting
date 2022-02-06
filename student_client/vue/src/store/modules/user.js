@@ -1,5 +1,5 @@
 import {login} from '@/api'
-import {getToken, removeToken, setToken} from '@/utils/auth'
+import {getToken, removeToken, setServerAddr, setToken} from '@/utils/cookie'
 import jwt_decode from "jwt-decode"
 import {parseTime} from "@/utils/time";
 
@@ -42,7 +42,10 @@ const mutations = {
 
 const actions = {
   // user login
-  login({commit}, userInfo) {
+  login({commit}, userForm) {
+    setServerAddr(userForm.server_addr)
+    let userInfo = Object.assign({}, userForm)
+    delete userInfo.server_addr
     return new Promise((resolve, reject) => {
       login(userInfo).then(data => {
         let token = data.token
@@ -54,7 +57,7 @@ const actions = {
           commit('SET_NAME', decoded.name)
           commit('SET_CLASS_ID', decoded.class_id)
           commit('SET_EXAM_SESSION_ID', decoded.exam_session_id)
-          commit('SET_EXAM_DEADLINE', parseTime(decoded.exam_deadline))
+          commit('SET_EXAM_DEADLINE', parseTime(decoded.exam_deadline, '{y}-{m}-{d} {h}:{i}:{s}'))
           resolve()
         } catch (error) {
           // return error in production env

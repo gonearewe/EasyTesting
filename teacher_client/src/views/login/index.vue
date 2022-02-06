@@ -1,5 +1,7 @@
 <template>
   <div class="login-container">
+    <particles-bg :bg="true" type="circle"/>
+
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" auto-complete="on" class="login-form"
              label-position="left">
 
@@ -41,8 +43,8 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" style="width:100%;margin-bottom:30px;" type="primary"
-                 @click.native.prevent="handleLogin">登录
+      <el-button :loading="loading" type="warning" @click.native.prevent="handleLogin">
+        登录
       </el-button>
 
     </el-form>
@@ -51,9 +53,13 @@
 
 <script>
 import {validTeacherId} from '@/utils/validate'
+import {ParticlesBg} from "particles-bg-vue";
 
 export default {
   name: 'Login',
+  components: {
+    ParticlesBg
+  },
   data() {
     const validateTeacherId = (rule, value, callback) => {
       if (!validTeacherId(value)) {
@@ -139,6 +145,14 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+  .el-button {
+    width: 30%;
+    margin-bottom: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .el-input {
     display: inline-block;
     height: 47px;
@@ -171,21 +185,23 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+$bg: gray;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
   overflow: hidden;
 
   .login-form {
     position: relative;
+    background-color: $bg;
     width: 520px;
+    top: 150px;
+    border-radius: 20px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 50px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }

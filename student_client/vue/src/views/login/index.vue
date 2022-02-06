@@ -1,5 +1,7 @@
 <template>
   <div class="login-container">
+    <particles-bg :bg="true" type="square"/>
+
     <el-form ref="loginForm" :model="loginForm" auto-complete="on" class="login-form"
              label-position="left">
 
@@ -7,49 +9,51 @@
         <h3 class="title">学生登录</h3>
       </div>
 
-      <el-form-item prop="student_id">
-        <span class="svg-container">
-          <svg-icon icon-class="user"/>
-        </span>
+      <el-form-item prop="server_addr">
         <el-input
-          v-model="loginForm.student_id"
+          v-model="loginForm.server_addr"
           auto-complete="on"
-          name="学号"
-          placeholder="例如：2020204520"
+          name="服务器地址"
+          placeholder="例如：http://192.168.1.3:443"
           tabindex="1"
           type="text"
         />
       </el-form-item>
 
-      <el-form-item prop="name">
-        <span class="svg-container">
-          <svg-icon icon-class="user"/>
-        </span>
+      <el-form-item prop="student_id">
         <el-input
-          v-model="loginForm.name"
-          name="姓名"
-          placeholder="例如：王小明"
+          v-model="loginForm.student_id"
+          auto-complete="on"
+          name="学号"
+          placeholder="例如：2020204520"
           tabindex="2"
           type="text"
         />
       </el-form-item>
 
+      <el-form-item prop="name">
+        <el-input
+          v-model="loginForm.name"
+          name="姓名"
+          placeholder="例如：王小明"
+          tabindex="3"
+          type="text"
+        />
+      </el-form-item>
+
       <el-form-item prop="exam_id">
-        <span class="svg-container">
-          <svg-icon icon-class="exam"/>
-        </span>
         <el-input
           ref="exam_id"
           v-model="loginForm.exam_id"
           auto-complete="on"
           name="考试号"
-          tabindex="3"
+          tabindex="4"
           @keyup.enter.native="dialogVisible=true"
         />
       </el-form-item>
 
-      <el-button :loading="loading" style="width:100%;margin-bottom:30px;" type="primary"
-                 @click.native.prevent="dialogVisible=true">登录
+      <el-button :loading="loading" type="warning" @click.native.prevent="dialogVisible=true">
+        登录
       </el-button>
     </el-form>
 
@@ -71,15 +75,18 @@
 
 <script>
 import VueMarkdown from 'vue-markdown'
+import {ParticlesBg} from "particles-bg-vue";
 
 export default {
   name: 'Login',
   components: {
-    VueMarkdown
+    VueMarkdown,
+    ParticlesBg
   },
   data() {
     return {
       loginForm: {
+        server_addr: 'http://localhost:443',
         student_id: '2020501880',
         name: '小明',
         exam_id: '4'
@@ -160,6 +167,14 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+  .el-button {
+    width: 30%;
+    margin-bottom: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .el-input {
     display: inline-block;
     height: 47px;
@@ -192,21 +207,23 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+$bg: gray;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
   overflow: hidden;
 
   .login-form {
     position: relative;
+    background-color: $bg;
     width: 520px;
+    top: 150px;
+    border-radius: 20px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 50px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }
@@ -221,14 +238,6 @@ $light_gray: #eee;
         margin-right: 16px;
       }
     }
-  }
-
-  .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: $dark_gray;
-    vertical-align: middle;
-    width: 30px;
-    display: inline-block;
   }
 
   .title-container {
