@@ -1,18 +1,33 @@
 {
 	"title": "Easy Testing Documentation",
 	"plugins" : [
-		"github",
+		"page-footer-ex",
 		"zealar",
+		"github",
 		"bootstrap-callout",
-		"highlight",
+		"-highlight",
+		"prism", 
+		"prism-themes", 
 		"-lunr", 
 		"-search", 
 		"search-pro",
-		"splitter"
+		"splitter",
+		"-sharing"
 	],
 	"pluginsConfig": {
 		"github": {
             "url": "https://github.com/gonearewe/EasyTesting"
+        },
+		"prism": {
+			"css": [
+			  "prismjs/themes/prism-solarizedlight.css"
+			]
+		},
+		"page-footer-ex": {
+            "copyright": "Apache-2.0 Licensed | Copyright © 2022-present [Euan Mactavish](https://github.com/gonearewe)",
+            "markdown": true,
+            "update_label": "Last Updated",
+            "update_format": "YYYY-MM-DD HH:mm"
         }
 	},
 	"ignores" : ["node_modules"]

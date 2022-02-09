@@ -1,10 +1,14 @@
 # 目录
 
-* [Welcome!](welcome.md)
+* [Welcome!](README.md)
 
 ## 教师使用手册
 
+* [简介](teacher_guide/introduction.md)
+* [登录界面](teacher_guide/login.md)
 * [基本界面结构](teacher_guide/structure.md)
+* [学生管理模块](teacher_guide/students.md)
+* [FAQ](teacher_guide/faq.md)
 
 ## 学生使用手册
 
