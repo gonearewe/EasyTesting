@@ -8,6 +8,8 @@
 * [登录界面](teacher_guide/login.md)
 * [基本界面结构](teacher_guide/structure.md)
 * [学生管理模块](teacher_guide/students.md)
+* [教师管理模块](teacher_guide/teachers.md)
+* [试题管理模块](teacher_guide/questions.md)
 * [FAQ](teacher_guide/faq.md)
 
 ## 学生使用手册
