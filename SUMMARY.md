@@ -10,6 +10,7 @@
 * [学生管理模块](teacher_guide/students.md)
 * [教师管理模块](teacher_guide/teachers.md)
 * [试题管理模块](teacher_guide/questions.md)
+* [考试管理模块](teacher_guide/exams.md)
 * [FAQ](teacher_guide/faq.md)
 
 ## 学生使用手册
