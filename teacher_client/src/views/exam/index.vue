@@ -103,7 +103,7 @@
             title="确定删除吗？"
             @confirm="handleDelete(row)"
           >
-            <el-button slot="reference" size="mini" type="danger">
+            <el-button slot="reference" :disabled="checkStatus(row,currentDatetime)==='进行中'" size="mini" type="danger">
               删除
             </el-button>
           </el-popconfirm>
