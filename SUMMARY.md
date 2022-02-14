@@ -19,7 +19,7 @@
 
 ## 设计文档
 
-* [系统总览](design/system.md)
+* [系统总览](design/introduction.md)
 * [接口文档](design/api.md)
 * [数据库](design/database.md)
 * [服务端](design/server.md)
