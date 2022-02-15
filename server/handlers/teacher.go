@@ -42,10 +42,7 @@ func PutTeacherHandler(c *gin.Context) {
 func PutTeacherProfileHandler(c *gin.Context) {
     var teacher models.Teacher
     utils.MustParseJsonTo(c, &teacher)
-    if teacher.ID != int(jwt.ExtractClaims(c)["id"].(float64)){
-        c.AbortWithError(401,errors.New("profile endpoint forbids modifying other teacher's profile"))
-        return
-    }
+    teacher.ID = int(jwt.ExtractClaims(c)["id"].(float64))
     if teacher.Password != "" {
         salt := utils.GenerateSalt()
         teacher.Salt = string(salt)
