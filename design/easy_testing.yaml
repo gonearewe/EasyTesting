@@ -2411,43 +2411,9 @@ paths:
       tags:
         - question
     parameters: []
-  /exams/enter:
-    post:
-      summary: ''
-      operationId: post-enter
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Bad Request
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                exam_id:
-                  type: integer
-                student_id:
-                  type: string
-              required:
-                - exam_id
-                - student_id
-      tags:
-        - exam
-      security: []
-    parameters: []
   /exams/my_questions:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - exam
       responses:
@@ -2644,7 +2610,7 @@ paths:
       security: []
   /exams/examinees:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - exam
       responses:
@@ -2692,8 +2658,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
                 teacher_id:
                   type: string
                 name:
@@ -2701,12 +2665,11 @@ paths:
                 password:
                   type: string
               required:
-                - id
                 - teacher_id
                 - name
   /cache:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
         - others
       responses:
@@ -2737,9 +2700,9 @@ paths:
         - others
   /exams/ended:
     get:
-      summary: Your GET endpoint
+      summary: ''
       tags:
-        - others
+        - exam
       responses:
         '200':
           description: OK

@@ -1,4 +1,4 @@
-首先介绍系统的前后端接口。
+接下来介绍系统的前后端接口。
 接口相当于一道切面，可以明确地划分开前后端的职责，
 本系统的接口通过 [OpenAPI](https://www.openapis.org/) v3.0.0 规范描述，详细的描述文件见[这里](https://github.com/gonearewe/EasyTesting/tree/gh-pages/design/easy_testing.yaml)，可以通过 [Swagger Editor](https://editor.swagger.io/) 查看。这里仅仅对接口作一个概要的介绍。
 
@@ -34,7 +34,11 @@ Payload 可携带明文信息供客户端使用，教师的 Token Payload 中包
 
 `GET student_auth` 则是学生的登录接口，接受参数 `student_id`、
 `name` 与 `exam_id`。学生登录特殊的地方在于不仅要学号与姓名正确，
-还要求指定的考试正在进行（即当前时间处于该考试的*开始时刻*与*结束时刻*间）。学生登录成功获得的 Token 的 Payload 中包含：
+还要求指定的考试正在进行（即当前时间处于该考试的*开始时刻*与*结束时刻*间），
+并且如果学生还未参加这场考试，则自动参加（即答题倒计时自接口访问成功开始计算），
+当然如果学生已经参加了，就只会返回一个 TOKEN（这种情况一般不会出现，因为 TOKEN 的
+有效期都设置得很长，基本不会在考试期间过期）。
+学生登录成功获得的 Token 的 Payload 中包含：
 
 - student_id：学号
 - name：学生的姓名
@@ -42,11 +46,43 @@ Payload 可携带明文信息供客户端使用，教师的 Token Payload 中包
 - exam_session_id：由当前学生 ID 和考试 ID 共同决定的系统唯一 ID 
 - exam_deadline：学生在这个考试中的作答截止时刻
 
-并且，学生的所有接口都只有在指定的考试正在进行时才能访问，
-这是对学生作答限时的基本保证。
+除开 `GET ping` 与这两个登录认证 API，
+其他的接口都要求 JWT 认证。并且教师与学生的可访问接口也是完全分开的
+（唯一一个两用户均可访问的认证接口是 `GET hello`）。
 
 ## 教师客户端的其他 API
 
 `mcq`、`maq`、`bfq`、`tfq`、`crq` 与 `cq` 这六个接口都支持
 GET、POST、PUT、DELETE 四大方法，分别用于单选题（Multiple Choice Question）、多选题（Multiple Answer Question）、填空题（Blank-Filling Question）、
 判断题（True or False Question）、代码阅读题（Code Reading Question）与编程题（Coding Question）的管理（增删改查）。
+
+`teachers` 与 `students` 接口同样支持四大方法，它们分别用于
+教师用户和学生用户的增删改查。但是前者仅有管理员可以访问，
+服务器通过 TOKEN Payload 中的 is_admin 字段认证管理员；
+因为服务器读取 is_admin 字段之前仍会验证 Signature，
+所以不必担心恶意请求篡改 is_admin 字段的问题。
+`PUT profile` 同样是用来修改教师的接口，但它仅限于修改自己的信息，
+并且不支持修改*是否为管理员*属性。
+
+`exams` 接口同样支持四大方法，用于支持对考试的增删改查。
+`GET exams/ended` 获得所有已结束考试的列表，因为它不返回考试的详细信息且列表一般不会很长，
+所以不支持分页。`GET exams/examinees` 接受参数 `exam_id`，
+返回指定考试的所有 exam session，同样不支持分页。
+
+## 学生客户端的其他 API
+
+教师客户端本质上是管理平台，所以相关的接口较多，而学生客户端的 API 就要少很多。
+
+`GET exams/my_questions` 用于获取学生的试题。`PUT exams/my_answers` 则用于提交作答。
+
+> WIP
+
+## API 的生命周期
+
+我们希望在有考试进行时禁用对题目的修改，也希望学生仅能在自己的作答时间内提交答案。
+显然，这要求 API 有一定的生命周期（lifecycle），各种 API 的生命周期如下所示：
+
+![lifecycle](../img/api-lifecycle.drawio.svg)
+
+当然，这是由生命周期决定的可访问性，如果接口参数有误或不满足其他条件，
+即使在生命周期内也会访问失败。

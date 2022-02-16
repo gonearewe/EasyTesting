@@ -20,8 +20,8 @@
 ## 设计文档
 
 * [系统总览](design/introduction.md)
-* [接口文档](design/api.md)
 * [数据库](design/database.md)
+* [接口文档](design/api.md)
 * [服务端](design/server.md)
 * [教师客户端](design/teacher_client.md)
 * [学生客户端](design/student_client.md)
