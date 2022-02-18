@@ -51,3 +51,12 @@ EasyTesting aims to support the online examination process of a specific course 
 - 2021.10.23 Coding Start, Gin Server First
 - 2021.10.16 API Design with OpenAPI
 - 2021.10.12 Basic Design and Framework Evaluating
+
+## Sponsor
+
+This project is sponsored by [JetBrains](https://www.jetbrains.com/), thanks so much for
+their [support]((https://jb.gg/OpenSourceSupport)) to open source.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/jb_beam.svg">
+</p>
