@@ -1,28 +1,52 @@
 import random
 
-from locust import HttpUser, task
+import mysql
+from locust import FastHttpUser, task, between, events
+from locust.runners import MasterRunner
 
 
-class Student(HttpUser):
-    @task
-    def participate(self):
+# refresh database on locust master init
+@events.init.add_listener
+def on_locust_init(environment, **kwargs):
+    if isinstance(environment.runner, MasterRunner):
+        mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="12345"
+        )
+        cursor = mydb.cursor()
+        cursor.execute(open("../server/sql/test.sql").read())
+
+
+class Student(FastHttpUser):
+    # Every Student will wait for 100~200ms after each task completion
+    wait_time = between(0.1, 0.2)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         student = random.choice(students)
         response = self.client.get("/student_auth", params={**student, "exam_id": 4})
-        auth = {"Authorization": "Bearer " + response.json()["token"]}
-        response = self.client.get("/exams/my_questions", headers=auth)
-        answers = self.build_answers(response.json())
-        self.client.put("/exams/my_answers", json=answers)
+        self.auth = {"Authorization": "Bearer " + response.json()["token"]}
+        response = self.client.get("/exams/my_questions", headers=self.auth)
+        questions = response.json()
+        self.answers = self.build_answers(questions)
+
+    @task
+    def participate(self):
+        self.client.put("/exams/my_answers", json=self.answers, headers=self.auth)
 
     def build_answers(self, questions):
         return {
-            "mcq": [{"id": q.id, "answer": random.randint(1, 4)} for q in questions["mcq"]],
-            "maq": [{"id": q.id, "answer": random.choice([[], [1, 4], [2, 3, 1], [4]])} for q in questions["maq"]],
-            "bfq": [{"id": q.id, "answer": random.choice(["", "abc", "jkl", "[678]"])} for q in questions["bfq"]],
-            "tfq": [{"id": q.id, "answer": random.choice([True, False])} for q in questions["tfq"]],
-            "crq": [{"id": q.id, "answer": ["{xxx}"] * q["blank_num"]} for q in questions["crq"]],
-            "cq": [{"id": q.id, "answer": "long_str" * 500, "right": False} for q in questions["cq"]],
+            "mcq": [{"id": q["id"], "answer": random.randint(1, 4)} for q in questions["mcq"]],
+            "maq": [{"id": q["id"], "answer": random.choice([[], [1, 4], [2, 3, 1], [4]])} for q in questions["maq"]],
+            "bfq": [{"id": q["id"], "answer": ["[678]"] * q["blank_num"]} for q in questions["bfq"]],
+            "tfq": [{"id": q["id"], "answer": random.choice([True, False])} for q in questions["tfq"]],
+            "crq": [{"id": q["id"], "answer": ["{xxx}"] * q["blank_num"]} for q in questions["crq"]],
+            "cq": [{"id": q["id"], "answer": long_str, "right": False} for q in questions["cq"]],
         }
 
+
+long_str = "long_str" * 500
 
 students = [
     {'student_id': a, 'name': b} for a, b in [

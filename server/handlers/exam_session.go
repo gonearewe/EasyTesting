@@ -9,6 +9,7 @@ import (
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
+	"github.com/google/logger"
 )
 
 func GetExamineeHandler(c *gin.Context) {
@@ -212,6 +213,14 @@ func PutMyAnswersHandler(c *gin.Context)  {
 	}
 
 	examSessionId:=int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
-	dao.SubmitMyAnswers(examSessionId,mcqs,maqs,bfqs,tfqs,crqs,cqs)
+	go func(){
+		defer func(){
+			if err:=recover();err != nil{
+				logger.Errorf("%v\n", err)
+			}
+		}()
+		dao.SubmitMyAnswers(examSessionId,mcqs,maqs,bfqs,tfqs,crqs,cqs)
+	}()
+
 }
 
