@@ -21,7 +21,7 @@ func GetCqHandler(c *gin.Context) {
 }
 
 func PostCqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var cqs []*models.Cq
     utils.MustParseJsonTo(c, &cqs)
     for _,cq:= range cqs{
@@ -31,14 +31,14 @@ func PostCqHandler(c *gin.Context) {
 }
 
 func PutCqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var cq models.Cq
     utils.MustParseJsonTo(c, &cq)
     dao.UpdateCqById(&cq)
 }
 
 func DeleteCqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {

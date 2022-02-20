@@ -76,12 +76,12 @@ CREATE TABLE `exam_session`
     `student_name` varchar(50) NOT NULL COMMENT '考生的姓名',
     `start_time`   datetime    NOT NULL COMMENT '作答开始时刻',
     `time_allowed` tinyint(3)  NOT NULL COMMENT '考生答题时间，单位：分钟',
-    `end_time`     datetime   DEFAULT NULL COMMENT '交卷时刻',
-    `answer_sheet` mediumblob DEFAULT NULL COMMENT '包括考试试题与作答情况的pdf，用于存档',
+    `end_time`     datetime DEFAULT NULL COMMENT '交卷时刻',
     `score`        smallint    NOT NULL COMMENT '最终成绩*10，即保存到小数点后一位',
     FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX (`exam_id`, `student_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -99,7 +99,7 @@ CREATE TABLE `mcq`
     `choice_3`             text(200)   NOT NULL COMMENT '选项的内容',
     `choice_4`             text(200)   NOT NULL COMMENT '选项的内容',
     `right_answer`         char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
-    `correct_rate`         float       NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
+#     `correct_rate`         float       NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -118,7 +118,10 @@ CREATE TABLE `mcq_answer`
     `student_answer`  char(1) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`mcq_id`) REFERENCES mcq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    -- unique composite index to speed up execution and avoid deadlocks on sql
+    -- like `UPDATE mcq_answer SET student_answer='3' WHERE mcq_id = 4 AND exam_session_id = 22`
+    UNIQUE INDEX (`mcq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -157,7 +160,8 @@ CREATE TABLE `maq_answer`
     `student_answer`  char(7) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`maq_id`) REFERENCES maq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX (`maq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -193,7 +197,8 @@ CREATE TABLE `bfq_answer`
     `student_answer_3` text(50) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`bfq_id`) REFERENCES bfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX (`bfq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -225,7 +230,8 @@ CREATE TABLE `tfq_answer`
     `student_answer`  bool DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX (`tfq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -267,7 +273,8 @@ CREATE TABLE `crq_answer`
     `student_answer_6` text(50) DEFAULT NULL COMMENT '学生的答案',
     FOREIGN KEY (`crq_id`) REFERENCES crq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX (`crq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -300,7 +307,8 @@ CREATE TABLE `cq_answer`
     `is_answer_right` bool      DEFAULT FALSE COMMENT '学生的代码是否正确',
     FOREIGN KEY (`cq_id`) REFERENCES cq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX (`cq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

@@ -1,21 +1,19 @@
 import random
 
-import mysql
+import mysql.connector
 from locust import FastHttpUser, task, between, events
-from locust.runners import MasterRunner
 
 
-# refresh database on locust master init
+# refresh database on locust init
 @events.init.add_listener
 def on_locust_init(environment, **kwargs):
-    if isinstance(environment.runner, MasterRunner):
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="12345"
-        )
-        cursor = mydb.cursor()
-        cursor.execute(open("../server/sql/test.sql").read())
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="12345"
+    )
+    cursor = mydb.cursor()
+    cursor.execute(open("../server/sql/test.sql", encoding='utf-8').read(), multi=True)
 
 
 class Student(FastHttpUser):

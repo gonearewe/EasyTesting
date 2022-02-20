@@ -65,22 +65,14 @@ func DeleteExamHandler(c *gin.Context) {
     dao.DeleteExams(ids)
 }
 
-// abortIfAnyExamActive aborts current request chain if any exam is active,
+// abortIfAnyExamActiveOrScoreNotCalculated aborts current request chain if any exam is active
+// or scores of who participated it aren't calculated,
 // this usually happens when trying POST, PUT or DELETE exam-related items (such as questions).
-func abortIfAnyExamActive(c *gin.Context) {
-    if isAnyExamActive() {
-        c.AbortWithError(http.StatusForbidden,errors.New("action forbidden when any exam is active"))
+func abortIfAnyExamActiveOrScoreNotCalculated(c *gin.Context) {
+    if dao.AnyExamActiveOrScoreNotCalculated() {
+        c.AbortWithError(http.StatusForbidden,
+            errors.New("action forbidden when any exam is active or its scores aren't calculated"))
     }
-}
-
-func isAnyExamActive() bool {
-    exams := dao.GetExams()
-    for _, exam := range exams {
-        if exam.StartTime.Before(time.Now()) && exam.EndTime.After(time.Now()) {
-            return true
-        }
-    }
-    return false
 }
 
 

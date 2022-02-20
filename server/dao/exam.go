@@ -100,10 +100,10 @@ func DeleteExams(ids []int) {
 
 func IsExamActive(examId int) bool {
     var exam models.Exam
-    err := db.Select("start_time", "end_time").Where("id = ?", examId).First(&exam).Error
+    err := db.Select("start_time", "end_time").Where("id = ?", examId).Take(&exam).Error
     if err == nil {
         now := time.Now()
-        return now.After(exam.StartTime)  && now.Before(exam.EndTime)
+        return now.After(exam.StartTime) && now.Before(exam.EndTime)
     }
     if errors.Is(err, gorm.ErrRecordNotFound) {
         return false
@@ -111,9 +111,22 @@ func IsExamActive(examId int) bool {
     panic(err)
 }
 
+func AnyExamActiveOrScoreNotCalculated() bool {
+    err := db.Select("id").
+        Where("scores_calculated = FALSE OR (CURTIME() >= start_time AND end_time > CURTIME())").
+        Take(&models.Exam{}).Error
+    if err == nil {
+        return true
+    }
+    if errors.Is(err, gorm.ErrRecordNotFound) {
+        return true
+    }
+    panic(err)
+}
+
 func IsExamEndedAndScoresNotCalculated(examId int) bool {
     var exam models.Exam
-    err := db.Select( "end_time" ,"scores_calculated").Where("id = ?", examId).First(&exam).Error
+    err := db.Select("end_time", "scores_calculated").Where("id = ?", examId).Take(&exam).Error
     if err == nil {
         return time.Now().After(exam.EndTime) && !exam.ScoresCalculated
     }

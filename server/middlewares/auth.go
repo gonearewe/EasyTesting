@@ -16,7 +16,7 @@ func setupAuth(r *gin.Engine) (teacherAuthRouter *gin.RouterGroup,
 	adminAuthRouter *gin.RouterGroup, studentAuthRouter *gin.RouterGroup) {
 	teacherAuthMiddleware := generateAuthMiddleware(teacherAuthenticator, teacherPayLoadFunc, nil)
 	adminAuthMiddleware := generateAuthMiddleware(teacherAuthenticator, teacherPayLoadFunc, adminAuthorizator)
-	studentAuthMiddleware := generateAuthMiddleware(studentAuthenticator, studentPayLoadFunc, nil)
+	studentAuthMiddleware := generateAuthMiddleware(studentAuthenticator, studentPayLoadFunc, studentAuthorizator)
 	r.GET("/teacher_auth", teacherAuthMiddleware.LoginHandler)
 	teacherAuthRouter = r.Group("/")
 	teacherAuthRouter.Use(teacherAuthMiddleware.MiddlewareFunc())
@@ -104,11 +104,29 @@ func studentAuthenticator(c *gin.Context) (user interface{}, err error) {
 		"student_id":      studentId,
 		"name":            student.Name,
 		"class_id":        student.ClassID,
+		"exam_id":		  examId,
 		"exam_session_id": session.ID,
+		// This is the deadline calculated based on the student's start time,
+		// however, if the exam has ended (reaching global deadline),
+		// the authenticated student still can't access any api.
 		"exam_deadline": session.StartTime.Add(time.Duration(session.TimeAllowed) * time.Minute),
 	}, nil
 }
 
 func studentPayLoadFunc(data interface{}) jwt.MapClaims {
 	return data.(jwt.MapClaims)
+}
+
+func studentAuthorizator(data interface{}, c *gin.Context) bool {
+	studentId := jwt.ExtractClaims(c)["student_id"].(string)
+	examId := int(jwt.ExtractClaims(c)["exam_id"].(float64))
+	if !dao.IsExamActive(examId){
+		return false
+	}
+	err,session := dao.GetExamSessionBy(studentId,examId)
+	if err!=nil {
+		return false
+	}
+	deadline := session.StartTime.Add(time.Duration(session.TimeAllowed) * time.Minute)
+	return time.Now().After(deadline)
 }

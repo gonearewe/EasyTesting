@@ -302,7 +302,6 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models
     errOccurred := false
 
     for _, mcq := range mcqs {
-        // TODO: Deadlock detected for this sql
         err := db.Model(&models.McqAnswer{}).Where("mcq_id = ?", mcq.McqID).
             Where("exam_session_id = ?", examSessionId).Update("student_answer", mcq.StudentAnswer).Error
         errOccurred = errOccurred || err != nil

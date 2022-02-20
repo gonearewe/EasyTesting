@@ -52,7 +52,7 @@ func PutTeacherProfileHandler(c *gin.Context) {
 }
 
 func DeleteTeachersHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {

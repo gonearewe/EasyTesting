@@ -39,7 +39,7 @@ func GetBfqHandler(c *gin.Context) {
 }
 
 func PostBfqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var reqs []gin.H
     utils.MustParseJsonTo(c, &reqs)
     var bfqs = make([]*models.Bfq, len(reqs))
@@ -72,7 +72,7 @@ func PostBfqHandler(c *gin.Context) {
 }
 
 func PutBfqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     req := utils.MustParseJson(c)
     rightAnswers := req["right_answers"].([]interface{})
     if len(rightAnswers) > 3 {
@@ -101,7 +101,7 @@ func PutBfqHandler(c *gin.Context) {
 }
 
 func DeleteBfqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {

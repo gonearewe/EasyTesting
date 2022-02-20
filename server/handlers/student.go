@@ -16,19 +16,21 @@ func GetStudentsHandler(c *gin.Context) {
 }
 
 func StudentsRegisterHandler(c *gin.Context) {
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var students []*models.Student
     utils.MustParseJsonTo(c, &students)
     dao.CreateStudents(students)
 }
 
 func PutStudentHandler(c *gin.Context) {
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var student models.Student
     utils.MustParseJsonTo(c, &student)
     dao.UpdateStudentById(&student)
 }
 
 func DeleteStudentsHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {

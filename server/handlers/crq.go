@@ -39,7 +39,7 @@ func GetCrqHandler(c *gin.Context) {
 }
 
 func PostCrqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var reqs []gin.H
     utils.MustParseJsonTo(c, &reqs)
     var crqs = make([]*models.Crq, len(reqs))
@@ -75,7 +75,7 @@ func PostCrqHandler(c *gin.Context) {
 }
 
 func PutCrqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     req := utils.MustParseJson(c)
     rightAnswers := req["right_answers"].([]interface{})
     for _, answer := range rightAnswers {
@@ -107,7 +107,7 @@ func PutCrqHandler(c *gin.Context) {
 }
 
 func DeleteCrqHandler(c *gin.Context) {
-    abortIfAnyExamActive(c)
+    abortIfAnyExamActiveOrScoreNotCalculated(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {
