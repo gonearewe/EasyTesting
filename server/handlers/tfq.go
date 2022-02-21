@@ -24,6 +24,8 @@ func GetTfqHandler(c *gin.Context) {
 			"publisher_teacher_id": tfq.PublisherTeacherID,
 			"stem":                 tfq.Stem,
 			"right_answer":         tfq.Answer,
+			"overall_score":        tfq.OverallScore,
+			"overall_correct_score":        tfq.OverallCorrectScore,
 		}
 	}
     c.JSON(200, gin.H{"total":num,"data":res})

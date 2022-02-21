@@ -40,6 +40,8 @@ func GetMaqHandler(c *gin.Context) {
             "stem":                 maq.Stem,
             "choices":              choices,
             "right_answer":         answer,
+            "overall_score":        maq.OverallScore,
+            "overall_correct_score":        maq.OverallCorrectScore,
         }
     }
     c.JSON(200, gin.H{"total":num,"data":res})

@@ -12,7 +12,9 @@ type Maq struct {
 	Choice5            string `gorm:"column:choice_5;type:text" json:"choice_5"`                                                                    // 选项的内容
 	Choice6            string `gorm:"column:choice_6;type:text" json:"choice_6"`                                                                    // 选项的内容
 	Choice7            string `gorm:"column:choice_7;type:text" json:"choice_7"`                                                                    // 选项的内容
-	RightAnswer        string `gorm:"column:right_answer;type:char(7);not null" json:"right_answer"`                                                // 答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"
+	RightAnswer        string `gorm:"column:right_answer;type:char(7);not null" json:"right_answer"`                                                                // 填空的答案
+	OverallCorrectScore int   `gorm:"column:overall_correct_score;type:int;not null" json:"overall_correct_score"` // 此题在所有出现中的总得分数*10，即保存到小数点后一位
+	OverallScore int   `gorm:"column:overall_score;type:int;not null" json:"overall_score"` // 此题在所有出现中的总分数*10，即保存到小数点后一位                                                // 答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"
 }
 
 // TableName get sql table name.获取数据库表名

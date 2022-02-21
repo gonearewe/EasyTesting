@@ -9,7 +9,9 @@ type Cq struct {
 	IsOutputToFile     bool   `gorm:"column:is_output_to_file;type:tinyint(1);not null" json:"is_output_to_file"`                                   // 程序输出是否写入文件，若为否，输出到命令行
 	Input              string `gorm:"column:input;type:text;not null" json:"input"`                                                                 // 程序的输入
 	Output             string `gorm:"column:output;type:text;not null" json:"output"`                                                               // 程序的输出
-	Template           string `gorm:"column:template;type:text;not null" json:"template"`                                                           // 题目的初始模板
+	Template           string `gorm:"column:template;type:text;not null" json:"template"`                                                                // 填空的答案
+	OverallCorrectScore int   `gorm:"column:overall_correct_score;type:int;not null" json:"overall_correct_score"` // 此题在所有出现中的总得分数*10，即保存到小数点后一位
+	OverallScore int   `gorm:"column:overall_score;type:int;not null" json:"overall_score"` // 此题在所有出现中的总分数*10，即保存到小数点后一位                                                           // 题目的初始模板
 }
 
 // TableName get sql table name.获取数据库表名

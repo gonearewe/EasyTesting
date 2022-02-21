@@ -28,6 +28,8 @@ func GetMcqHandler(c *gin.Context) {
 			"stem":                 mcq.Stem,
 			"choices":              [4]string{mcq.Choice1, mcq.Choice2, mcq.Choice3, mcq.Choice4},
 			"right_answer":         utils.Int(mcq.RightAnswer),
+			"overall_score":        mcq.OverallScore,
+			"overall_correct_score":        mcq.OverallCorrectScore,
 		}
 	}
     c.JSON(200, gin.H{"total":num,"data":res})

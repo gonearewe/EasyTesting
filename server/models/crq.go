@@ -12,6 +12,8 @@ type Crq struct {
 	Answer4            string `gorm:"column:answer_4;type:tinytext" json:"answer_4"`                                                                // 填空的答案
 	Answer5            string `gorm:"column:answer_5;type:tinytext" json:"answer_5"`                                                                // 填空的答案
 	Answer6            string `gorm:"column:answer_6;type:tinytext" json:"answer_6"`                                                                // 填空的答案
+	OverallCorrectScore int   `gorm:"column:overall_correct_score;type:int;not null" json:"overall_correct_score"` // 此题在所有出现中的总得分数*10，即保存到小数点后一位
+	OverallScore int   `gorm:"column:overall_score;type:int;not null" json:"overall_score"` // 此题在所有出现中的总分数*10，即保存到小数点后一位                                                                // 填空的答案
 }
 
 // TableName get sql table name.获取数据库表名

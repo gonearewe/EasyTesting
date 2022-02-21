@@ -51,6 +51,8 @@ func UpdateCqById(question *models.Cq) {
             "is_input_from_file":question.IsInputFromFile,
             "is_output_to_file":question.IsOutputToFile,
             "template":question.Template,
+            "overall_score":       0,
+            "overall_correct_score":      0,
         }).Error
     utils.PanicWhen(err)
 }

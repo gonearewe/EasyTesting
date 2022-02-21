@@ -9,6 +9,8 @@ type Bfq struct {
 	Answer1            string `gorm:"column:answer_1;type:tinytext;not null" json:"answer_1"`                                                       // 填空的答案
 	Answer2            string `gorm:"column:answer_2;type:tinytext" json:"answer_2"`                                                                // 填空的答案
 	Answer3            string `gorm:"column:answer_3;type:tinytext" json:"answer_3"`                                                                // 填空的答案
+	OverallCorrectScore int   `gorm:"column:overall_correct_score;type:int;not null" json:"overall_correct_score"` // 此题在所有出现中的总得分数*10，即保存到小数点后一位
+	OverallScore int   `gorm:"column:overall_score;type:int;not null" json:"overall_score"` // 此题在所有出现中的总分数*10，即保存到小数点后一位
 }
 
 // TableName get sql table name.获取数据库表名

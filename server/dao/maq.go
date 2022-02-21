@@ -54,6 +54,8 @@ func UpdateMaqById(question *models.Maq) {
             "choice_6":question.Choice6,
             "choice_7":question.Choice7,
             "right_answer":question.RightAnswer,
+            "overall_score":       0,
+            "overall_correct_score":      0,
         }).Error
     utils.PanicWhen(err)
 }

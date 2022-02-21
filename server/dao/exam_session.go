@@ -384,52 +384,92 @@ func CalculateScores(examId int) {
         utils.PanicWhen(tx.Select("id").Where("exam_id = ?", examId).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&examinees).Error)
         ids := make([]int, len(examinees))
-        var idScoreMap = map[int]int{}
+        var sessionId2ScoreMap = map[int]int{}
         for i, e := range examinees {
             ids[i] = e.ID
-            idScoreMap[e.ID] = 0
+            sessionId2ScoreMap[e.ID] = 0
         }
 
+        type overallStatistics struct {
+            overallCorrectScore int
+            overallScore int
+        }
+        var mcqId2StatisticsMap = map[int]*overallStatistics{}
+        var maqId2StatisticsMap = map[int]*overallStatistics{}
+        var bfqId2StatisticsMap = map[int]*overallStatistics{}
+        var tfqId2StatisticsMap = map[int]*overallStatistics{}
+        var crqId2StatisticsMap = map[int]*overallStatistics{}
+        var cqId2StatisticsMap = map[int]*overallStatistics{}
+
         var mcqAns []*models.McqAnswer
-        utils.PanicWhen(tx.Select("exam_session_id", "right_answer", "student_answer").Where("exam_session_id IN ?", ids).
+        utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&mcqAns).Error)
+        for _,ans := range mcqAns{
+            mcqId2StatisticsMap[ans.McqID] = &overallStatistics{}
+        }
 
         var maqAns []*models.MaqAnswer
-        utils.PanicWhen(tx.Select("exam_session_id", "right_answer", "student_answer").Where("exam_session_id IN ?", ids).
+        utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&maqAns).Error)
+        for _,ans := range maqAns{
+            maqId2StatisticsMap[ans.MaqID] = &overallStatistics{}
+        }
 
         var bfqAns []*models.BfqAnswer
         utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&bfqAns).Error)
+        for _,ans := range bfqAns{
+            bfqId2StatisticsMap[ans.BfqID] = &overallStatistics{}
+        }
 
         var tfqAns []*models.TfqAnswer
-        utils.PanicWhen(tx.Select("exam_session_id", "right_answer", "student_answer").Where("exam_session_id IN ?", ids).
+        utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&tfqAns).Error)
+        for _,ans := range tfqAns{
+            tfqId2StatisticsMap[ans.TfqID] = &overallStatistics{}
+        }
 
         var crqAns []*models.CrqAnswer
         utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&crqAns).Error)
+        for _,ans := range crqAns {
+            crqId2StatisticsMap[ans.CrqID] = &overallStatistics{}
+        }
 
         var cqAns []*models.CqAnswer
-        utils.PanicWhen(tx.Select("exam_session_id", "is_answer_right").Where("exam_session_id IN ?", ids).
+        utils.PanicWhen(tx.Where("exam_session_id IN ?", ids).
             Clauses(clause.Locking{Strength: "SHARE"}).Find(&cqAns).Error)
+        for _,ans := range cqAns{
+            cqId2StatisticsMap[ans.CqID] = &overallStatistics{}
+        }
 
         for _, e := range mcqAns {
+            statistics := mcqId2StatisticsMap[e.McqID]
+            statistics.overallScore += int(exam.McqScore) * 10
             if e.StudentAnswer == e.RightAnswer {
                 // score stored in `exam` table is integer, but that in `exam_session` table is decimal,
                 // so a factor of 10 is needed.
-                idScoreMap[e.ExamSessionID] += int(exam.McqScore) * 10
+                sessionId2ScoreMap[e.ExamSessionID] += int(exam.McqScore) * 10
+                statistics.overallCorrectScore += int(exam.McqScore) * 10
             }
         }
         for _, e := range maqAns {
-            if utils.IsAnagram(e.StudentAnswer, e.RightAnswer) {
-                idScoreMap[e.ExamSessionID] += int(exam.MaqScore) * 10
+            statistics := maqId2StatisticsMap[e.MaqID]
+            statistics.overallScore += int(exam.MaqScore) * 10
+            if utils.IsAnagram(e.StudentAnswer, e.RightAnswer) { // 全选对得满分
+                sessionId2ScoreMap[e.ExamSessionID] += int(exam.MaqScore) * 10
+                statistics.overallCorrectScore += int(exam.MaqScore) * 10
+            }else if utils.Contains(e.RightAnswer,e.StudentAnswer) { // 漏选得半分
+                sessionId2ScoreMap[e.ExamSessionID] += int(exam.MaqScore) * 10 / 2
+                statistics.overallCorrectScore += int(exam.MaqScore) * 10 / 2
             }
         }
         for _, e := range bfqAns {
             var bfq models.Bfq
             utils.PanicWhen(tx.Select("blank_num", "answer_1", "answer_2", "answer_3").
                 Where("id = ?", e.BfqID).First(&bfq).Error)
+            statistics := bfqId2StatisticsMap[e.BfqID]
+            statistics.overallScore += int(exam.BfqScore) * 10
             for i, ans := range [][]string{
                 []string{e.StudentAnswer1, bfq.Answer1}, []string{e.StudentAnswer2, bfq.Answer2},
                 []string{e.StudentAnswer3, bfq.Answer3},
@@ -438,13 +478,18 @@ func CalculateScores(examId int) {
                     break
                 }
                 if ans[0] == ans[1] {
-                    idScoreMap[e.ExamSessionID] += int(exam.BfqScore) * 10 / int(bfq.BlankNum)
+                    score := int(exam.BfqScore) * 10 / int(bfq.BlankNum)
+                    sessionId2ScoreMap[e.ExamSessionID] += score
+                    statistics.overallCorrectScore += score
                 }
             }
         }
         for _, e := range tfqAns {
+            statistics := tfqId2StatisticsMap[e.TfqID]
+            statistics.overallScore += int(exam.TfqScore) * 10
             if e.StudentAnswer == e.RightAnswer {
-                idScoreMap[e.ExamSessionID] += int(exam.TfqScore) * 10
+                sessionId2ScoreMap[e.ExamSessionID] += int(exam.TfqScore) * 10
+                statistics.overallCorrectScore += int(exam.TfqScore) * 10
             }
         }
         for _, e := range crqAns {
@@ -452,6 +497,8 @@ func CalculateScores(examId int) {
             utils.PanicWhen(tx.Select(
                 "blank_num", "answer_1", "answer_2", "answer_3", "answer_4", "answer_5", "answer_6",
             ).Where("id = ?", e.CrqID).First(&crq).Error)
+            statistics := crqId2StatisticsMap[e.CrqID]
+            statistics.overallScore += int(exam.CrqScore) * 10
             for i, ans := range [][]string{
                 []string{e.StudentAnswer1, crq.Answer1}, []string{e.StudentAnswer2, crq.Answer2},
                 []string{e.StudentAnswer3, crq.Answer3}, []string{e.StudentAnswer4, crq.Answer4},
@@ -461,18 +508,33 @@ func CalculateScores(examId int) {
                     break
                 }
                 if ans[0] == ans[1] {
-                    idScoreMap[e.ExamSessionID] += int(exam.CrqScore) * 10 / int(crq.BlankNum)
+                    score := int(exam.CrqScore) * 10 / int(crq.BlankNum)
+                    sessionId2ScoreMap[e.ExamSessionID] += score
+                    statistics.overallCorrectScore += score
                 }
             }
         }
         for _, e := range cqAns {
+            statistics := cqId2StatisticsMap[e.CqID]
+            statistics.overallScore += int(exam.CqScore) * 10
             if e.IsAnswerRight {
-                idScoreMap[e.ExamSessionID] += int(exam.CqScore) * 10
+                sessionId2ScoreMap[e.ExamSessionID] += int(exam.CqScore) * 10
+                statistics.overallCorrectScore += int(exam.CqScore) * 10
             }
         }
 
-        for id, score := range idScoreMap {
+        for id, score := range sessionId2ScoreMap {
             utils.PanicWhen(tx.Model(&models.ExamSession{}).Where("id = ?", id).Update("score", score).Error)
+        }
+        tmp:= []string{"mcq","maq","bfq","tfq","crq","cq"}
+        for i, m := range []map[int]*overallStatistics{mcqId2StatisticsMap,maqId2StatisticsMap,
+            bfqId2StatisticsMap,tfqId2StatisticsMap,crqId2StatisticsMap,cqId2StatisticsMap} {
+            for id, statistics := range m {
+                utils.PanicWhen(tx.Raw(
+                    "UPDATE ? SET overall_score = overall_score + ?, "+
+                        "overall_correct_score = overall_correct_score + ? WHERE id = ?",
+                    tmp[i],statistics.overallScore, statistics.overallCorrectScore, id).Error)
+            }
         }
         utils.PanicWhen(tx.Model(&models.Exam{}).Where("id = ?", examId).Update("scores_calculated", true).Error)
         return nil

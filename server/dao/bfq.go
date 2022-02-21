@@ -50,6 +50,8 @@ func UpdateBfqById(question *models.Bfq) {
             "answer_1":question.Answer1,
             "answer_2":question.Answer2,
             "answer_3":question.Answer3,
+            "overall_score":       0,
+            "overall_correct_score":      0,
         }).Error
     utils.PanicWhen(err)
 }

@@ -9,7 +9,9 @@ type Mcq struct {
 	Choice2            string `gorm:"column:choice_2;type:text;not null" json:"choice_2"`                                                           // 选项的内容
 	Choice3            string `gorm:"column:choice_3;type:text;not null" json:"choice_3"`                                                           // 选项的内容
 	Choice4            string `gorm:"column:choice_4;type:text;not null" json:"choice_4"`                                                           // 选项的内容
-	RightAnswer        string `gorm:"column:right_answer;type:char(1);not null" json:"right_answer"`                                                // 答案，正确选项的索引，如 "4"、"1"
+	RightAnswer        string `gorm:"column:right_answer;type:char(1);not null" json:"right_answer"`                                                                // 填空的答案
+	OverallCorrectScore int   `gorm:"column:overall_correct_score;type:int;not null" json:"overall_correct_score"` // 此题在所有出现中的总得分数*10，即保存到小数点后一位
+	OverallScore int   `gorm:"column:overall_score;type:int;not null" json:"overall_score"` // 此题在所有出现中的总分数*10，即保存到小数点后一位                                                // 答案，正确选项的索引，如 "4"、"1"
 }
 
 // TableName get sql table name.获取数据库表名

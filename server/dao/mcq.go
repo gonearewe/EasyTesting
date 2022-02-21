@@ -44,7 +44,17 @@ func CreateMcqs(questions []*models.Mcq) {
 // the record to be updated will be specified by given mcq's id.
 // When any error occurs, it panics and the given mcq will not be updated.
 func UpdateMcqById(question *models.Mcq) {
-    err := db.Where("id = ?", question.ID).Updates(question).Error
+    err := db.Model(question).Where("id = ?", question.ID).Updates(
+        map[string]interface{}{
+            "stem":question.Stem,
+            "choice_1":question.Choice1,
+            "choice_2":question.Choice2,
+            "choice_3":question.Choice3,
+            "choice_4":question.Choice4,
+            "right_answer":question.RightAnswer,
+            "overall_score":       0,
+            "overall_correct_score":      0,
+        }).Error
     utils.PanicWhen(err)
 }
 

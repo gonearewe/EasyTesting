@@ -53,6 +53,8 @@ func UpdateCrqById(question *models.Crq) {
             "answer_4":question.Answer4,
             "answer_5":question.Answer5,
             "answer_6":question.Answer6,
+            "overall_score":       0,
+            "overall_correct_score":      0,
         }).Error
     utils.PanicWhen(err)
 }

@@ -33,6 +33,8 @@ func GetBfqHandler(c *gin.Context) {
             "publisher_teacher_id": bfq.PublisherTeacherID,
             "stem":                 bfq.Stem,
             "right_answers":        answers,
+            "overall_score":        bfq.OverallScore,
+            "overall_correct_score":        bfq.OverallCorrectScore,
         }
     }
     c.JSON(200, gin.H{"total": num, "data": res})

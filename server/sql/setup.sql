@@ -91,15 +91,16 @@ CREATE TABLE `exam_session`
 DROP TABLE IF EXISTS `mcq`;
 CREATE TABLE `mcq`
 (
-    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `choice_1`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_2`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_3`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_4`             text(200)   NOT NULL COMMENT '选项的内容',
-    `right_answer`         char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
-#     `correct_rate`         float       NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
+    `id`                    int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                  text(200)   NOT NULL COMMENT '题干',
+    `choice_1`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_2`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_3`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_4`              text(200)   NOT NULL COMMENT '选项的内容',
+    `right_answer`          char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
+    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -131,17 +132,19 @@ CREATE TABLE `mcq_answer`
 DROP TABLE IF EXISTS `maq`;
 CREATE TABLE `maq`
 (
-    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `choice_1`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_2`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_3`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_4`             text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_5`             text(200) DEFAULT NULL COMMENT '选项的内容',
-    `choice_6`             text(200) DEFAULT NULL COMMENT '选项的内容',
-    `choice_7`             text(200) DEFAULT NULL COMMENT '选项的内容',
-    `right_answer`         char(7)     NOT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
+    `id`                    int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                  text(200)   NOT NULL COMMENT '题干',
+    `choice_1`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_2`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_3`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_4`              text(200)   NOT NULL COMMENT '选项的内容',
+    `choice_5`              text(200) DEFAULT NULL COMMENT '选项的内容',
+    `choice_6`              text(200) DEFAULT NULL COMMENT '选项的内容',
+    `choice_7`              text(200) DEFAULT NULL COMMENT '选项的内容',
+    `right_answer`          char(7)     NOT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
+    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -171,13 +174,15 @@ CREATE TABLE `maq_answer`
 DROP TABLE IF EXISTS `bfq`;
 CREATE TABLE `bfq`
 (
-    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `blank_num`            tinyint(2)  NOT NULL COMMENT '要填的空的数目',
-    `answer_1`             text(50)    NOT NULL COMMENT '填空的答案',
-    `answer_2`             text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_3`             text(50) DEFAULT NULL COMMENT '填空的答案',
+    `id`                    int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                  text(200)   NOT NULL COMMENT '题干',
+    `blank_num`             tinyint(2)  NOT NULL COMMENT '要填的空的数目',
+    `answer_1`              text(50)    NOT NULL COMMENT '填空的答案',
+    `answer_2`              text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_3`              text(50) DEFAULT NULL COMMENT '填空的答案',
+    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -208,10 +213,12 @@ CREATE TABLE `bfq_answer`
 DROP TABLE IF EXISTS `tfq`;
 CREATE TABLE `tfq`
 (
-    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `answer`               bool        NOT NULL COMMENT '正确答案',
+    `id`                    int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                  text(200)   NOT NULL COMMENT '题干',
+    `answer`                bool        NOT NULL COMMENT '正确答案',
+    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -241,16 +248,18 @@ CREATE TABLE `tfq_answer`
 DROP TABLE IF EXISTS `crq`;
 CREATE TABLE `crq`
 (
-    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `blank_num`            tinyint(2)  NOT NULL COMMENT '要填的空的数目',
-    `answer_1`             text(50)    NOT NULL COMMENT '填空的答案',
-    `answer_2`             text(50)    NOT NULL COMMENT '填空的答案',
-    `answer_3`             text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_4`             text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_5`             text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_6`             text(50) DEFAULT NULL COMMENT '填空的答案',
+    `id`                    int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                  text(200)   NOT NULL COMMENT '题干',
+    `blank_num`             tinyint(2)  NOT NULL COMMENT '要填的空的数目',
+    `answer_1`              text(50)    NOT NULL COMMENT '填空的答案',
+    `answer_2`              text(50)    NOT NULL COMMENT '填空的答案',
+    `answer_3`              text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_4`              text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_5`              text(50) DEFAULT NULL COMMENT '填空的答案',
+    `answer_6`              text(50) DEFAULT NULL COMMENT '填空的答案',
+    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -284,14 +293,16 @@ CREATE TABLE `crq_answer`
 DROP TABLE IF EXISTS `cq`;
 CREATE TABLE `cq`
 (
-    `id`                   int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
-    `publisher_teacher_id` varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
-    `stem`                 text(200)   NOT NULL COMMENT '题干',
-    `is_input_from_file`   bool        NOT NULL COMMENT '程序输入是否从文件读取，若为否，从命令行读取',
-    `is_output_to_file`    bool        NOT NULL COMMENT '程序输出是否写入文件，若为否，输出到命令行',
-    `input`                text(200)   NOT NULL COMMENT '程序的输入',
-    `output`               text(200)   NOT NULL COMMENT '程序的输出',
-    `template`             text(200)   NOT NULL COMMENT '题目的初始模板',
+    `id`                    int(10)     NOT NULL AUTO_INCREMENT COMMENT '用作主键',
+    `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
+    `stem`                  text(200)   NOT NULL COMMENT '题干',
+    `is_input_from_file`    bool        NOT NULL COMMENT '程序输入是否从文件读取，若为否，从命令行读取',
+    `is_output_to_file`     bool        NOT NULL COMMENT '程序输出是否写入文件，若为否，输出到命令行',
+    `input`                 text(200)   NOT NULL COMMENT '程序的输入',
+    `output`                text(200)   NOT NULL COMMENT '程序的输出',
+    `template`              text(200)   NOT NULL COMMENT '题目的初始模板',
+    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB

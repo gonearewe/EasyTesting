@@ -68,3 +68,23 @@ func IsAnagram(str1 string,str2 string)bool{
 	}
 	return true
 }
+
+func Contains(str string,sub string)bool{
+	if len(str) < len(sub){
+		return false
+	}
+	array1 := []rune(str)
+	array2 := []rune(sub)
+	sort.Slice(array1, func(i int, j int) bool {
+		return array1[i] < array1[j]
+	})
+	sort.Slice(array2, func(i int, j int) bool {
+		return array2[i] < array2[j]
+	})
+	for i := range array2 {
+		if array1[i] != array2[i] {
+			return false
+		}
+	}
+	return true
+}

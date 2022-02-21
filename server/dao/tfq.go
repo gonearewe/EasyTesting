@@ -44,7 +44,13 @@ func CreateTfqs(questions []*models.Tfq) {
 // the record to be updated will be specified by given tfq's id.
 // When any error occurs, it panics and the given tfq will not be updated.
 func UpdateTfqById(question *models.Tfq) {
-    err := db.Where("id = ?", question.ID).Updates(question).Error
+    err := db.Model(question).Where("id = ?", question.ID).Updates(
+    map[string]interface{}{
+        "stem":question.Stem,
+        "answer":question.Answer,
+        "overall_score":       0,
+        "overall_correct_score":      0,
+    }).Error
     utils.PanicWhen(err)
 }
 

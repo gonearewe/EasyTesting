@@ -33,6 +33,8 @@ func GetCrqHandler(c *gin.Context) {
             "publisher_teacher_id": crq.PublisherTeacherID,
             "stem":                 crq.Stem,
             "right_answers":        answers,
+            "overall_score":        crq.OverallScore,
+            "overall_correct_score":        crq.OverallCorrectScore,
         }
     }
     c.JSON(200, gin.H{"total": num, "data": res})
