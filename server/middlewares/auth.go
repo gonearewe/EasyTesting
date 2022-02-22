@@ -128,5 +128,5 @@ func studentAuthorizator(data interface{}, c *gin.Context) bool {
 		return false
 	}
 	deadline := session.StartTime.Add(time.Duration(session.TimeAllowed) * time.Minute)
-	return time.Now().After(deadline)
+	return time.Now().Before(deadline)
 }

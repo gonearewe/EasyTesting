@@ -13,7 +13,6 @@ type ExamSession struct {
 	StartTime   time.Time `gorm:"column:start_time;type:datetime;not null" json:"start_time"` // 作答开始时刻
 	TimeAllowed int8      `gorm:"column:time_allowed;type:tinyint(3);not null" json:"time_allowed"`  
 	EndTime     time.Time `gorm:"column:end_time;type:datetime" json:"end_time"`              // 交卷时刻
-	AnswerSheet []byte    `gorm:"column:answer_sheet;type:mediumblob" json:"-"`               // 包括考试试题与作答情况的pdf，用于存档
 	Score       int16    `gorm:"column:score;type:smallint" json:"score"`                    // 最终成绩*10，即保存到小数点后一位
 }
 

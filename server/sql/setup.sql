@@ -99,8 +99,8 @@ CREATE TABLE `mcq`
     `choice_3`              text(200)   NOT NULL COMMENT '选项的内容',
     `choice_4`              text(200)   NOT NULL COMMENT '选项的内容',
     `right_answer`          char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
-    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
-    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -139,12 +139,12 @@ CREATE TABLE `maq`
     `choice_2`              text(200)   NOT NULL COMMENT '选项的内容',
     `choice_3`              text(200)   NOT NULL COMMENT '选项的内容',
     `choice_4`              text(200)   NOT NULL COMMENT '选项的内容',
-    `choice_5`              text(200) DEFAULT NULL COMMENT '选项的内容',
-    `choice_6`              text(200) DEFAULT NULL COMMENT '选项的内容',
-    `choice_7`              text(200) DEFAULT NULL COMMENT '选项的内容',
+    `choice_5`              text(200)            DEFAULT NULL COMMENT '选项的内容',
+    `choice_6`              text(200)            DEFAULT NULL COMMENT '选项的内容',
+    `choice_7`              text(200)            DEFAULT NULL COMMENT '选项的内容',
     `right_answer`          char(7)     NOT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
-    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
-    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -179,10 +179,10 @@ CREATE TABLE `bfq`
     `stem`                  text(200)   NOT NULL COMMENT '题干',
     `blank_num`             tinyint(2)  NOT NULL COMMENT '要填的空的数目',
     `answer_1`              text(50)    NOT NULL COMMENT '填空的答案',
-    `answer_2`              text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_3`              text(50) DEFAULT NULL COMMENT '填空的答案',
-    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
-    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `answer_2`              text(50)             DEFAULT NULL COMMENT '填空的答案',
+    `answer_3`              text(50)             DEFAULT NULL COMMENT '填空的答案',
+    `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -217,8 +217,8 @@ CREATE TABLE `tfq`
     `publisher_teacher_id`  varchar(10) NOT NULL COMMENT '创建本题的教师的工号',
     `stem`                  text(200)   NOT NULL COMMENT '题干',
     `answer`                bool        NOT NULL COMMENT '正确答案',
-    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
-    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -254,12 +254,12 @@ CREATE TABLE `crq`
     `blank_num`             tinyint(2)  NOT NULL COMMENT '要填的空的数目',
     `answer_1`              text(50)    NOT NULL COMMENT '填空的答案',
     `answer_2`              text(50)    NOT NULL COMMENT '填空的答案',
-    `answer_3`              text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_4`              text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_5`              text(50) DEFAULT NULL COMMENT '填空的答案',
-    `answer_6`              text(50) DEFAULT NULL COMMENT '填空的答案',
-    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
-    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `answer_3`              text(50)             DEFAULT NULL COMMENT '填空的答案',
+    `answer_4`              text(50)             DEFAULT NULL COMMENT '填空的答案',
+    `answer_5`              text(50)             DEFAULT NULL COMMENT '填空的答案',
+    `answer_6`              text(50)             DEFAULT NULL COMMENT '填空的答案',
+    `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -301,8 +301,8 @@ CREATE TABLE `cq`
     `input`                 text(200)   NOT NULL COMMENT '程序的输入',
     `output`                text(200)   NOT NULL COMMENT '程序的输出',
     `template`              text(200)   NOT NULL COMMENT '题目的初始模板',
-    `overall_correct_score` int         NOT NULL COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
-    `overall_score`         int         NOT NULL COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
+    `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB

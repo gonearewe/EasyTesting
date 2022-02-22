@@ -119,7 +119,7 @@ func AnyExamActiveOrScoreNotCalculated() bool {
         return true
     }
     if errors.Is(err, gorm.ErrRecordNotFound) {
-        return true
+        return false
     }
     panic(err)
 }

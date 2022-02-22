@@ -57,6 +57,16 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column align="center" header-align="center" label="难度" width="60">
+        <template slot-scope="{row}">
+          <el-tooltip v-if="row.overall_score < 100" content="数据过少，无法分析" effect="dark" placement="top">
+            <el-tag type="info">无</el-tag>
+          </el-tooltip>
+          <el-tag v-else :type="getDifficultyColor(1-row.overall_correct_score/row.overall_score)">
+            {{ (1 - row.overall_correct_score / row.overall_score).toFixed(1) }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作" width="200">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleUpdate(row)">
@@ -136,6 +146,7 @@ import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import MarkdownEditor from "@/components/MarkdownEditor";
 import _ from "lodash"
+import {getDifficultyColor} from "@/views/question/common";
 
 export default {
   name: 'TfqList',
@@ -187,6 +198,7 @@ export default {
     this.getList()
   },
   methods: {
+    getDifficultyColor,
     getList() {
       this.listLoading = true
       getQuestions('tfq', this.listQuery).then(body => {
@@ -242,14 +254,13 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           updateQuestion('tfq', this.temp).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, _.merge({}, this.temp)) // remember to copy
             this.dialogFormVisible = false
             this.$message({
               message: '修改已保存',
               showClose: true,
               type: 'success'
             })
+            this.getList()
           })
         }
       })

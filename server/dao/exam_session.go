@@ -12,7 +12,6 @@ import (
 )
 
 func GetExamSessionsBy(examId int) (ret []*models.ExamSession) {
-    // `answer_sheet` field is excluded.
     err := db.Select("student_id", "student_name", "start_time", "end_time", "score").
         Where("exam_id = ?", examId).Find(&ret).Error
     utils.PanicWhen(err)
@@ -26,7 +25,6 @@ func GetExamSessionBy(studentId string, examId int) (err error, ret *models.Exam
 }
 
 func GetEndedExamSessionsBy(examId int) (ret []*models.ExamSession) {
-    // `answer_sheet` field is excluded.
     db.Select("student_id", "student_name", "start_time", "end_time", "score").
         Where("exam_id = ?", examId).Find(&ret)
     return
@@ -530,10 +528,10 @@ func CalculateScores(examId int) {
         for i, m := range []map[int]*overallStatistics{mcqId2StatisticsMap,maqId2StatisticsMap,
             bfqId2StatisticsMap,tfqId2StatisticsMap,crqId2StatisticsMap,cqId2StatisticsMap} {
             for id, statistics := range m {
-                utils.PanicWhen(tx.Raw(
-                    "UPDATE ? SET overall_score = overall_score + ?, "+
+                utils.PanicWhen(tx.Exec(
+                    "UPDATE "+tmp[i]+" SET overall_score = overall_score + ?, "+
                         "overall_correct_score = overall_correct_score + ? WHERE id = ?",
-                    tmp[i],statistics.overallScore, statistics.overallCorrectScore, id).Error)
+                    statistics.overallScore, statistics.overallCorrectScore, id).Error)
             }
         }
         utils.PanicWhen(tx.Model(&models.Exam{}).Where("id = ?", examId).Update("scores_calculated", true).Error)

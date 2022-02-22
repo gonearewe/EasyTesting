@@ -1,33 +1,27 @@
 import random
 
-import mysql.connector
-from locust import FastHttpUser, task, between, events
-
-
-# refresh database on locust init
-@events.init.add_listener
-def on_locust_init(environment, **kwargs):
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="12345"
-    )
-    cursor = mydb.cursor()
-    cursor.execute(open("../server/sql/test.sql", encoding='utf-8').read(), multi=True)
+from locust import FastHttpUser, task, between
 
 
 class Student(FastHttpUser):
     # Every Student will wait for 100~200ms after each task completion
-    wait_time = between(0.1, 0.2)
+    wait_time = between(10000, 20000)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         student = random.choice(students)
-        response = self.client.get("/student_auth", params={**student, "exam_id": 4})
+        response = self.client.get("/student_auth", params={**student, "exam_id": 3})
         self.auth = {"Authorization": "Bearer " + response.json()["token"]}
         response = self.client.get("/exams/my_questions", headers=self.auth)
         questions = response.json()
+        self.validateQuestions(questions)
         self.answers = self.build_answers(questions)
+
+    def validateQuestions(self, questions):
+        for q in ["mcq", "maq", "bfq", "tfq", "crq", "cq"]:
+            li = [e["id"] for e in questions[q]]
+            # validate that there's no duplicated question issued
+            assert len(li) == len(set(li))
 
     @task
     def participate(self):
