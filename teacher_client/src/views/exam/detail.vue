@@ -26,13 +26,13 @@
 
     <el-form :inline="true" :model="statistics">
       <el-form-item label="平均分">
-        <span>{{ statistics.average }}</span>
+        <span>{{ statistics.average.toFixed(1) }}</span>
       </el-form-item>
       <el-form-item label="最高分">
-        <span>{{ statistics.max }}</span>
+        <span>{{ statistics.max.toFixed(1) }}</span>
       </el-form-item>
       <el-form-item label="最低分">
-        <span>{{ statistics.min }}</span>
+        <span>{{ statistics.min.toFixed(1) }}</span>
       </el-form-item>
     </el-form>
 

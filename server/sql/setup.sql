@@ -12,7 +12,8 @@ CREATE TABLE `student`
     `name`       varchar(50)        NOT NULL COMMENT '姓名',
     `class_id`   varchar(10)        NOT NULL COMMENT '班号',
     PRIMARY KEY (`id`),
-    INDEX (`student_id`),
+    INDEX (`student_id`, `class_id`, `name`),
+    INDEX (`class_id`, `name`),
     INDEX (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -30,7 +31,7 @@ CREATE TABLE `teacher`
     `salt`       varchar(50)        NOT NULL COMMENT '盐',
     `is_admin`   bool               NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员',
     PRIMARY KEY (`id`),
-    INDEX (`teacher_id`),
+    INDEX (`teacher_id`, `name`),
     INDEX (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

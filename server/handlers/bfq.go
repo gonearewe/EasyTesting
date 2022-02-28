@@ -29,19 +29,18 @@ func GetBfqHandler(c *gin.Context) {
         }
 
         res[i] = gin.H{
-            "id":                   bfq.ID,
-            "publisher_teacher_id": bfq.PublisherTeacherID,
-            "stem":                 bfq.Stem,
-            "right_answers":        answers,
-            "overall_score":        bfq.OverallScore,
-            "overall_correct_score":        bfq.OverallCorrectScore,
+            "id":                    bfq.ID,
+            "publisher_teacher_id":  bfq.PublisherTeacherID,
+            "stem":                  bfq.Stem,
+            "right_answers":         answers,
+            "overall_score":         bfq.OverallScore,
+            "overall_correct_score": bfq.OverallCorrectScore,
         }
     }
     c.JSON(200, gin.H{"total": num, "data": res})
 }
 
 func PostBfqHandler(c *gin.Context) {
-    abortIfAnyExamActiveOrScoreNotCalculated(c)
     var reqs []gin.H
     utils.MustParseJsonTo(c, &reqs)
     var bfqs = make([]*models.Bfq, len(reqs))
@@ -74,7 +73,6 @@ func PostBfqHandler(c *gin.Context) {
 }
 
 func PutBfqHandler(c *gin.Context) {
-    abortIfAnyExamActiveOrScoreNotCalculated(c)
     req := utils.MustParseJson(c)
     rightAnswers := req["right_answers"].([]interface{})
     if len(rightAnswers) > 3 {
@@ -103,7 +101,6 @@ func PutBfqHandler(c *gin.Context) {
 }
 
 func DeleteBfqHandler(c *gin.Context) {
-    abortIfAnyExamActiveOrScoreNotCalculated(c)
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {

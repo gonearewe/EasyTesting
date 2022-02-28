@@ -36,7 +36,7 @@ func GetMcqHandler(c *gin.Context) {
 }
 
 func PostMcqHandler(c *gin.Context) {
-	abortIfAnyExamActiveOrScoreNotCalculated(c)
+	
 	var reqs []gin.H
 	utils.MustParseJsonTo(c, &reqs)
 	var mcqs = make([]*models.Mcq, len(reqs))
@@ -67,7 +67,7 @@ func PostMcqHandler(c *gin.Context) {
 }
 
 func PutMcqHandler(c *gin.Context) {
-	abortIfAnyExamActiveOrScoreNotCalculated(c)
+	
 	req := utils.MustParseJson(c)
 	choices := req["choices"].([]interface{})
 	if len(choices)<4{
@@ -94,7 +94,7 @@ func PutMcqHandler(c *gin.Context) {
 }
 
 func DeleteMcqHandler(c *gin.Context) {
-	abortIfAnyExamActiveOrScoreNotCalculated(c)
+	
 	li := strings.Split(c.Query("ids"), ",")
 	ids := make([]int, len(li))
 	for i, e := range li {

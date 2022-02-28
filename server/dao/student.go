@@ -40,11 +40,11 @@ func buildStudentQueryFrom(tx *gorm.DB, studentId string, name string, classId s
 	if studentId != "" {
 		filtered = filtered.Where("student_id LIKE ?", studentId+"%")
 	}
-	if name != "" {
-		filtered = filtered.Where("name LIKE ?", "%"+name+"%")
-	}
 	if classId != "" {
 		filtered = filtered.Where("class_id LIKE ?", classId+"%")
+	}
+	if name != "" {
+		filtered = filtered.Where("name LIKE ?", "%"+name+"%")
 	}
 	return filtered
 }
@@ -62,11 +62,12 @@ func CreateStudents(students []*models.Student) {
 func UpdateStudentById(t *models.Student) {
 	err := db.Transaction(func(tx *gorm.DB) error {
 		var err error
-		err = db.Where("id = ?", t.ID).Updates(t).Error
+		err = db.Updates(t).Error
 		if err != nil {
 			return err
 		}
 
+		// then update `student_name` in `exam_session` table to maintain consistency
 		return db.Model(&models.ExamSession{}).Where("student_id = ?", t.StudentID).
 			Update("student_name", t.Name).Error
 	})

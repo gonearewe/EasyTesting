@@ -3,7 +3,6 @@ package handlers
 // Handlers for exam endpoints, refer to easy_testing.yaml(OpenAPI file) for details.
 
 import (
-    "net/http"
     "strings"
     "time"
 
@@ -63,16 +62,6 @@ func DeleteExamHandler(c *gin.Context) {
         ids[i] = utils.Int(e)
     }
     dao.DeleteExams(ids)
-}
-
-// abortIfAnyExamActiveOrScoreNotCalculated aborts current request chain if any exam is active
-// or scores of who participated it aren't calculated,
-// this usually happens when trying POST, PUT or DELETE exam-related items (such as questions).
-func abortIfAnyExamActiveOrScoreNotCalculated(c *gin.Context) {
-    if dao.AnyExamActiveOrScoreNotCalculated() {
-        c.AbortWithError(http.StatusForbidden,
-            errors.New("action forbidden when any exam is active or its scores aren't calculated"))
-    }
 }
 
 

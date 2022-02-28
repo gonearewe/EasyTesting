@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/handlers"
+	"github.com/gonearewe/EasyTesting/middlewares"
 )
 
 func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup,
@@ -18,44 +19,44 @@ func SetupRoute(unauthRouter gin.IRouter, teacherAuthRouter *gin.RouterGroup,
 	adminAuthRouter.GET("/teachers", handlers.GetTeachersHandler)
 	adminAuthRouter.POST("/teachers", handlers.TeachersRegisterHandler)
 	adminAuthRouter.PUT("/teachers", handlers.PutTeacherHandler)
-	adminAuthRouter.DELETE("/teachers", handlers.DeleteTeachersHandler)
+	adminAuthRouter.DELETE("/teachers",middlewares.CheckGlobalExamStatus, handlers.DeleteTeachersHandler)
 
 	teacherAuthRouter.PUT("/profile", handlers.PutTeacherProfileHandler)
 
 	teacherAuthRouter.GET("/students", handlers.GetStudentsHandler)
 	teacherAuthRouter.POST("/students", handlers.StudentsRegisterHandler)
-	teacherAuthRouter.PUT("/students", handlers.PutStudentHandler)
-	teacherAuthRouter.DELETE("/students", handlers.DeleteStudentsHandler)
+	teacherAuthRouter.PUT("/students",middlewares.CheckGlobalExamStatus, handlers.PutStudentHandler)
+	teacherAuthRouter.DELETE("/students",middlewares.CheckGlobalExamStatus, handlers.DeleteStudentsHandler)
 
 	teacherAuthRouter.GET("/mcq", handlers.GetMcqHandler)
-	teacherAuthRouter.POST("/mcq", handlers.PostMcqHandler)
-	teacherAuthRouter.PUT("/mcq", handlers.PutMcqHandler)
-	teacherAuthRouter.DELETE("/mcq", handlers.DeleteMcqHandler)
+	teacherAuthRouter.POST("/mcq",middlewares.CheckGlobalExamStatus, handlers.PostMcqHandler)
+	teacherAuthRouter.PUT("/mcq",middlewares.CheckGlobalExamStatus, handlers.PutMcqHandler)
+	teacherAuthRouter.DELETE("/mcq",middlewares.CheckGlobalExamStatus, handlers.DeleteMcqHandler)
 
 	teacherAuthRouter.GET("/maq", handlers.GetMaqHandler)
-	teacherAuthRouter.POST("/maq", handlers.PostMaqHandler)
-	teacherAuthRouter.PUT("/maq", handlers.PutMaqHandler)
-	teacherAuthRouter.DELETE("/maq", handlers.DeleteMaqHandler)
+	teacherAuthRouter.POST("/maq",middlewares.CheckGlobalExamStatus, handlers.PostMaqHandler)
+	teacherAuthRouter.PUT("/maq",middlewares.CheckGlobalExamStatus, handlers.PutMaqHandler)
+	teacherAuthRouter.DELETE("/maq",middlewares.CheckGlobalExamStatus, handlers.DeleteMaqHandler)
 
 	teacherAuthRouter.GET("/bfq", handlers.GetBfqHandler)
-	teacherAuthRouter.POST("/bfq", handlers.PostBfqHandler)
-	teacherAuthRouter.PUT("/bfq", handlers.PutBfqHandler)
-	teacherAuthRouter.DELETE("/bfq", handlers.DeleteBfqHandler)
+	teacherAuthRouter.POST("/bfq",middlewares.CheckGlobalExamStatus, handlers.PostBfqHandler)
+	teacherAuthRouter.PUT("/bfq",middlewares.CheckGlobalExamStatus, handlers.PutBfqHandler)
+	teacherAuthRouter.DELETE("/bfq",middlewares.CheckGlobalExamStatus, handlers.DeleteBfqHandler)
 
 	teacherAuthRouter.GET("/tfq", handlers.GetTfqHandler)
-	teacherAuthRouter.POST("/tfq", handlers.PostTfqHandler)
-	teacherAuthRouter.PUT("/tfq", handlers.PutTfqHandler)
-	teacherAuthRouter.DELETE("/tfq", handlers.DeleteTfqHandler)
+	teacherAuthRouter.POST("/tfq",middlewares.CheckGlobalExamStatus, handlers.PostTfqHandler)
+	teacherAuthRouter.PUT("/tfq",middlewares.CheckGlobalExamStatus, handlers.PutTfqHandler)
+	teacherAuthRouter.DELETE("/tfq",middlewares.CheckGlobalExamStatus, handlers.DeleteTfqHandler)
 
 	teacherAuthRouter.GET("/crq", handlers.GetCrqHandler)
-	teacherAuthRouter.POST("/crq", handlers.PostCrqHandler)
-	teacherAuthRouter.PUT("/crq", handlers.PutCrqHandler)
-	teacherAuthRouter.DELETE("/crq", handlers.DeleteCrqHandler)
+	teacherAuthRouter.POST("/crq",middlewares.CheckGlobalExamStatus, handlers.PostCrqHandler)
+	teacherAuthRouter.PUT("/crq",middlewares.CheckGlobalExamStatus, handlers.PutCrqHandler)
+	teacherAuthRouter.DELETE("/crq",middlewares.CheckGlobalExamStatus, handlers.DeleteCrqHandler)
 
 	teacherAuthRouter.GET("/cq", handlers.GetCqHandler)
-	teacherAuthRouter.POST("/cq", handlers.PostCqHandler)
-	teacherAuthRouter.PUT("/cq", handlers.PutCqHandler)
-	teacherAuthRouter.DELETE("/cq", handlers.DeleteCqHandler)
+	teacherAuthRouter.POST("/cq",middlewares.CheckGlobalExamStatus, handlers.PostCqHandler)
+	teacherAuthRouter.PUT("/cq",middlewares.CheckGlobalExamStatus, handlers.PutCqHandler)
+	teacherAuthRouter.DELETE("/cq",middlewares.CheckGlobalExamStatus, handlers.DeleteCqHandler)
 
 	teacherAuthRouter.GET("/exams", handlers.GetExamHandler)
 	teacherAuthRouter.GET("/exams/ended", handlers.GetEndedExamHandler)
