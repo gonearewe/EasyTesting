@@ -8,7 +8,7 @@
 <!--            NOTICE: Instead of code below, moving model into `source` can prevent-->
 <!--            an event called `rendered` triggered every time user presses a key which results-->
 <!--            in a significant performance loss.-->
-<!--            <vue-markdown :source="mcq.stem"></vue-markdown>-->
+            <!--            <vue-markdown>{{mcq.stem}}</vue-markdown>-->
             <vue-markdown :source="mcq.stem"></vue-markdown>
           </div>
           <el-radio-group v-model="answers.mcq[i]">
@@ -67,6 +67,19 @@
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="编程题">
+        <el-card class="box-card" shadow="hover">
+          <p>
+            <i class="el-icon-warning-outline"></i>
+            请根据题意编写代码，从文件或命令行中读取输入，向文件或命令行打印输出。
+            假如涉及文件，输入文件为工作目录下的 input.txt，输出文件则为 output.txt。
+            示例：f = open("output.txt", "rw")
+          </p>
+          <p>
+            <i class="el-icon-warning-outline"></i>
+            你可通过 print 函数进行调试。系统自动保存或提交答卷时只会保存最近一次运行的代码，
+            所以<strong>在完成或修改代码后请务必运行一次</strong>。
+          </p>
+        </el-card>
         <el-card v-for="(cq,i) in questions.cq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
@@ -79,8 +92,9 @@
               <el-tag :type="cq.is_output_to_file?'success':'warning'" style="margin-right:10px;">
                 {{ cq.is_output_to_file ? '输出至文件' : '输出至命令行' }}
               </el-tag>
+              <!--      disable the button when `runningCode` to achieve ratelimit -->
               <el-button :loading="runningCode" size="small" style="float: right" type="primary"
-                         @click="runStudentCode(cq,answers.cq[i])" icon="el-icon-time">
+                         :disabled="runningCode" icon="el-icon-time" @click="runStudentCode(cq,answers.cq[i])">
                 运行代码
               </el-button>
             </div>
@@ -118,7 +132,9 @@
     <div class="fixed-box">
       <flip-countdown :deadline="deadline" :showDays="false" countdownSize="x-large" labelSize="small"
                       @timeElapsed="saveAnswers"></flip-countdown>
-      <el-button icon="el-icon-upload" size="medium" type="warning" :loading="submitting" @click="saveAnswers">
+      <!--      disable the button when `submitting` to achieve client-side ratelimit -->
+      <el-button :disabled="submitting" :loading="submitting" icon="el-icon-upload"
+                 size="medium" type="warning" @click="saveAnswers">
         提交答卷
       </el-button>
     </div>
@@ -169,12 +185,15 @@ export default {
 
       // try loading models, may not succeed if we're starting the client for the first time
       loadMyAnswerModels().then(body => {
-          this.$message({
-            message: '已恢复你的作答至上一次保存时的状态',
-            showClose: true,
-            type: 'success'
-          })
-          this.answers = body
+          // body will be empty if we're starting the client for the first time
+          if (body && body.mcq && body.maq && body.tfq && body.bfq && body.crq && body.cq) {
+            this.$message({
+              message: '已恢复你的作答至上一次保存时的状态',
+              showClose: true,
+              type: 'success'
+            })
+            this.answers = body
+          }
         }
       )
     })
@@ -185,7 +204,6 @@ export default {
   },
   data() {
     return {
-      kkk:'',
       runningCode: false,
       submitting: false,
       questions: {},
@@ -262,9 +280,9 @@ export default {
     notifyProcess(answers){
       let mcqCompletedCnt = answers.mcq.filter(e=>e.answer).length
       let maqCompletedCnt = answers.maq.filter(e=>e.answer.length>0).length
-      let bfqCompletedCnt = answers.bfq.filter(e=>e.answer.every(a=>a)).length
-      let tfqCompletedCnt = answers.tfq.filter(e=>e.answer !==null).length
-      let crqCompletedCnt = answers.crq.filter(e=>e.answer.every(a=>a)).length
+      let bfqCompletedCnt = answers.bfq.filter(e => e.answer.every(a => a)).length
+      let tfqCompletedCnt = answers.tfq.filter(e => typeof e.answer == "boolean").length
+      let crqCompletedCnt = answers.crq.filter(e => e.answer.every(a => a)).length
       let uncompletedCnt = Object.values(answers).map(e=>e.length).reduce((a,b)=>a+b) -
         mcqCompletedCnt - maqCompletedCnt - bfqCompletedCnt - tfqCompletedCnt - crqCompletedCnt - answers.cq.length
       this.$notify({

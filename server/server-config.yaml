@@ -1,3 +1,4 @@
 dsn: "root:12345@tcp(127.0.0.1:3306)/easy_testing?charset=utf8mb4&parseTime=True&loc=Local"
 port: 9000
 jwt_secret_key: "4xg8jlAh8s00KR1Fdc6mY"
+rps_limit: 100

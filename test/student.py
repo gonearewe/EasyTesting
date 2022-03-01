@@ -5,12 +5,12 @@ from locust import FastHttpUser, task, between
 
 class Student(FastHttpUser):
     # Every Student will wait for 100~200ms after each task completion
-    wait_time = between(10000, 20000)
+    wait_time = between(0.1, 0.2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         student = random.choice(students)
-        response = self.client.get("/student_auth", params={**student, "exam_id": 3})
+        response = self.client.get("/student_auth", params={**student, "exam_id": 4})
         self.auth = {"Authorization": "Bearer " + response.json()["token"]}
         response = self.client.get("/exams/my_questions", headers=self.auth)
         questions = response.json()

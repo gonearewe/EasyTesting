@@ -33,13 +33,13 @@ EasyTesting aims to support the online examination process of a specific course 
 
 ## Screenshots of Demo
 
-![student_client_demo_1](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/student_client_demo_1.png)
-![student_client_demo_2](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/student_client_demo_2.png)
-![teacher_client_demo_1](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/teacher_client_demo_1.png)
-![teacher_client_demo_2](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/teacher_client_demo_2.png)
-![teacher_client_demo_3](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/teacher_client_demo_3.png)
-![teacher_client_demo_4](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/teacher_client_demo_4.png)
-![teacher_client_demo_5](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/doc/img/teacher_client_demo_5.png)
+![student_client_demo_1](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/student_client_demo_1.png)
+![student_client_demo_2](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/student_client_demo_2.png)
+![teacher_client_demo_1](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/teacher_client_demo_1.png)
+![teacher_client_demo_2](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/teacher_client_demo_2.png)
+![teacher_client_demo_3](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/teacher_client_demo_3.png)
+![teacher_client_demo_4](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/teacher_client_demo_4.png)
+![teacher_client_demo_5](https://raw.githubusercontent.com/gonearewe/EasyTesting/master/img/teacher_client_demo_5.png)
 
 ## Timeline
 

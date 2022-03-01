@@ -3,6 +3,8 @@ package handlers
 // Handlers for exam endpoints, refer to easy_testing.yaml(OpenAPI file) for details.
 
 import (
+    "context"
+    "strconv"
     "strings"
     "time"
 
@@ -11,6 +13,7 @@ import (
     "github.com/gonearewe/EasyTesting/dao"
     "github.com/gonearewe/EasyTesting/models"
     "github.com/gonearewe/EasyTesting/utils"
+    "github.com/subchen/go-trylock/v2"
     "gopkg.in/errgo.v2/errors"
 )
 
@@ -64,4 +67,25 @@ func DeleteExamHandler(c *gin.Context) {
     dao.DeleteExams(ids)
 }
 
-
+// IsExamActive wraps and speeds up dao.IsExamActive, which requests the database everytime, by introducing cache.
+// However, this function may not return the lastest exam activity. 
+func IsExamActive(examId int) bool {
+    key := "exam_activity_"+ strconv.Itoa(examId)
+    if ret,found := utils.MemoryStore.Get(key);found{
+        return ret.(bool)
+    }else {
+        // a mutex to avoid Cache Breakdown
+        var mu = trylock.New()
+        if acquired := mu.TryLock(context.Background()); !acquired {
+            // maybe other routine will successfully load the cache later, so let's wait for a moment and try again
+            time.Sleep(1*time.Millisecond)
+            return IsExamActive(examId)
+        }
+        defer mu.Unlock()
+        // only one routine will get the mutex and request the database
+        isActive := dao.IsExamActive(examId)
+        // cache expires every 10 seconds
+        utils.MemoryStore.Set(key, isActive, 10*time.Second)
+        return isActive
+    }
+}

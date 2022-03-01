@@ -7,6 +7,7 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/dao"
+	"github.com/gonearewe/EasyTesting/handlers"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
 	"github.com/spf13/viper"
@@ -118,15 +119,11 @@ func studentPayLoadFunc(data interface{}) jwt.MapClaims {
 }
 
 func studentAuthorizator(data interface{}, c *gin.Context) bool {
-	studentId := jwt.ExtractClaims(c)["student_id"].(string)
 	examId := int(jwt.ExtractClaims(c)["exam_id"].(float64))
-	if !dao.IsExamActive(examId){
+	if !handlers.IsExamActive(examId){
 		return false
 	}
-	err,session := dao.GetExamSessionBy(studentId,examId)
-	if err!=nil {
-		return false
-	}
-	deadline := session.StartTime.Add(time.Duration(session.TimeAllowed) * time.Minute)
+	deadline,err:=time.Parse(time.RFC3339,jwt.ExtractClaims(c)["exam_deadline"].(string))
+	utils.PanicWhen(err)
 	return time.Now().Before(deadline)
 }
