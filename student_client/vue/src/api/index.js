@@ -16,8 +16,9 @@ export function getMyQuestions() {
   })
 }
 
+const STATIC_URL = 'http://localhost:2998'
 export function runCode(body) {
-  return service(process.env.STATIC_URL, true)({
+  return service(STATIC_URL, true)({
     url: '/code',
     method: 'put',
     data: body

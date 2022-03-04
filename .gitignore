@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -132,3 +131,7 @@ dmypy.json
 .vscode/
 .idea/
 .pycharm/
+
+# dist built by bat file
+easy_testing_student_client_windows/
+easy_testing_server_windows/

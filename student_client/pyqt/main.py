@@ -15,6 +15,7 @@ if __name__ == "__main__":
 
     browser = QWebEngineView()
     browser.load(QUrl("http://localhost:2998"))
+    browser.setZoomFactor(1.8)
     browser.showMaximized()
 
     code = app.exec_()

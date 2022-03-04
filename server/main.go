@@ -19,6 +19,9 @@ func init() {
 }
 
 func main() {
+	if viper.GetBool("disable_console_color") {
+		gin.DisableConsoleColor()
+	}
 	r := gin.New()
 	teacherAuthRouter, adminAuthRouter, studentAuthRouter := middlewares.SetupMiddleWares(r)
 	SetupRoute(r, teacherAuthRouter, adminAuthRouter, studentAuthRouter)

@@ -29,7 +29,7 @@ func buildBfqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
     if teacherId != "" {
         filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
     }
-    return filtered
+    return filtered.Order("id")
 }
 
 // CreateBfqs stores given Blank Filling Question (bfq) into the database,

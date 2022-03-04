@@ -46,7 +46,7 @@ func buildStudentQueryFrom(tx *gorm.DB, studentId string, name string, classId s
 	if name != "" {
 		filtered = filtered.Where("name LIKE ?", "%"+name+"%")
 	}
-	return filtered
+	return filtered.Order("id")
 }
 
 // CreateStudents stores given Student into the database,

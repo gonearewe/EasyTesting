@@ -11,6 +11,7 @@ func recovery(c *gin.Context) {
 	defer func() {
 		if err := recover(); err != nil {
 			trace := make([]byte, 1<<16)
+			// get error stack info
 			n := runtime.Stack(trace, false)
 			logger.Errorf("%v\n%s", err, string(trace[:n]))
 			// logger.Error(err)

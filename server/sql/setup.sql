@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS easy_testing CHARACTER SET utf8mb4;
 USE easy_testing;
 SET FOREIGN_KEY_CHECKS = 0;
 

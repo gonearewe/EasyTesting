@@ -7,7 +7,7 @@ import {getToken} from '@/utils/cookie'
 export default function (server_addr, reportOnErr) {
   // create an axios instance
   let service = axios.create({
-    baseURL: server_addr || process.env.VUE_APP_BASE_API, // url = base url + request url
+    baseURL: server_addr, // url = base url + request url
     timeout: 5000 // request timeout
   })
 

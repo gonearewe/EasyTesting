@@ -1,13 +1,25 @@
 <template>
   <div class="app-container">
+    <el-dialog :close-on-click-modal="false" :visible.sync="tipVisible" title="小贴士">
+      <div style="text-align: center">
+        <img src="@/assets/tip_zoom.png" style="width: 100px;height: 80px;"/>
+        <p><strong>Ctrl + 鼠标滚轮 缩放页面</strong></p>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click.native="tipVisible=false">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
+
     <el-tabs type="border-card">
       <el-tab-pane label="单选题">
         <el-card v-for="(mcq,i) in questions.mcq" class="box-card" shadow="hover">
           <div slot="header">
             <el-tag style="margin-right: 10px">{{ '第 ' + (i + 1) + ' 题' }}</el-tag>
-<!--            NOTICE: Instead of code below, moving model into `source` can prevent-->
-<!--            an event called `rendered` triggered every time user presses a key which results-->
-<!--            in a significant performance loss.-->
+            <!--            NOTICE: Instead of code below, moving model into `source` can prevent-->
+            <!--            an event called `rendered` triggered every time user presses a key which results-->
+            <!--            in a significant performance loss.-->
             <!--            <vue-markdown>{{mcq.stem}}</vue-markdown>-->
             <vue-markdown :source="mcq.stem"></vue-markdown>
           </div>
@@ -135,7 +147,7 @@
       <!--      disable the button when `submitting` to achieve client-side ratelimit -->
       <el-button :disabled="submitting" :loading="submitting" icon="el-icon-upload"
                  size="medium" type="warning" @click="saveAnswers">
-        提交答卷
+        保存答卷
       </el-button>
     </div>
     <back-to-top/>
@@ -160,18 +172,18 @@ export default {
     FlipCountdown
   },
   created() {
-    this.$nextTick(() => {
-      // 禁用右键
-      document.oncontextmenu = new Function("event.returnValue=false");
-      // 禁用选择
-      document.onselectstart = new Function("event.returnValue=false");
-    })
+    // this.$nextTick(() => {
+    //   // 禁用右键
+    //   document.oncontextmenu = new Function("event.returnValue=false");
+    //   // 禁用选择
+    //   document.onselectstart = new Function("event.returnValue=false");
+    // })
 
     getMyQuestions().then(questions => {
       for (const questionName in questions) {
         // shuffle question array, but with `exam_session_id` as the random seed
         // so that the question array is in the same order every time the student enters this page
-        shuffle(questions[questionName],this.$store.getters.exam_session_id)
+        shuffle(questions[questionName], this.$store.getters.exam_session_id)
         // TODO: shuffle choice array of mcq and maq for anti-cheating
       }
       this.questions = questions
@@ -189,6 +201,7 @@ export default {
           if (body && body.mcq && body.maq && body.tfq && body.bfq && body.crq && body.cq) {
             this.$message({
               message: '已恢复你的作答至上一次保存时的状态',
+              duration: 5000,
               showClose: true,
               type: 'success'
             })
@@ -204,6 +217,7 @@ export default {
   },
   data() {
     return {
+      tipVisible: true,
       runningCode: false,
       submitting: false,
       questions: {},

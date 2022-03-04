@@ -9,6 +9,7 @@
         <h3 class="title">学生登录</h3>
       </div>
 
+      <p class="label">服务器地址</p>
       <el-form-item prop="server_addr">
         <el-input
           v-model="loginForm.server_addr"
@@ -20,6 +21,7 @@
         />
       </el-form-item>
 
+      <p class="label">学号</p>
       <el-form-item prop="student_id">
         <el-input
           v-model="loginForm.student_id"
@@ -31,6 +33,7 @@
         />
       </el-form-item>
 
+      <p class="label">姓名</p>
       <el-form-item prop="name">
         <el-input
           v-model="loginForm.name"
@@ -41,6 +44,7 @@
         />
       </el-form-item>
 
+      <p class="label">考试号</p>
       <el-form-item prop="exam_id">
         <el-input
           ref="exam_id"
@@ -52,7 +56,7 @@
         />
       </el-form-item>
 
-      <el-button :loading="loading" type="warning" @click.native.prevent="dialogVisible=true">
+      <el-button :disabled="loading" type="warning" @click.native.prevent="dialogVisible=true">
         登录
       </el-button>
     </el-form>
@@ -65,7 +69,8 @@
         <vue-markdown>{{ notice.promise }}</vue-markdown>
       </el-checkbox>
       <div slot="footer" class="dialog-footer">
-        <el-button :disabled="!aboutChecked||!promiseChecked" type="primary" @click="handleLogin">
+        <el-button :disabled="!aboutChecked||!promiseChecked||loading" :loading="loading"
+                   type="primary" @click="handleLogin">
           开始考试
         </el-button>
       </div>
@@ -86,7 +91,7 @@ export default {
   data() {
     return {
       loginForm: {
-        server_addr: 'http://localhost:9000',
+        server_addr: 'http://2.56.240.138:9000',
         student_id: '2020501880',
         name: '小明',
         exam_id: '4'
@@ -109,10 +114,10 @@ export default {
 编程题要求你编写程序解决问题，软件允许你**运行程序获得终端输出**；运行出错或超时同样会有输出。
 
 右侧悬浮的倒计时会**显示你的剩余作答时间**，时间归零后软件会自动提交答卷，考试同时结束，作答终止。
-如要提前交卷，请点击右侧“提交答卷”按钮，待**出现成功提示后**关闭软件窗口。
+如要提前交卷，请点击右侧“保存答卷”按钮，待**出现成功提示后**关闭软件窗口。
 
 软件会每隔一段时间将你的作答情况**自动保存**至服务端，并给予成功提示。
-你也可以通过界面右侧的“提交答卷”按钮手动保存，但是**请勿频繁提交**以免增加服务器压力。
+你也可以通过界面右侧的“保存答卷”按钮手动保存，但是**请勿频繁提交**以免增加服务器压力。
 
 考试过程中请勿关闭软件。如遇到**软件卡死、电脑意外关机**等情况，请尽快**重新打开软件并登录**，
 软件会恢复你的试卷与上次保存的作答情况，但是中途消耗的时间无法补偿。
@@ -203,6 +208,10 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
+
+  .label {
+    color: #f0c78a;
+  }
 }
 </style>
 
@@ -220,7 +229,7 @@ $light_gray: #eee;
     position: relative;
     background-color: $bg;
     width: 520px;
-    top: 150px;
+    top: 50px;
     border-radius: 20px;
     max-width: 100%;
     padding: 50px 35px 0;
