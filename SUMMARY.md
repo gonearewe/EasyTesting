@@ -1,6 +1,7 @@
 # 目录
 
 * [Welcome!](README.md)
+* [部署指南](deployment.md)
 
 ## 教师使用手册
 
@@ -25,5 +26,6 @@
 * [服务端](design/server.md)
 * [教师客户端](design/teacher_client.md)
 * [学生客户端](design/student_client.md)
+* [构建指南](design/build.md)
 
 

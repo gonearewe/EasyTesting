@@ -1,4 +1,3 @@
-
 ## 部署
 
 首先要安装 MySQL 数据库，建议版本 5.7。
@@ -81,6 +80,19 @@ $ ./EasyTesting
 ```
 $ ./EasyTesting &> debug.log &
 ```
+
+> #### warning::Windows 平台注意终端冻结问题
+>
+> 假如你在 Windows 10 平台下运行服务端，则要尤其注意：终端默认会在你点击它，同时应用程序有输出时，直接冻结程序。
+> 通常只需要按下 Esc 或回车就能恢复程序，但倘若没有注意到这个问题，也许会导致大量的客户端连接超时
+> （报错：timeout of 5000ms exceeded）。
+>
+> 这并非是软件自身的 bug，而是 Windows 10 的问题。
+> 详情参见 [Why is my command prompt freezing on Windows 10?](https://stackoverflow.com/questions/33883530/why-is-my-command-prompt-freezing-on-windows-10)。
+> 解决方法是在终端标题栏上右键，菜单选择*默认值*或*属性*（*默认值*会应用于所有终端），取消勾选*快速编辑模式*，
+> *确定*并重启终端。
+
+![](./img/win10-cmd-freezing.png)
 
 现在即可在浏览器上访问 <http://localhost:9000> 进入教师端（如果你没有修改默认端口号的话）。
 test.sql 提供的教师用户有：
