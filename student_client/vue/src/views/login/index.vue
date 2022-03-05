@@ -65,6 +65,7 @@
       <span>关于软件</span>
       <vue-markdown>{{ notice.about }}</vue-markdown>
       <el-checkbox v-model="aboutChecked">我已阅读软件使用说明</el-checkbox>
+      <br>
       <el-checkbox v-model="promiseChecked">
         <vue-markdown>{{ notice.promise }}</vue-markdown>
       </el-checkbox>
@@ -87,6 +88,14 @@ export default {
   components: {
     VueMarkdown,
     ParticlesBg
+  },
+  created() {
+    this.$nextTick(() => {
+      // 禁用右键
+      document.oncontextmenu = new Function("event.returnValue=false");
+      // 禁用选择
+      document.onselectstart = new Function("event.returnValue=false");
+    })
   },
   data() {
     return {
@@ -142,8 +151,7 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({path: this.redirect || '/'})
-            this.loading = false
-          }).catch(() => {
+          }).finally(() => {
             this.loading = false
           })
         } else {

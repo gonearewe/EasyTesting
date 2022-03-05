@@ -1,5 +1,6 @@
 import sys
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QFont
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -14,6 +15,8 @@ if __name__ == "__main__":
     app.setFont(QFont("YaHei", 25))
 
     browser = QWebEngineView()
+    browser.setWindowIcon(QtGui.QIcon('favicon.ico'))
+    browser.setWindowTitle("Easy Testing")
     browser.load(QUrl("http://localhost:2998"))
     browser.setZoomFactor(1.8)
     browser.showMaximized()

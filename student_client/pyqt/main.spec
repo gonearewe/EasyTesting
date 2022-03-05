@@ -12,7 +12,7 @@ a = Analysis(['main.py'],
              pathex=['C:\\\\Users\\\\John Mactavish\\\\.virtualenvs\\\\pyqt-Jt_vAwyy'],
              binaries=[],
              # data files copy, see documentation for details
-             datas=[('index.html','.'),('static','static'),('python-3.7.9-embed-amd64','runner')],
+             datas=[('favicon.ico','.'),('index.html','.'),('static','static'),('python-3.7.9-embed-amd64','runner')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

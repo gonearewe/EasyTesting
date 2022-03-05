@@ -12,7 +12,8 @@
       </div>
     </el-dialog>
 
-    <el-tabs type="border-card">
+    <el-skeleton v-if="tabsLoading" :rows="6" animated style="top: 30px"/>
+    <el-tabs v-else type="border-card">
       <el-tab-pane label="单选题">
         <el-card v-for="(mcq,i) in questions.mcq" class="box-card" shadow="hover">
           <div slot="header">
@@ -141,6 +142,7 @@
         </el-card>
       </el-tab-pane>
     </el-tabs>
+
     <div class="fixed-box">
       <flip-countdown :deadline="deadline" :showDays="false" countdownSize="x-large" labelSize="small"
                       @timeElapsed="saveAnswers"></flip-countdown>
@@ -148,6 +150,11 @@
       <el-button :disabled="submitting" :loading="submitting" icon="el-icon-upload"
                  size="medium" type="warning" @click="saveAnswers">
         保存答卷
+      </el-button>
+      <br>
+      <el-button :disabled="submitting" icon="el-icon-s-claim"
+                 size="medium" type="info" @click="notifyProgress">
+        检查进度
       </el-button>
     </div>
     <back-to-top/>
@@ -172,12 +179,12 @@ export default {
     FlipCountdown
   },
   created() {
-    // this.$nextTick(() => {
-    //   // 禁用右键
-    //   document.oncontextmenu = new Function("event.returnValue=false");
-    //   // 禁用选择
-    //   document.onselectstart = new Function("event.returnValue=false");
-    // })
+    this.$nextTick(() => {
+      // 禁用右键
+      document.oncontextmenu = new Function("event.returnValue=false");
+      // 禁用选择
+      document.onselectstart = new Function("event.returnValue=false");
+    })
 
     getMyQuestions().then(questions => {
       for (const questionName in questions) {
@@ -208,7 +215,9 @@ export default {
             this.answers = body
           }
         }
-      )
+      ).finally(() => {
+        this.tabsLoading = false
+      })
     })
 
     // auto-save every x seconds, x <- [120,180), interval includes random to avoid flush to server
@@ -218,6 +227,7 @@ export default {
   data() {
     return {
       tipVisible: true,
+      tabsLoading: true,
       runningCode: false,
       submitting: false,
       questions: {},
@@ -250,67 +260,70 @@ export default {
       runCode(tmp).then(body => {
         answer.console_output = body.console_output
         answer.right = body.pass
+      }).finally(() => {
         this.runningCode = false
-      }).catch(() => {
-        this.runningCode=false
       })
+    },
+    freezeAnswers() {
+      const questions = _.merge({}, this.questions)
+      const answers = _.merge({}, this.answers)
+      let ret = {}
+      ret.mcq = questions.mcq.map((e, i) => {
+        return {id: e.id, answer: answers.mcq[i]}
+      })
+      ret.maq = questions.maq.map((e, i) => {
+        return {id: e.id, answer: answers.maq[i]}
+      })
+      ret.bfq = questions.bfq.map((e, i) => {
+        return {id: e.id, answer: answers.bfq[i].slice(0, e.blank_num).map(e => e === null ? '' : e)}
+      })
+      ret.tfq = questions.tfq.map((e, i) => {
+        return {id: e.id, answer: answers.tfq[i]}
+      })
+      ret.crq = questions.crq.map((e, i) => {
+        return {id: e.id, answer: answers.crq[i].slice(0, e.blank_num).map(e => e || '')}
+      })
+      ret.cq = questions.cq.map((e, i) => {
+        return {id: e.id, answer: answers.cq[i].code || '', right: answers.cq[i].right}
+      })
+      return ret
     },
     saveAnswers() {
       this.submitting = true
-      const questions = _.merge({}, this.questions)
-      const answers = _.merge({}, this.answers)
-      saveMyAnswerModels(answers)
-      let req = {}
-      req.mcq = questions.mcq.map((e, i) => {
-        return {id: e.id, answer: answers.mcq[i]}
-      })
-      req.maq = questions.maq.map((e, i) => {
-        return {id: e.id, answer: answers.maq[i]}
-      })
-      req.bfq = questions.bfq.map((e, i) => {
-        return {id: e.id, answer: answers.bfq[i].slice(0, e.blank_num).map(e => e===null?'':e)}
-      })
-      req.tfq = questions.tfq.map((e, i) => {
-        return {id: e.id, answer: answers.tfq[i]}
-      })
-      req.crq = questions.crq.map((e, i) => {
-        return {id: e.id, answer: answers.crq[i].slice(0, e.blank_num).map(e => e||'')}
-      })
-      req.cq = questions.cq.map((e, i) => {
-        return {id: e.id, answer: answers.cq[i].code||'', right: answers.cq[i].right}
-      })
-      this.notifyProcess(req)
+      saveMyAnswerModels(_.merge({}, this.answers))
+      let req = this.freezeAnswers()
       submitMyAnswers(req).then(() => {
-        this.submitting = false
         this.$message({
           message: '你的作答已保存',
           showClose: true,
           type: 'success'
         })
-      }).catch(()=>{
-        this.submitting=false
+      }).finally(() => {
+        this.submitting = false
       })
     },
-    notifyProcess(answers){
-      let mcqCompletedCnt = answers.mcq.filter(e=>e.answer).length
-      let maqCompletedCnt = answers.maq.filter(e=>e.answer.length>0).length
+    notifyProgress() {
+      let answers = this.freezeAnswers()
+      let mcqCompletedCnt = answers.mcq.filter(e => e.answer).length
+      let maqCompletedCnt = answers.maq.filter(e => e.answer.length > 0).length
       let bfqCompletedCnt = answers.bfq.filter(e => e.answer.every(a => a)).length
       let tfqCompletedCnt = answers.tfq.filter(e => typeof e.answer == "boolean").length
       let crqCompletedCnt = answers.crq.filter(e => e.answer.every(a => a)).length
-      let uncompletedCnt = Object.values(answers).map(e=>e.length).reduce((a,b)=>a+b) -
+      let uncompletedCnt = Object.values(answers).map(e => e.length).reduce((a, b) => a + b) -
         mcqCompletedCnt - maqCompletedCnt - bfqCompletedCnt - tfqCompletedCnt - crqCompletedCnt - answers.cq.length
       this.$notify({
-        title: uncompletedCnt === 0 ?'你已完成所有试题':'你还有 '+uncompletedCnt+' 道小题未完成',
-        type: uncompletedCnt === 0 ?'success':'warning',
+        title: uncompletedCnt === 0 ? '你已完成所有试题' : '你还有 ' + uncompletedCnt + ' 道小题未完成',
+        type: uncompletedCnt === 0 ? 'success' : 'warning',
         dangerouslyUseHTMLString: true,
         message: [
-          '已完成 <strong>'+mcqCompletedCnt+'/'+answers.mcq.length+' 的单选题</strong>',
-          '已完成 <strong>'+maqCompletedCnt+'/'+answers.maq.length+' 的多选题</strong>',
-          '已完成 <strong>'+bfqCompletedCnt+'/'+answers.bfq.length+' 的填空题</strong>',
-          '已完成 <strong>'+tfqCompletedCnt+'/'+answers.tfq.length+' 的判断题</strong>',
-          '已完成 <strong>'+crqCompletedCnt+'/'+answers.crq.length+' 的代码阅读题</strong>',
-          '<strong>注意：'+answers.cq.length+' 道编程题的进度无法统计</strong>',
+          '已完成 <strong>' + mcqCompletedCnt + '/' + answers.mcq.length + ' 的单选题</strong>',
+          '已完成 <strong>' + maqCompletedCnt + '/' + answers.maq.length + ' 的多选题</strong>',
+          '已完成 <strong>' + bfqCompletedCnt + '/' + answers.bfq.length + ' 的填空题</strong>',
+          '已完成 <strong>' + tfqCompletedCnt + '/' + answers.tfq.length + ' 的判断题</strong>',
+          '已完成 <strong>' + crqCompletedCnt + '/' + answers.crq.length + ' 的代码阅读题</strong>',
+          '<strong>注意：' + answers.cq.length + ' 道编程题的进度无法统计</strong>',
         ].join('<hr/>'),
+        position: 'top-left',
         duration: 8000
       })
     }
@@ -330,7 +343,7 @@ export default {
 
   .el-button {
     float: right;
-    margin: 10px;
+    margin: 10px 10px 0;
   }
 }
 </style>

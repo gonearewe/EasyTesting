@@ -24,11 +24,6 @@ ECHO PyInstaller Packaging %client_src_path%\pyqt
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 CALL pipenv run pyinstaller main.spec
 
-:: Fix A Problem According To https://stackoverflow.com/questions/67060913/pyinstaller-could-not-find-qtwebengineprocess-exe-for-pyqt5-web-application
-SET conf_path=%client_src_path%\pyqt\dist\main\PyQt5\Qt5\bin\qt.conf
-ECHO "[Paths]" >              "%conf_path%"
-ECHO "Prefix = PyQt5/Qt5/" >> "%conf_path%"
-
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO Cleaning
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
