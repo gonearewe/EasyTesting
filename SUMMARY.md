@@ -1,11 +1,11 @@
 # 目录
 
 * [Welcome!](README.md)
-* [部署指南](deployment.md)
 
 ## 教师使用手册
 
 * [简介](teacher_guide/introduction.md)
+* [部署指南](teacher_guide/deployment.md)
 * [登录界面](teacher_guide/login.md)
 * [基本界面结构](teacher_guide/structure.md)
 * [学生管理模块](teacher_guide/students.md)
