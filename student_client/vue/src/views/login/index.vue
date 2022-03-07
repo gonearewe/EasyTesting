@@ -11,6 +11,9 @@
 
       <p class="label">服务器地址</p>
       <el-form-item prop="server_addr">
+        <span class="svg-container">
+          <svg-icon icon-class="server"/>
+        </span>
         <el-input
           v-model="loginForm.server_addr"
           auto-complete="on"
@@ -23,6 +26,9 @@
 
       <p class="label">学号</p>
       <el-form-item prop="student_id">
+        <span class="svg-container">
+          <svg-icon icon-class="id"/>
+        </span>
         <el-input
           v-model="loginForm.student_id"
           auto-complete="on"
@@ -35,6 +41,9 @@
 
       <p class="label">姓名</p>
       <el-form-item prop="name">
+        <span class="svg-container">
+          <svg-icon icon-class="user"/>
+        </span>
         <el-input
           v-model="loginForm.name"
           name="姓名"
@@ -46,6 +55,9 @@
 
       <p class="label">考试号</p>
       <el-form-item prop="exam_id">
+        <span class="svg-container">
+          <svg-icon icon-class="exam"/>
+        </span>
         <el-input
           ref="exam_id"
           v-model="loginForm.exam_id"
@@ -100,7 +112,7 @@ export default {
   data() {
     return {
       loginForm: {
-        server_addr: 'http://2.56.240.138:9000',
+        server_addr: 'http://localhost:9000',
         student_id: '2020501880',
         name: '小明',
         exam_id: '4'
@@ -243,6 +255,14 @@ $light_gray: #eee;
     padding: 50px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+  }
+
+  .svg-container {
+    padding: 6px 5px 6px 15px;
+    color: $dark_gray;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
   }
 
   .tips {

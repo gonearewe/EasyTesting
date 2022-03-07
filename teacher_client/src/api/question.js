@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 
 export function getQuestions(type, params) {
-  return request({
+  return request()({
     url: '/' + type,
     method: 'get',
     params: params
@@ -10,7 +10,7 @@ export function getQuestions(type, params) {
 }
 
 export function createQuestions(type, questions) {
-  return request({
+  return request()({
     url: '/' + type,
     method: 'post',
     data: questions
@@ -18,7 +18,7 @@ export function createQuestions(type, questions) {
 }
 
 export function updateQuestion(type, question) {
-  return request({
+  return request()({
     url: '/' + type,
     method: 'put',
     data: question
@@ -26,7 +26,7 @@ export function updateQuestion(type, question) {
 }
 
 export function deleteQuestions(type, ids) {
-  return request({
+  return request()({
     url: '/' + type,
     method: 'delete',
     params: {'ids': ids.join(',')}

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 
 export function getStudents(params) {
-  return request({
+  return request()({
     url: '/students',
     method: 'get',
     params: params
@@ -10,7 +10,7 @@ export function getStudents(params) {
 }
 
 export function createStudents(students) {
-  return request({
+  return request()({
     url: '/students',
     method: 'post',
     data: students
@@ -18,7 +18,7 @@ export function createStudents(students) {
 }
 
 export function updateStudent(student) {
-  return request({
+  return request()({
     url: '/students',
     method: 'put',
     data: student
@@ -26,7 +26,7 @@ export function updateStudent(student) {
 }
 
 export function deleteStudents(ids) {
-  return request({
+  return request()({
     url: '/students',
     method: 'delete',
     params: {'ids': ids.join(',')}

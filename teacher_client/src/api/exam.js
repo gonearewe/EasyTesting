@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 
 export function getExams(params) {
-  return request({
+  return request()({
     url: '/exams',
     method: 'get',
     params: params
@@ -10,7 +10,7 @@ export function getExams(params) {
 }
 
 export function getEndedExams(params) {
-  return request({
+  return request()({
     url: '/exams/ended',
     method: 'get',
     params: params
@@ -18,7 +18,7 @@ export function getEndedExams(params) {
 }
 
 export function createExams(exams) {
-  return request({
+  return request()({
     url: '/exams',
     method: 'post',
     data: exams
@@ -26,7 +26,7 @@ export function createExams(exams) {
 }
 
 export function updateExam(exam) {
-  return request({
+  return request()({
     url: '/exams',
     method: 'put',
     data: exam
@@ -34,7 +34,7 @@ export function updateExam(exam) {
 }
 
 export function deleteExams(ids) {
-  return request({
+  return request()({
     url: '/exams',
     method: 'delete',
     params: {'ids': ids.join(',')}
@@ -42,7 +42,7 @@ export function deleteExams(ids) {
 }
 
 export function getExaminees(params) {
-  return request({
+  return request()({
     url: '/exams/examinees',
     method: 'get',
     params: params

@@ -1,3 +1,5 @@
+# Run this with `pipenv run locust -f .\student.py -H http://localhost:9000`,
+# and use Web UI at `http://localhost:8089/`
 import random
 
 from locust import FastHttpUser, task, between
@@ -5,17 +7,17 @@ from locust import FastHttpUser, task, between
 
 class Student(FastHttpUser):
     # Every Student will wait for 100~200ms after each task completion
-    wait_time = between(0.1, 0.2)
+    wait_time = between(60, 120)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        student = random.choice(students)
-        response = self.client.get("/student_auth", params={**student, "exam_id": 4})
+        self.student = random.choice(students)
+        response = self.client.get("/student_auth", params={**self.student, "exam_id": 4})
         self.auth = {"Authorization": "Bearer " + response.json()["token"]}
         response = self.client.get("/exams/my_questions", headers=self.auth)
-        questions = response.json()
-        self.validateQuestions(questions)
-        self.answers = self.build_answers(questions)
+        self.questions = response.json()
+        self.validateQuestions(self.questions)
+        self.answers = self.build_answers(self.questions)
 
     def validateQuestions(self, questions):
         for q in ["mcq", "maq", "bfq", "tfq", "crq", "cq"]:
@@ -23,9 +25,17 @@ class Student(FastHttpUser):
             # validate that there's no duplicated question issued
             assert len(li) == len(set(li))
 
-    @task
+    @task(10)
     def participate(self):
         self.client.put("/exams/my_answers", json=self.answers, headers=self.auth)
+        self.client.put("/cache", data=bytes(long_str, 'utf-8'), headers=self.auth)
+
+    @task
+    def restart(self):
+        self.client.get("/student_auth", params={**self.student, "exam_id": 4})
+        response = self.client.get("/exams/my_questions", headers=self.auth)
+        assert self.questions == response.json()
+        self.client.get("/cache", headers=self.auth)
 
     def build_answers(self, questions):
         return {

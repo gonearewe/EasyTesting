@@ -1,5 +1,5 @@
 import {login} from '@/api/user'
-import {getToken, removeToken, setToken} from '@/utils/auth'
+import {getToken, removeToken, setServerAddr, setToken} from '@/utils/cookie'
 import {resetRouter} from '@/router'
 import jwt_decode from "jwt-decode"
 import {sha256} from "js-sha256"
@@ -40,7 +40,8 @@ const mutations = {
 const actions = {
   // user login
   login({commit}, userInfo) {
-    const {teacher_id, password} = userInfo
+    const {teacher_id, password, server_addr} = userInfo
+    setServerAddr(server_addr)
     return new Promise((resolve, reject) => {
       login({teacher_id: teacher_id.trim(), password: sha256(password)}).then(data => {
         let token = data.token

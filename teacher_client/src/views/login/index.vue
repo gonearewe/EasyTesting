@@ -9,6 +9,22 @@
         <h3 class="title">教师登录</h3>
       </div>
 
+      <p class="label">服务器地址</p>
+      <el-form-item prop="server_addr">
+        <span class="svg-container">
+          <svg-icon icon-class="server"/>
+        </span>
+        <el-input
+          v-model="loginForm.server_addr"
+          auto-complete="on"
+          name="服务器地址"
+          placeholder="例如：http://192.168.1.3:443"
+          tabindex="1"
+          type="text"
+        />
+      </el-form-item>
+
+      <p class="label">工号</p>
       <el-form-item prop="teacher_id">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
@@ -19,11 +35,12 @@
           auto-complete="on"
           name="工号"
           placeholder="例如：2010204520"
-          tabindex="1"
+          tabindex="2"
           type="text"
         />
       </el-form-item>
 
+      <p class="label">密码</p>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password"/>
@@ -35,7 +52,7 @@
           :type="passwordType"
           auto-complete="on"
           name="密码"
-          tabindex="2"
+          tabindex="3"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
@@ -43,7 +60,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="warning" @click.native.prevent="handleLogin">
+      <el-button :disabled="loading" :loading="loading" type="warning" @click.native.prevent="handleLogin">
         登录
       </el-button>
 
@@ -78,6 +95,7 @@ export default {
     }
     return {
       loginForm: {
+        server_addr: 'http://localhost:9000',
         teacher_id: '0',
         password: 'ET000'
       },
@@ -215,6 +233,10 @@ $light_gray: #eee;
         margin-right: 16px;
       }
     }
+  }
+
+  .label {
+    color: #f0c78a;
   }
 
   .svg-container {
