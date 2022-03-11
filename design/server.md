@@ -7,7 +7,73 @@
 不过，在讨论这些流程逻辑之前，我们先来详细看看服务端源代码的文件结构。
 
 ```
-
+.
+├── init.go             初始化逻辑
+├── main.go             程序入口
+├── router.go           HTTP 路由
+├── server-config.yaml  程序的配置文件
+├── go.mod              项目依赖文件
+├── go.sum              自动生成的项目依赖文件
+├── config.yml          gormt 的配置文件
+├── middlewares         中间件模块
+│   ├── middlewares.go    模块入口
+│   ├── auth.go           认证与授权中间件
+│   ├── check_exam.go     考试检查中间件
+│   ├── cors.go           CORS 中间件
+│   ├── ratelimit.go      限流中间件
+│   └── recovery.go       异常恢复中间件
+├── dao                 数据访问模块
+│   ├── bfq.go
+│   ├── common.go
+│   ├── cq.go
+│   ├── crq.go
+│   ├── dao.go
+│   ├── exam.go
+│   ├── exam_session.go
+│   ├── maq.go
+│   ├── mcq.go
+│   ├── student.go
+│   ├── teacher.go
+│   └── tfq.go
+├── handlers            Handlers 模块
+│   ├── bfq.go
+│   ├── cache.go
+│   ├── cq.go
+│   ├── crq.go
+│   ├── exam.go
+│   ├── exam_session.go
+│   ├── hello.go
+│   ├── maq.go
+│   ├── mcq.go
+│   ├── ping.go
+│   ├── student.go
+│   ├── teacher.go
+│   └── tfq.go
+├── models              数据模型模块
+│   ├── my_answers.go
+│   ├── bfq.go
+│   ├── bfq_answer.go
+│   ├── cq.go
+│   ├── cq_answer.go
+│   ├── crq.go
+│   ├── crq_answer.go
+│   ├── exam.go
+│   ├── exam_session.go
+│   ├── maq.go
+│   ├── maq_answer.go
+│   ├── mcq.go
+│   ├── mcq_answer.go
+│   ├── student.go
+│   ├── teacher.go
+│   ├── tfq.go
+│   └── tfq_answer.go
+├── sql                 数据库脚本
+│   ├── setup.sql         创建脚本
+│   └── test.sql          插入测试数据的脚本
+└── utils               辅助工具模块
+    ├── cache.go
+    ├── password.go
+    └── utils.go
 ```
 
 main.go 中的 main 函数是程序的入口，它会初始化 Gin 的 Engine 并设置中间件与路由，

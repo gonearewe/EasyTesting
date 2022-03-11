@@ -75,7 +75,10 @@ GET、POST、PUT、DELETE 四大方法，分别用于单选题（Multiple Choice
 
 `GET exams/my_questions` 用于获取学生的试题。`PUT exams/my_answers` 则用于提交作答。
 
-> WIP
+`PUT cache` 与 `GET cache` 分别用于存取缓存。服务端会为每一个 exam_session_id 准备一个字符串缓存，
+其在考试期间保证不会过期，可以用来存任何东西。
+事实上，客户端用它来存记录考生作答情况的程序内部结构（一个 json 对象），
+这样一来可以在中途退出重进后通过 `GET cache` 还原作答情况（试卷则可通过 `GET exams/my_questions` 重新获得）。
 
 ## API 的生命周期
 
