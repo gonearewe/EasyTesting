@@ -49,6 +49,11 @@ $ sudo chmod 755 your_path_to_folder/easy_testing/EasyTesting
 接下来执行数据库脚本 setup.sql，参考[官网文档](https://dev.mysql.com/doc/refman/5.7/en/mysql-batch-commands.html)进行。
 如果需要测试数据，还可接着执行 test.sql。
 
+> #### info::正式使用时的操作
+>
+> 正式使用时，务必不要使用默认的数据库用户名与密码，并且要将 server-config.yaml 中的 jwt_secret_key 改成其他的随机字符。
+> 仅需执行数据库脚本 setup.sql，然后手动插入一个 root 用户。
+
 最后**进入文件夹根目录**启动服务端主程序（因为**程序会在当前工作目录下查找配置文件**），
 
 ```
@@ -117,7 +122,7 @@ test.sql 提供的教师用户有：
 ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
 ```
 
-我们只需要删除其中的 NO_ZERO_IN_DATE 与 NO_ZERO_DATE，通过重新全局设置 sql_mode：
+只需要删除其中的 NO_ZERO_IN_DATE 与 NO_ZERO_DATE，通过重新全局设置 sql_mode：
 
 ```sql
 SET GLOBAL sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';

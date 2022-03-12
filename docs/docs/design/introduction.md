@@ -34,7 +34,92 @@
 master 分支文件结构如下：
 
 ```
+.
+├── LICENSE
+├── README.md
+├── build               用于构建的脚本
+│   ├── build_student.bat
+│   └── build_teacher_and_server.bat
+├── img                 供 README.md 使用的图片
+│   ├── jb_beam.svg
+│   ├── logo.png
+│   ├── ...
+│   └── teacher_client_demo_5.png
+├── server              服务端源码
+│   ├── init.go
+│   ├── main.go
+│   ├── go.mod
+│   ├── ...
+│   ├── dao
+│   │   ├── bfq.go
+│   │   ├── ...
+│   │   └── tfq.go
+│   ├── handlers
+│   │   ├── bfq.go
+│   │   ├── ...
+│   │   └── tfq.go
+│   └── utils
+│       ├── cache.go
+│       ├── password.go
+│       └── utils.go
+├── student_client      学生客户端源码
+│   ├── pyqt            PyQt 部分
+│   │   ├── Pipfile
+│   │   ├── ...
+│   │   ├── local_server.py
+│   │   ├── main.py
+│   │   └── main.spec
+│   └── vue             Vue 部分
+│       ├── src
+│       │   ├── App.vue
+│       │   ├── main.js
+│       │   ├── permission.js
+│       │   ├── ...
+│       │   ├── api
+│       │   │   └── index.js
+│       │   ├── utils
+│       │   │   ├── cookie.js
+│       │   │   ├── ...
+│       │   │   └── validate.js
+│       │   └── views
+│       │       ├── 404.vue
+│       │       ├── home
+│       │       │   └── index.vue
+│       │       └── login
+│       │           └── index.vue
+│       ├── ...
+│       ├── package.json
+│       └── vue.config.js
+├── teacher_client      教师客户端源码
+│   ├── ...
+│   ├── src
+│   │   ├── main.js
+│   │   ├── permission.js
+│   │   ├── App.vue
+│   │   ├── ...
+│   │   ├── api
+│   │   │   ├── exam.js
+│   │   │   ├── ...
+│   │   │   └── user.js
+│   │   └── views
+│   │       ├── 404.vue
+│   │       ├── exam
+│   │       │   ├── chart.vue
+│   │       │   ├── ...
+│   │       │   └── resize.js
+│   │       ├── login
+│   │       │   └── index.vue
+│   │       ├── ...
+│   │       └── teacher
+│   │           └── index.vue
+│   └── vue.config.js
+└── test                用于测试的脚本
+    ├── Pipfile
+    ├── Pipfile.lock
+    ├── student.py
+    └── teacher.py
 
+72 directories, 260 files
 ```
 
 

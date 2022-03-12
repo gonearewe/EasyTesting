@@ -138,7 +138,20 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2" data-path="../teacher_guide/login.html">
+        <li class="chapter " data-level="2.2" data-path="../teacher_guide/deployment.html">
+            
+                <a href="../teacher_guide/deployment.html">
+            
+                    
+                    部署指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../teacher_guide/login.html">
             
                 <a href="../teacher_guide/login.html">
             
@@ -151,7 +164,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="../teacher_guide/structure.html">
+        <li class="chapter " data-level="2.4" data-path="../teacher_guide/structure.html">
             
                 <a href="../teacher_guide/structure.html">
             
@@ -164,7 +177,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.4" data-path="../teacher_guide/students.html">
+        <li class="chapter " data-level="2.5" data-path="../teacher_guide/students.html">
             
                 <a href="../teacher_guide/students.html">
             
@@ -177,7 +190,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.5" data-path="../teacher_guide/teachers.html">
+        <li class="chapter " data-level="2.6" data-path="../teacher_guide/teachers.html">
             
                 <a href="../teacher_guide/teachers.html">
             
@@ -190,7 +203,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.6" data-path="../teacher_guide/questions.html">
+        <li class="chapter " data-level="2.7" data-path="../teacher_guide/questions.html">
             
                 <a href="../teacher_guide/questions.html">
             
@@ -203,7 +216,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.7" data-path="../teacher_guide/exams.html">
+        <li class="chapter " data-level="2.8" data-path="../teacher_guide/exams.html">
             
                 <a href="../teacher_guide/exams.html">
             
@@ -216,7 +229,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.8" data-path="../teacher_guide/faq.html">
+        <li class="chapter " data-level="2.9" data-path="../teacher_guide/faq.html">
             
                 <a href="../teacher_guide/faq.html">
             
@@ -236,9 +249,9 @@
         
         
     
-        <li class="chapter " data-level="3.1" data-path="../student_guide/structure.html">
+        <li class="chapter " data-level="3.1" data-path="../student_guide/structure.md">
             
-                <a href="../student_guide/structure.html">
+                <span>
             
                     
                     基本界面结构
@@ -327,6 +340,19 @@
             
                     
                     学生客户端
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="build.html">
+            
+                <a href="build.html">
+            
+                    
+                    构建指南
             
                 </a>
             
@@ -440,16 +466,17 @@ GET&#x3001;POST&#x3001;PUT&#x3001;DELETE &#x56DB;&#x5927;&#x65B9;&#x6CD5;&#xFF0C
 <h2 id="&#x5B66;&#x751F;&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x5176;&#x4ED6;-api">&#x5B66;&#x751F;&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x5176;&#x4ED6; API</h2>
 <p>&#x6559;&#x5E08;&#x5BA2;&#x6237;&#x7AEF;&#x672C;&#x8D28;&#x4E0A;&#x662F;&#x7BA1;&#x7406;&#x5E73;&#x53F0;&#xFF0C;&#x6240;&#x4EE5;&#x76F8;&#x5173;&#x7684;&#x63A5;&#x53E3;&#x8F83;&#x591A;&#xFF0C;&#x800C;&#x5B66;&#x751F;&#x5BA2;&#x6237;&#x7AEF;&#x7684; API &#x5C31;&#x8981;&#x5C11;&#x5F88;&#x591A;&#x3002;</p>
 <p><code>GET exams/my_questions</code> &#x7528;&#x4E8E;&#x83B7;&#x53D6;&#x5B66;&#x751F;&#x7684;&#x8BD5;&#x9898;&#x3002;<code>PUT exams/my_answers</code> &#x5219;&#x7528;&#x4E8E;&#x63D0;&#x4EA4;&#x4F5C;&#x7B54;&#x3002;</p>
-<blockquote>
-<p>WIP</p>
-</blockquote>
+<p><code>PUT cache</code> &#x4E0E; <code>GET cache</code> &#x5206;&#x522B;&#x7528;&#x4E8E;&#x5B58;&#x53D6;&#x7F13;&#x5B58;&#x3002;&#x670D;&#x52A1;&#x7AEF;&#x4F1A;&#x4E3A;&#x6BCF;&#x4E00;&#x4E2A; exam_session_id &#x51C6;&#x5907;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x7F13;&#x5B58;&#xFF0C;
+&#x5176;&#x5728;&#x8003;&#x8BD5;&#x671F;&#x95F4;&#x4FDD;&#x8BC1;&#x4E0D;&#x4F1A;&#x8FC7;&#x671F;&#xFF0C;&#x53EF;&#x4EE5;&#x7528;&#x6765;&#x5B58;&#x4EFB;&#x4F55;&#x4E1C;&#x897F;&#x3002;
+&#x4E8B;&#x5B9E;&#x4E0A;&#xFF0C;&#x5BA2;&#x6237;&#x7AEF;&#x7528;&#x5B83;&#x6765;&#x5B58;&#x8BB0;&#x5F55;&#x8003;&#x751F;&#x4F5C;&#x7B54;&#x60C5;&#x51B5;&#x7684;&#x7A0B;&#x5E8F;&#x5185;&#x90E8;&#x7ED3;&#x6784;&#xFF08;&#x4E00;&#x4E2A; json &#x5BF9;&#x8C61;&#xFF09;&#xFF0C;
+&#x8FD9;&#x6837;&#x4E00;&#x6765;&#x53EF;&#x4EE5;&#x5728;&#x4E2D;&#x9014;&#x9000;&#x51FA;&#x91CD;&#x8FDB;&#x540E;&#x901A;&#x8FC7; <code>GET cache</code> &#x8FD8;&#x539F;&#x4F5C;&#x7B54;&#x60C5;&#x51B5;&#xFF08;&#x8BD5;&#x5377;&#x5219;&#x53EF;&#x901A;&#x8FC7; <code>GET exams/my_questions</code> &#x91CD;&#x65B0;&#x83B7;&#x5F97;&#xFF09;&#x3002;</p>
 <h2 id="api-&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;">API &#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</h2>
 <p>&#x6211;&#x4EEC;&#x5E0C;&#x671B;&#x5728;&#x6709;&#x8003;&#x8BD5;&#x8FDB;&#x884C;&#x65F6;&#x7981;&#x7528;&#x5BF9;&#x9898;&#x76EE;&#x7684;&#x4FEE;&#x6539;&#xFF0C;&#x4E5F;&#x5E0C;&#x671B;&#x5B66;&#x751F;&#x4EC5;&#x80FD;&#x5728;&#x81EA;&#x5DF1;&#x7684;&#x4F5C;&#x7B54;&#x65F6;&#x95F4;&#x5185;&#x63D0;&#x4EA4;&#x7B54;&#x6848;&#x3002;
 &#x663E;&#x7136;&#xFF0C;&#x8FD9;&#x8981;&#x6C42; API &#x6709;&#x4E00;&#x5B9A;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF08;lifecycle&#xFF09;&#xFF0C;&#x5404;&#x79CD; API &#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x5982;&#x4E0B;&#x6240;&#x793A;&#xFF1A;</p>
 <p><img src="../img/api-lifecycle.drawio.svg" alt="lifecycle"></p>
 <p>&#x5F53;&#x7136;&#xFF0C;&#x8FD9;&#x662F;&#x7531;&#x751F;&#x547D;&#x5468;&#x671F;&#x51B3;&#x5B9A;&#x7684;&#x53EF;&#x8BBF;&#x95EE;&#x6027;&#xFF0C;&#x5982;&#x679C;&#x63A5;&#x53E3;&#x53C2;&#x6570;&#x6709;&#x8BEF;&#x6216;&#x4E0D;&#x6EE1;&#x8DB3;&#x5176;&#x4ED6;&#x6761;&#x4EF6;&#xFF0C;
 &#x5373;&#x4F7F;&#x5728;&#x751F;&#x547D;&#x5468;&#x671F;&#x5185;&#x4E5F;&#x4F1A;&#x8BBF;&#x95EE;&#x5931;&#x8D25;&#x3002;</p>
-<footer class="page-footer-ex"> <span class="page-footer-ex-copyright"> Apache-2.0 Licensed | Copyright &#xA9; 2022-present <a href="https://github.com/gonearewe" target="_blank">Euan Mactavish</a> </span> &#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0; <span class="page-footer-ex-footer-update"> Last Updated 2022-02-15 19:27 </span> </footer>
+<footer class="page-footer-ex"> <span class="page-footer-ex-copyright"> Apache-2.0 Licensed | Copyright &#xA9; 2022-present <a href="https://github.com/gonearewe" target="_blank">Euan Mactavish</a> </span> &#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0; <span class="page-footer-ex-footer-update"> Last Updated 2022-03-02 22:59 </span> </footer>
                                 
                                 </section>
                             
@@ -492,7 +519,7 @@ GET&#x3001;POST&#x3001;PUT&#x3001;DELETE &#x56DB;&#x5927;&#x65B9;&#x6CD5;&#xFF0C
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"接口文档","level":"4.3","depth":1,"next":{"title":"服务端","level":"4.4","depth":1,"path":"design/server.md","ref":"design/server.md","articles":[]},"previous":{"title":"数据库","level":"4.2","depth":1,"path":"design/database.md","ref":"design/database.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-footer-ex","zealar","github","bootstrap-callout","-highlight","prism","prism-themes","-lunr","-search","search-pro","splitter","-sharing"],"ignores":["node_modules"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"prism":{"css":["prismjs/themes/prism-solarizedlight.css"]},"github":{"url":"https://github.com/gonearewe/EasyTesting"},"page-footer-ex":{"copyright":"Apache-2.0 Licensed | Copyright © 2022-present [Euan Mactavish](https://github.com/gonearewe)","markdown":true,"update_format":"YYYY-MM-DD HH:mm","update_label":"Last Updated"},"splitter":{},"zealar":{},"search-pro":{},"bootstrap-callout":{},"fontsettings":{"theme":"white","family":"sans","size":2},"prism-themes":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Easy Testing Documentation","gitbook":"*"},"file":{"path":"design/api.md","mtime":"2022-02-15T11:27:33.738Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-02-28T14:24:50.409Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"接口文档","level":"4.3","depth":1,"next":{"title":"服务端","level":"4.4","depth":1,"path":"design/server.md","ref":"design/server.md","articles":[]},"previous":{"title":"数据库","level":"4.2","depth":1,"path":"design/database.md","ref":"design/database.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-footer-ex","zealar","github","bootstrap-callout","-highlight","prism","prism-themes","-lunr","-search","search-pro","splitter","-sharing"],"ignores":["node_modules"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"prism":{"css":["prismjs/themes/prism-solarizedlight.css"]},"github":{"url":"https://github.com/gonearewe/EasyTesting"},"page-footer-ex":{"copyright":"Apache-2.0 Licensed | Copyright © 2022-present [Euan Mactavish](https://github.com/gonearewe)","markdown":true,"update_format":"YYYY-MM-DD HH:mm","update_label":"Last Updated"},"splitter":{},"zealar":{},"search-pro":{},"bootstrap-callout":{},"fontsettings":{"theme":"white","family":"sans","size":2},"prism-themes":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Easy Testing Documentation","gitbook":"*"},"file":{"path":"design/api.md","mtime":"2022-03-02T14:59:27.849Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-11T13:08:42.964Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

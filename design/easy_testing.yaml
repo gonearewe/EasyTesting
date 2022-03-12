@@ -51,328 +51,6 @@ paths:
       operationId: get-hello
       tags:
         - others
-  /paper:
-    get:
-      summary: ''
-      tags:
-        - exam
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                properties:
-                  mcq:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        stem:
-                          type: string
-                          minLength: 1
-                        choices:
-                          type: array
-                          minItems: 4
-                          maxItems: 4
-                          items:
-                            type: string
-                      required:
-                        - id
-                        - stem
-                  maq:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        stem:
-                          type: string
-                          minLength: 1
-                        choices:
-                          type: array
-                          minItems: 4
-                          maxItems: 7
-                          items:
-                            type: string
-                      required:
-                        - id
-                        - stem
-                  bfq:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        stem:
-                          type: string
-                          minLength: 1
-                        blank_num:
-                          type: integer
-                      required:
-                        - id
-                        - stem
-                        - blank_num
-                  tfq:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        stem:
-                          type: string
-                          minLength: 1
-                      required:
-                        - id
-                        - stem
-                  crq:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        stem:
-                          type: string
-                          minLength: 1
-                        blank_num:
-                          type: integer
-                      required:
-                        - id
-                        - stem
-                        - blank_num
-                  cq:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                      required:
-                        - id
-                required:
-                  - mcq
-                  - maq
-                  - bfq
-                  - tfq
-                  - crq
-                  - cq
-              examples:
-                example-1:
-                  value:
-                    mcq:
-                      - id: 0
-                        stem: 6 + 6 = ?
-                        choices:
-                          - '12'
-                          - '13'
-                          - '0'
-                          - '1'
-                      - id: 1
-                        stem: 6 * 6 = ?
-                        choices:
-                          - '30'
-                          - '32'
-                          - '34'
-                          - '36'
-                    maq:
-                      - id: 0
-                        stem: 下列是 Python 关键词的有
-                        choices:
-                          - del
-                          - def
-                          - elif
-                          - from
-                          - self
-                          - except
-                    bfq:
-                      - id: 0
-                        stem: Python 中用于检查列表、元组等集合中是否存在某个值的关键词是 __
-                        blank_num: 1
-                    tfq:
-                      - id: 0
-                        stem: Python 是面向对象语言
-                      - id: 1
-                        stem: '**AK47** 于 **1949** 年推出的改良版本获苏军认可并正式采用'
-                    crq:
-                      - id: 0
-                        stem: |-
-                          下面代码的运行结果是：
-                          ```py
-                          print(2+1)
-                          ```
-                        blank_num: 1
-                    cq:
-                      - id: 0
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          description: Forbidden
-      operationId: get-paper
-    parameters: []
-    put:
-      summary: ''
-      operationId: put-paper
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: Bad Request
-        '401':
-          $ref: '#/components/responses/401'
-        '403':
-          description: Forbidden
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                mcq:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      answer:
-                        type: integer
-                    required:
-                      - id
-                      - answer
-                maq:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      answers:
-                        type: array
-                        items:
-                          type: integer
-                    required:
-                      - id
-                bfq:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      answers:
-                        type: array
-                        items:
-                          type: string
-                    required:
-                      - id
-                tfq:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      answer:
-                        type: boolean
-                    required:
-                      - id
-                      - answer
-                crq:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      answers:
-                        type: array
-                        items:
-                          type: string
-                    required:
-                      - id
-                cq:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                    required:
-                      - id
-              required:
-                - mcq
-                - maq
-                - bfq
-                - tfq
-                - crq
-                - cq
-            examples:
-              example-1:
-                value:
-                  mcq:
-                    - id: 0
-                      answer: 1
-                    - id: 1
-                      answer: 4
-                  maq:
-                    - id: 0
-                      answers:
-                        - 1
-                        - 2
-                        - 4
-                  bfq:
-                    - id: 0
-                      answers:
-                        - 封装
-                        - 继承
-                        - 多态
-                  tfq:
-                    - id: 0
-                      answer: true
-                    - id: 1
-                      answer: false
-                  crq:
-                    - id: 0
-                      answers:
-                        - len(li)
-                        - x+=1
-                  cq:
-                    - id: 0
-      tags:
-        - exam
   /teachers:
     get:
       summary: ''
@@ -437,19 +115,23 @@ paths:
             type: string
           in: query
           name: teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: name
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-teachers
@@ -540,36 +222,40 @@ paths:
         content:
           application/json:
             schema:
+              type: array
               description: ''
-              type: object
-              properties:
-                id:
-                  type: integer
-                teacher_id:
-                  type: string
-                  minLength: 1
-                name:
-                  type: string
-                  minLength: 1
-                password:
-                  type: string
-                  minLength: 1
-                is_admin:
-                  type: boolean
-              required:
-                - id
-                - teacher_id
-                - name
-                - password
-                - is_admin
+              minItems: 1
+              uniqueItems: true
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  teacher_id:
+                    type: string
+                    minLength: 1
+                  name:
+                    type: string
+                    minLength: 1
+                  password:
+                    type: string
+                    minLength: 1
+                  is_admin:
+                    type: boolean
+                required:
+                  - id
+                  - teacher_id
+                  - name
+                  - password
+                  - is_admin
             examples:
               example-1:
                 value:
-                  id: 1
-                  teacher_id: '2015339940'
-                  name: 张三
-                  password: 8fcd1836eba80875018ae5bb1f5e0754ccd28ff157379ca1a29db8f6d4450726
-                  is_admin: false
+                  - id: 1
+                    teacher_id: '2015339940'
+                    name: 张三
+                    password: 8fcd1836eba80875018ae5bb1f5e0754ccd28ff157379ca1a29db8f6d4450726
+                    is_admin: false
       tags:
         - user
   /teacher_auth:
@@ -742,23 +428,28 @@ paths:
             type: string
           in: query
           name: student_id
+          required: true
         - schema:
             type: string
           in: query
           name: name
+          required: true
         - schema:
             type: string
           in: query
           name: class_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-students
@@ -870,6 +561,7 @@ paths:
           in: query
           description: 'array of id (not Teacher ID or Student ID) to be deleted, separated by '','''
           name: ids
+          required: true
       tags:
         - user
   /exams:
@@ -985,21 +677,19 @@ paths:
         - schema:
             type: string
           in: query
-          name: id
-          description: the exam id
-        - schema:
-            type: string
-          in: query
           name: publisher_teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-exams
@@ -1202,6 +892,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - exam
   /mcq:
@@ -1286,15 +977,18 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-mcq
@@ -1420,6 +1114,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - question
   /maq:
@@ -1507,15 +1202,18 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-maq
@@ -1652,6 +1350,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - question
   /bfq:
@@ -1724,15 +1423,18 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-bfq
@@ -1837,6 +1539,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - question
   /tfq:
@@ -1899,15 +1602,18 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-tfq
@@ -2002,6 +1708,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - question
   /crq:
@@ -2082,15 +1789,18 @@ paths:
             type: string
           in: query
           name: publisher_teacher_id
+          required: true
         - schema:
             type: string
           in: query
           name: page_size
+          required: true
         - schema:
             type: string
           in: query
           name: page_index
           description: starts with 1
+          required: true
     post:
       summary: ''
       operationId: post-crq
@@ -2225,6 +1935,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - question
   /cq:
@@ -2408,6 +2119,7 @@ paths:
           in: query
           name: ids
           description: 'array of id to be deleted, separated by '','''
+          required: true
       tags:
         - question
     parameters: []
@@ -2438,6 +2150,7 @@ paths:
                           items:
                             type: string
                       required:
+                        - id
                         - stem
                         - choices
                   maq:
@@ -2454,6 +2167,7 @@ paths:
                           items:
                             type: string
                       required:
+                        - id
                         - stem
                         - choices
                   bfq:
@@ -2468,6 +2182,7 @@ paths:
                         blank_num:
                           type: integer
                       required:
+                        - id
                         - stem
                         - blank_num
                   tfq:
@@ -2480,6 +2195,7 @@ paths:
                         stem:
                           type: string
                       required:
+                        - id
                         - stem
                   crq:
                     type: array
@@ -2493,6 +2209,7 @@ paths:
                         blank_num:
                           type: integer
                       required:
+                        - id
                         - stem
                         - blank_num
                 required:
@@ -2508,12 +2225,6 @@ paths:
         '403':
           description: Forbidden
       operationId: get-exams-my_questions
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: exam_session_id
-      security: []
   /exams/my_answers:
     put:
       summary: ''
@@ -2622,7 +2333,7 @@ paths:
                 - bfq
                 - tfq
                 - crq
-      security: []
+                - cq
   /exams/examinees:
     get:
       summary: ''
@@ -2646,12 +2357,18 @@ paths:
                       type: string
                     score:
                       type: integer
+                  required:
+                    - student_id
+                    - start_time
+                    - end_time
+                    - score
       operationId: get-exams-examinees
       parameters:
         - schema:
             type: integer
           in: query
           name: exam_id
+          required: true
   /profile:
     put:
       summary: ''
@@ -2682,6 +2399,7 @@ paths:
               required:
                 - teacher_id
                 - name
+                - password
   /cache:
     get:
       summary: ''

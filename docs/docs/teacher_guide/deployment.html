@@ -1,0 +1,598 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>部署指南 · Easy Testing Documentation</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-footer-ex/style/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-zealar/test.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-bootstrap-callout/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-prism/prism-solarizedlight.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search-pro/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-splitter/splitter.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="login.html" />
+    
+    
+    <link rel="prev" href="introduction.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Welcome!
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">教师使用手册</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    简介
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.2" data-path="deployment.html">
+            
+                <a href="deployment.html">
+            
+                    
+                    部署指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="login.html">
+            
+                <a href="login.html">
+            
+                    
+                    登录界面
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="structure.html">
+            
+                <a href="structure.html">
+            
+                    
+                    基本界面结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="students.html">
+            
+                <a href="students.html">
+            
+                    
+                    学生管理模块
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="teachers.html">
+            
+                <a href="teachers.html">
+            
+                    
+                    教师管理模块
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="questions.html">
+            
+                <a href="questions.html">
+            
+                    
+                    试题管理模块
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="exams.html">
+            
+                <a href="exams.html">
+            
+                    
+                    考试管理模块
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.9" data-path="faq.html">
+            
+                <a href="faq.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">学生使用手册</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../student_guide/structure.md">
+            
+                <span>
+            
+                    
+                    基本界面结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">设计文档</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../design/introduction.html">
+            
+                <a href="../design/introduction.html">
+            
+                    
+                    系统总览
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../design/database.html">
+            
+                <a href="../design/database.html">
+            
+                    
+                    数据库
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../design/api.html">
+            
+                <a href="../design/api.html">
+            
+                    
+                    接口文档
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../design/server.html">
+            
+                <a href="../design/server.html">
+            
+                    
+                    服务端
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../design/teacher_client.html">
+            
+                <a href="../design/teacher_client.html">
+            
+                    
+                    教师客户端
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../design/student_client.html">
+            
+                <a href="../design/student_client.html">
+            
+                    
+                    学生客户端
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="../design/build.html">
+            
+                <a href="../design/build.html">
+            
+                    
+                    构建指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >部署指南</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <p>&#x5148;&#x4ECB;&#x7ECD;&#x7CFB;&#x7EDF;&#x7684;&#x90E8;&#x7F72;&#x3002;Easy Testing &#x7684;&#x670D;&#x52A1;&#x7AEF;&#x4E0E;&#x6559;&#x5E08;&#x5BA2;&#x6237;&#x7AEF;&#x662F;&#x6253;&#x5305;&#x5728;&#x4E00;&#x8D77;&#x7684;&#xFF0C;
+&#x8FD9;&#x6253;&#x5305;&#x6587;&#x4EF6;&#x548C;&#x5B66;&#x751F;&#x5BA2;&#x6237;&#x7AEF;&#x6253;&#x5305;&#x6587;&#x4EF6;&#x4E00;&#x8D77;&#x5728; <a href="https://github.com/gonearewe/EasyTesting/releases" target="_blank">GitHub Releases</a> &#x53D1;&#x5E03;&#x3002;
+&#x6839;&#x636E;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x3001;CPU &#x67B6;&#x6784;&#x9009;&#x62E9;&#x9700;&#x8981;&#x7684;&#x7248;&#x672C;&#x4E0B;&#x8F7D;&#x5373;&#x53EF;&#x3002;</p>
+<p>&#x9996;&#x5148;&#x8981;&#x5B89;&#x88C5; MySQL &#x6570;&#x636E;&#x5E93;&#xFF0C;&#x5EFA;&#x8BAE;&#x7248;&#x672C; 5.7&#x3002;
+&#x5B89;&#x88C5;&#x6B65;&#x9AA4;&#x53C2;&#x8003;<a href="https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/" target="_blank">&#x5B98;&#x7F51;&#x6587;&#x6863;</a>&#x3002;</p>
+<p>&#x7136;&#x540E;&#x5C06;&#x524D;&#x9762;&#x4E0B;&#x8F7D;&#x7684;&#x538B;&#x7F29;&#x5305;&#x89E3;&#x538B;&#x81F3;&#x4EFB;&#x610F;&#x4F4D;&#x7F6E;&#xFF0C;&#x5176;&#x4E2D;&#x5305;&#x62EC;&#xFF1A;</p>
+<pre class="language-"><code>&#x251C;&#x2500;&#x2500; EasyTesting          &#x670D;&#x52A1;&#x7AEF;&#x4E3B;&#x7A0B;&#x5E8F;
+&#x251C;&#x2500;&#x2500; server-config.yaml   &#x670D;&#x52A1;&#x7AEF;&#x4E3B;&#x7A0B;&#x5E8F;&#x7684;&#x914D;&#x7F6E;&#x6587;&#x4EF6;
+&#x251C;&#x2500;&#x2500; favicon.ico          &#x8F6F;&#x4EF6;&#x56FE;&#x6807;
+&#x251C;&#x2500;&#x2500; index.html           &#x6559;&#x5E08;&#x7AEF;&#x4E3B;&#x9875;&#x9762;
+&#x251C;&#x2500;&#x2500; sql                  MySQL &#x811A;&#x672C;
+&#x2502;   &#x251C;&#x2500;&#x2500; setup.sql        &#x521B;&#x5EFA;&#x6570;&#x636E;&#x5E93;&#x7684;&#x811A;&#x672C;
+&#x2502;   &#x2514;&#x2500;&#x2500; test.sql         &#x63D2;&#x5165;&#x6D4B;&#x8BD5;&#x6570;&#x636E;&#x7684;&#x811A;&#x672C;
+&#x2514;&#x2500;&#x2500; static               &#x6559;&#x5E08;&#x7AEF;&#x4E3B;&#x9875;&#x9762;&#x7684;&#x9759;&#x6001;&#x6587;&#x4EF6;
+    &#x251C;&#x2500;&#x2500; css              &#x6837;&#x5F0F;&#x6587;&#x4EF6;
+    &#x2502;   &#x251C;&#x2500;&#x2500; app.4c2aef82.css
+    &#x2502;   &#x251C;&#x2500;&#x2500; chunk-019156c7.a8088982.css
+    &#x2502;   &#x251C;&#x2500;&#x2500; chunk-07c1fcd4.04dea0eb.css
+    &#x2502;   &#x2514;&#x2500;&#x2500; ...
+    &#x251C;&#x2500;&#x2500; fonts            &#x5B57;&#x4F53;&#x6587;&#x4EF6;
+    &#x2502;   &#x251C;&#x2500;&#x2500; element-icons.535877f5.woff
+    &#x2502;   &#x2514;&#x2500;&#x2500; element-icons.732389de.ttf
+    &#x251C;&#x2500;&#x2500; img              &#x56FE;&#x7247;
+    &#x2502;   &#x251C;&#x2500;&#x2500; 404.a57b6f31.png
+    &#x2502;   &#x251C;&#x2500;&#x2500; 404_cloud.0f4bc32b.png
+    &#x2502;   &#x251C;&#x2500;&#x2500; avatar.ecba1844.gif
+    &#x2502;   &#x2514;&#x2500;&#x2500; ...
+    &#x2514;&#x2500;&#x2500; js  javascript  &#x811A;&#x672C;&#x6587;&#x4EF6;
+        &#x251C;&#x2500;&#x2500; app.82de0e6e.js
+        &#x251C;&#x2500;&#x2500; app.9d60ec40.js
+        &#x251C;&#x2500;&#x2500; chunk-019156c7.b0ca593f.js
+        &#x2514;&#x2500;&#x2500; ...
+</code></pre><p>&#x5176;&#x4E2D; static &#x6587;&#x4EF6;&#x5939;&#x662F;&#x524D;&#x7AEF;&#x81EA;&#x52A8;&#x6253;&#x5305;&#x7684;&#xFF0C;&#x5185;&#x90E8;&#x6587;&#x4EF6;&#x540D;&#x4E0E;&#x6587;&#x4EF6;&#x6570;&#x672A;&#x5FC5;&#x4E0E;&#x4E0A;&#x9762;&#x7684;&#x4E00;&#x81F4;&#x3002;
+server-config.yaml &#x662F;&#x5173;&#x952E;&#x7684;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#xFF0C;&#x5185;&#x90E8;&#x7684;&#x5C5E;&#x6027;&#x90FD;&#x6709;&#x6CE8;&#x91CA;&#xFF0C;
+&#x5982;&#x679C;&#x4EC5;&#x7528;&#x4E8E;&#x6D4B;&#x8BD5;&#xFF0C;&#x4EC5;&#x9700;&#x4FEE;&#x6539;&#x6570;&#x636E;&#x5E93; dsn &#x7684;&#x7528;&#x6237;&#x540D;&#x4E0E;&#x5BC6;&#x7801;&#xFF08;&#x5373;&#x66FF;&#x6362;&#x6389; <code>root:12345</code>&#xFF09;&#x3002;
+&#x8BB0;&#x5F97;&#x8BBE;&#x7F6E;&#x597D;&#x6587;&#x4EF6;&#x6743;&#x9650;&#xFF1A;</p>
+<pre class="language-"><code>$ sudo chmod -R 644 your_path_to_folder/easy_testing
+$ sudo chmod 755 your_path_to_folder/easy_testing/EasyTesting
+</code></pre><p>&#x63A5;&#x4E0B;&#x6765;&#x6267;&#x884C;&#x6570;&#x636E;&#x5E93;&#x811A;&#x672C; setup.sql&#xFF0C;&#x53C2;&#x8003;<a href="https://dev.mysql.com/doc/refman/5.7/en/mysql-batch-commands.html" target="_blank">&#x5B98;&#x7F51;&#x6587;&#x6863;</a>&#x8FDB;&#x884C;&#x3002;
+&#x5982;&#x679C;&#x9700;&#x8981;&#x6D4B;&#x8BD5;&#x6570;&#x636E;&#xFF0C;&#x8FD8;&#x53EF;&#x63A5;&#x7740;&#x6267;&#x884C; test.sql&#x3002;</p>
+<p>&#x6700;&#x540E;<strong>&#x8FDB;&#x5165;&#x6587;&#x4EF6;&#x5939;&#x6839;&#x76EE;&#x5F55;</strong>&#x542F;&#x52A8;&#x670D;&#x52A1;&#x7AEF;&#x4E3B;&#x7A0B;&#x5E8F;&#xFF08;&#x56E0;&#x4E3A;<strong>&#x7A0B;&#x5E8F;&#x4F1A;&#x5728;&#x5F53;&#x524D;&#x5DE5;&#x4F5C;&#x76EE;&#x5F55;&#x4E0B;&#x67E5;&#x627E;&#x914D;&#x7F6E;&#x6587;&#x4EF6;</strong>&#xFF09;&#xFF0C;</p>
+<pre class="language-"><code>$ cd your_path_to_folder/easy_testing
+$ ./EasyTesting
+</code></pre><p>&#x6B63;&#x5E38;&#x542F;&#x52A8;&#x540E;&#x7EC8;&#x7AEF;&#x4F1A;&#x51FA;&#x73B0;&#x65E5;&#x5FD7;&#xFF0C;&#x7C7B;&#x4F3C;&#x4E8E;&#xFF1A;</p>
+<pre class="language-"><code>[GIN-debug] [WARNING] Running in &quot;debug&quot; mode. Switch to &quot;release&quot; mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /teacher_auth             --&gt; github.com/appleboy/gin-jwt/v2.(*GinJWTMiddleware).LoginHandler-fm (5 handlers)
+[GIN-debug] GET    /student_auth             --&gt; github.com/appleboy/gin-jwt/v2.(*GinJWTMiddleware).LoginHandler-fm (5 handlers)
+[GIN-debug] GET    /                         --&gt; github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] HEAD   /                         --&gt; github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] GET    /favicon.ico              --&gt; github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] HEAD   /favicon.ico              --&gt; github.com/gin-gonic/gin.(*RouterGroup).StaticFile.func1 (5 handlers)
+[GIN-debug] GET    /static/*filepath         --&gt; github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] HEAD   /static/*filepath         --&gt; github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (5 handlers)
+[GIN-debug] GET    /ping                     --&gt; github.com/gonearewe/EasyTesting/handlers.PingHandler (5 handlers)
+[GIN-debug] GET    /hello                    --&gt; github.com/gonearewe/EasyTesting/handlers.HelloHandler (6 handlers)
+[GIN-debug] GET    /cache                    --&gt; github.com/gonearewe/EasyTesting/handlers.GetCacheHandler (6 handlers)
+[GIN-debug] PUT    /cache                    --&gt; github.com/gonearewe/EasyTesting/handlers.PutCacheHandler (6 handlers)
+</code></pre><p>&#x4E3A;&#x4E86;&#x8C03;&#x8BD5;&#x65B9;&#x4FBF;&#xFF0C;&#x53EF;&#x4EE5;&#x628A; stdout &#x548C; stderr &#x90FD;&#x91CD;&#x5B9A;&#x5411;&#x5230;&#x6587;&#x4EF6;&#x4E2D;&#x5E76;&#x8BA9;&#x7A0B;&#x5E8F;&#x540E;&#x53F0;&#x8FD0;&#x884C;&#xFF1A;</p>
+<pre class="language-"><code>$ nohup ./EasyTesting &amp;&gt; debug.log &amp;
+</code></pre><div class="callout callout-warning"><h4 id="windows-&#x5E73;&#x53F0;&#x6CE8;&#x610F;&#x7EC8;&#x7AEF;&#x51BB;&#x7ED3;&#x95EE;&#x9898;">Windows &#x5E73;&#x53F0;&#x6CE8;&#x610F;&#x7EC8;&#x7AEF;&#x51BB;&#x7ED3;&#x95EE;&#x9898;</h4><div><p>&#x5047;&#x5982;&#x4F60;&#x5728; Windows 10 &#x5E73;&#x53F0;&#x4E0B;&#x8FD0;&#x884C;&#x670D;&#x52A1;&#x7AEF;&#xFF0C;&#x5219;&#x8981;&#x5C24;&#x5176;&#x6CE8;&#x610F;&#xFF1A;&#x7EC8;&#x7AEF;&#x9ED8;&#x8BA4;&#x4F1A;&#x5728;&#x4F60;&#x70B9;&#x51FB;&#x5B83;&#xFF0C;&#x540C;&#x65F6;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x6709;&#x8F93;&#x51FA;&#x65F6;&#xFF0C;&#x76F4;&#x63A5;&#x51BB;&#x7ED3;&#x7A0B;&#x5E8F;&#x3002;
+&#x901A;&#x5E38;&#x53EA;&#x9700;&#x8981;&#x6309;&#x4E0B; Esc &#x6216;&#x56DE;&#x8F66;&#x5C31;&#x80FD;&#x6062;&#x590D;&#x7A0B;&#x5E8F;&#xFF0C;&#x4F46;&#x5018;&#x82E5;&#x6CA1;&#x6709;&#x6CE8;&#x610F;&#x5230;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#xFF0C;&#x4E5F;&#x8BB8;&#x4F1A;&#x5BFC;&#x81F4;&#x5927;&#x91CF;&#x7684;&#x5BA2;&#x6237;&#x7AEF;&#x8FDE;&#x63A5;&#x8D85;&#x65F6;
+&#xFF08;&#x62A5;&#x9519;&#xFF1A;timeout of 5000ms exceeded&#xFF09;&#x3002;</p><p>&#x8FD9;&#x5E76;&#x975E;&#x662F;&#x8F6F;&#x4EF6;&#x81EA;&#x8EAB;&#x7684; bug&#xFF0C;&#x800C;&#x662F; Windows 10 &#x7684;&#x95EE;&#x9898;&#x3002;
+&#x8BE6;&#x60C5;&#x53C2;&#x89C1; <a href="https://stackoverflow.com/questions/33883530/why-is-my-command-prompt-freezing-on-windows-10" target="_blank">Why is my command prompt freezing on Windows 10?</a>&#x3002;
+&#x89E3;&#x51B3;&#x65B9;&#x6CD5;&#x662F;&#x5728;&#x7EC8;&#x7AEF;&#x6807;&#x9898;&#x680F;&#x4E0A;&#x53F3;&#x952E;&#xFF0C;&#x83DC;&#x5355;&#x9009;&#x62E9;<em>&#x9ED8;&#x8BA4;&#x503C;</em>&#x6216;<em>&#x5C5E;&#x6027;</em>&#xFF08;<em>&#x9ED8;&#x8BA4;&#x503C;</em>&#x4F1A;&#x5E94;&#x7528;&#x4E8E;&#x6240;&#x6709;&#x7EC8;&#x7AEF;&#xFF09;&#xFF0C;&#x53D6;&#x6D88;&#x52FE;&#x9009;<em>&#x5FEB;&#x901F;&#x7F16;&#x8F91;&#x6A21;&#x5F0F;</em>&#xFF0C;
+<em>&#x786E;&#x5B9A;</em>&#x5E76;&#x91CD;&#x542F;&#x7EC8;&#x7AEF;&#x3002;</p></div></div>
+<p><img src="../img/win10-cmd-freezing.png" alt=""></p>
+<p>&#x73B0;&#x5728;&#x5373;&#x53EF;&#x5728;&#x6D4F;&#x89C8;&#x5668;&#x4E0A;&#x8BBF;&#x95EE; <a href="http://localhost:9000" target="_blank">http://localhost:9000</a> &#x8FDB;&#x5165;&#x6559;&#x5E08;&#x7AEF;&#xFF08;&#x5982;&#x679C;&#x4F60;&#x6CA1;&#x6709;&#x4FEE;&#x6539;&#x9ED8;&#x8BA4;&#x7AEF;&#x53E3;&#x53F7;&#x7684;&#x8BDD;&#xFF09;&#x3002;
+test.sql &#x63D0;&#x4F9B;&#x7684;&#x6559;&#x5E08;&#x7528;&#x6237;&#x6709;&#xFF1A;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">&#x5DE5;&#x53F7;</th>
+<th style="text-align:center">&#x59D3;&#x540D;</th>
+<th style="text-align:right">&#x5BC6;&#x7801;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">root</td>
+<td style="text-align:right">ET000</td>
+</tr>
+<tr>
+<td style="text-align:center">2010301800</td>
+<td style="text-align:center">&#x5F20;&#x4E09;</td>
+<td style="text-align:right">Scala</td>
+</tr>
+<tr>
+<td style="text-align:center">2012550921</td>
+<td style="text-align:center">&#x674E;&#x56DB;</td>
+<td style="text-align:right">K_On</td>
+</tr>
+</tbody>
+</table>
+<p>&#x5982;&#x679C;&#x670D;&#x52A1;&#x5668;&#x5728;&#x542F;&#x52A8;&#x65F6;&#x51FA;&#x73B0;&#xFF1A;</p>
+<blockquote>
+<p>Error 1292: Incorrect datetime value: &apos;0000-00-00&apos; for column &apos;end_time&apos;</p>
+</blockquote>
+<p>&#x8BF4;&#x660E;&#x662F; MySQL &#x7981;&#x7528;&#x4E86; datetime &#x7C7B;&#x578B;&#x7684;&#x96F6;&#x503C;&#x3002;
+&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x5728; MySQL console &#x4E2D;&#x8F93;&#x5165; <code>SELECT @@GLOBAL.sql_mode;</code> &#x67E5;&#x770B;
+&#x5168;&#x5C40;&#x7684; sql_mode&#xFF0C;&#x5B83;&#x53EF;&#x80FD;&#x5305;&#x62EC;&#x8FD9;&#x4E9B;&#x5185;&#x5BB9;&#xFF1A;</p>
+<pre class="language-"><code>ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+</code></pre><p>&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x8981;&#x5220;&#x9664;&#x5176;&#x4E2D;&#x7684; NO_ZERO_IN_DATE &#x4E0E; NO_ZERO_DATE&#xFF0C;&#x901A;&#x8FC7;&#x91CD;&#x65B0;&#x5168;&#x5C40;&#x8BBE;&#x7F6E; sql_mode&#xFF1A;</p>
+<pre class="language-"><code class="lang-sql"><span class="token keyword">SET</span> <span class="token keyword">GLOBAL</span> sql_mode <span class="token operator">=</span> <span class="token string">&apos;ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION&apos;</span><span class="token punctuation">;</span>
+</code></pre>
+<blockquote>
+<p>&#x53C2;&#x8003;&#x4E86; Stackoverflow &#x4E0A;&#x7684;&#x95EE;&#x9898; <a href="https://stackoverflow.com/questions/35565128/mysql-incorrect-datetime-value-0000-00-00-000000" target="_blank">MySQL Incorrect datetime value: &apos;0000-00-00 00:00:00&apos;</a></p>
+</blockquote>
+<footer class="page-footer-ex"> <span class="page-footer-ex-copyright"> Apache-2.0 Licensed | Copyright &#xA9; 2022-present <a href="https://github.com/gonearewe" target="_blank">Euan Mactavish</a> </span> &#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0; <span class="page-footer-ex-footer-update"> Last Updated 2022-03-10 16:33 </span> </footer>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page: 简介">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="login.html" class="navigation navigation-next " aria-label="Next page: 登录界面">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"部署指南","level":"2.2","depth":1,"next":{"title":"登录界面","level":"2.3","depth":1,"path":"teacher_guide/login.md","ref":"teacher_guide/login.md","articles":[]},"previous":{"title":"简介","level":"2.1","depth":1,"path":"teacher_guide/introduction.md","ref":"teacher_guide/introduction.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-footer-ex","zealar","github","bootstrap-callout","-highlight","prism","prism-themes","-lunr","-search","search-pro","splitter","-sharing"],"ignores":["node_modules"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"prism":{"css":["prismjs/themes/prism-solarizedlight.css"]},"github":{"url":"https://github.com/gonearewe/EasyTesting"},"page-footer-ex":{"copyright":"Apache-2.0 Licensed | Copyright © 2022-present [Euan Mactavish](https://github.com/gonearewe)","markdown":true,"update_format":"YYYY-MM-DD HH:mm","update_label":"Last Updated"},"splitter":{},"zealar":{},"search-pro":{},"bootstrap-callout":{},"fontsettings":{"theme":"white","family":"sans","size":2},"prism-themes":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Easy Testing Documentation","gitbook":"*"},"file":{"path":"teacher_guide/deployment.md","mtime":"2022-03-10T08:33:34.412Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-03-11T13:08:42.964Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-zealar/test.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search-pro/jquery.mark.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search-pro/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-splitter/splitter.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

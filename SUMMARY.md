@@ -2,7 +2,7 @@
 
 * [Welcome!](README.md)
 
-## 教师使用手册
+## 教师用户手册
 
 * [简介](teacher_guide/introduction.md)
 * [部署指南](teacher_guide/deployment.md)
@@ -14,9 +14,9 @@
 * [考试管理模块](teacher_guide/exams.md)
 * [FAQ](teacher_guide/faq.md)
 
-## 学生使用手册
+## 学生用户手册
 
-* [基本界面结构](student_guide/structure.md)
+* [手册](student_guide/guide.md)
 
 ## 设计文档
 
