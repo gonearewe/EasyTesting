@@ -12,24 +12,16 @@ import (
 // When any error occurs, it panics.
 func GetCqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Cq, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        err := buildCqQueryFrom(tx, teacherId).
+        err := buildQueryFrom(tx, teacherId,&models.Cq{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
             Find(&ret).Error
         if err != nil {
             return err
         }
-        return buildCqQueryFrom(tx, teacherId).Count(&num).Error
+        return buildQueryFrom(tx, teacherId,&models.Cq{}).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
-}
-
-func buildCqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
-    var filtered = tx.Model(&models.Cq{})
-    if teacherId != "" {
-        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
-    }
-    return filtered
 }
 
 // CreateCqs stores given Coding Question (cq) into the database,

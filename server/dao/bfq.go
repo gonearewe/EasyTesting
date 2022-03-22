@@ -12,24 +12,16 @@ import (
 // When any error occurs, it panics.
 func GetBfqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Bfq, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        err := buildBfqQueryFrom(tx, teacherId).
+        err := buildQueryFrom(tx, teacherId,&models.Bfq{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
             Find(&ret).Error
         if err != nil {
             return err
         }
-        return buildBfqQueryFrom(tx, teacherId).Count(&num).Error
+        return buildQueryFrom(tx, teacherId,&models.Bfq{}).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
-}
-
-func buildBfqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
-    var filtered = tx.Model(&models.Bfq{})
-    if teacherId != "" {
-        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
-    }
-    return filtered.Order("id")
 }
 
 // CreateBfqs stores given Blank Filling Question (bfq) into the database,

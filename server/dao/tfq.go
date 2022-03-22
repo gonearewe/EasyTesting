@@ -13,24 +13,16 @@ import (
 // When any error occurs, it panics.
 func GetTfqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Tfq, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        err := buildTfqQueryFrom(tx, teacherId).
+        err := buildQueryFrom(tx, teacherId,&models.Tfq{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
             Find(&ret).Error
         if err != nil {
             return err
         }
-        return buildTfqQueryFrom(tx, teacherId).Count(&num).Error
+        return buildQueryFrom(tx, teacherId,&models.Tfq{}).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
-}
-
-func buildTfqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
-    var filtered = tx.Model(&models.Tfq{})
-    if teacherId != "" {
-        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
-    }
-    return filtered
 }
 
 // CreateTfqs stores given True False Question (tfq) into the database,

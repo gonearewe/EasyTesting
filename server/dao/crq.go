@@ -12,24 +12,16 @@ import (
 // When any error occurs, it panics.
 func GetCrqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Crq, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        err := buildCrqQueryFrom(tx, teacherId).
+        err := buildQueryFrom(tx, teacherId,&models.Crq{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
             Find(&ret).Error
         if err != nil {
             return err
         }
-        return buildCrqQueryFrom(tx, teacherId).Count(&num).Error
+        return buildQueryFrom(tx, teacherId,&models.Crq{}).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
-}
-
-func buildCrqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
-    var filtered = tx.Model(&models.Crq{})
-    if teacherId != "" {
-        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
-    }
-    return filtered
 }
 
 // CreateCrqs stores given Code Reading Question (crq) into the database,

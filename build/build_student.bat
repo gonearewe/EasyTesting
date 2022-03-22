@@ -36,6 +36,8 @@ SET dist_path="%root_path%\easy_testing_student_client_windows"
 IF EXIST %dist_path% RMDIR /S /Q %dist_path%
 :: Rename And Move Dist To Root Path
 MOVE /Y "%client_src_path%\pyqt\dist\main" %dist_path%
+:: Copy README.md And LICENSE
+ROBOCOPY %root_path% %dist_path% README.md LICENSE
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO %dist_path% IS READY FOR DEPLOYMENT
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

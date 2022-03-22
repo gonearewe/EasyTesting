@@ -24,9 +24,9 @@ func InitDb() {
 		panic(errors.Because(errors.New("initialization failed"), err, ""))
 	} else {
 		// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
-		sqlDb.SetMaxIdleConns(10)
+		sqlDb.SetMaxIdleConns(20)
 		// SetMaxOpenConns sets the maximum number of open connections to the database.
-		sqlDb.SetMaxOpenConns(100)
+		sqlDb.SetMaxOpenConns(200)
 		// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 		sqlDb.SetConnMaxLifetime(time.Hour)
 	}

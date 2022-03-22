@@ -32,7 +32,6 @@ func GetTfqHandler(c *gin.Context) {
 }
 
 func PostTfqHandler(c *gin.Context) {
-	
 	var reqs []gin.H
 	utils.MustParseJsonTo(c, &reqs)
 	var tfqs = make([]*models.Tfq, len(reqs))
@@ -47,7 +46,6 @@ func PostTfqHandler(c *gin.Context) {
 }
 
 func PutTfqHandler(c *gin.Context) {
-	
 	req := utils.MustParseJson(c)
 	tfq := &models.Tfq{
 		ID:          int(req["id"].(float64)),
@@ -58,7 +56,6 @@ func PutTfqHandler(c *gin.Context) {
 }
 
 func DeleteTfqHandler(c *gin.Context) {
-	
 	li := strings.Split(c.Query("ids"), ",")
 	ids := make([]int, len(li))
 	for i, e := range li {

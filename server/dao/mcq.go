@@ -13,24 +13,16 @@ import (
 // When any error occurs, it panics.
 func GetMcqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Mcq, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        err := buildMcqQueryFrom(tx, teacherId).
+        err := buildQueryFrom(tx, teacherId,&models.Mcq{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
             Find(&ret).Error
         if err != nil {
             return err
         }
-        return buildMcqQueryFrom(tx, teacherId).Count(&num).Error
+        return buildQueryFrom(tx, teacherId,&models.Mcq{}).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
-}
-
-func buildMcqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
-    var filtered = tx.Model(&models.Mcq{})
-    if teacherId != "" {
-        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
-    }
-    return filtered
 }
 
 // CreateMcqs stores given Multiple Choice Question (mcq) into the database,

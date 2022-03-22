@@ -326,3 +326,11 @@ CREATE TABLE `cq_answer`
   DEFAULT CHARSET = utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- Single admin inserted to ensure bootstrap with pure Web UI.
+INSERT INTO `teacher`
+    (`teacher_id`, `name`, `password`, `salt`, `is_admin`)
+VALUES
+    -- client should input password 'ET000' and hash its utf-8 encoding with sha256
+    ('0', 'root', '$2a$10$lgnXPiP9UR3rj2.tu9l8F.iQJqy5jXwTEuH1b9NWGpbxi0816HiNy',
+     'S0xMx8Hx4mxNui1RCPk1n6MfElv41bgkiBFR3NxS', TRUE);

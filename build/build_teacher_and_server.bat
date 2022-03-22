@@ -36,6 +36,8 @@ ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ROBOCOPY /E "%server_src_path%\sql" "%dist_path%\sql"
 ROBOCOPY "%server_src_path%" "%dist_path%" "EasyTesting.exe" "server-config.yaml"
 
+:: Copy README.md And LICENSE
+ROBOCOPY %root_path% %dist_path% README.md LICENSE
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO %dist_path% IS READY FOR DEPLOYMENT
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

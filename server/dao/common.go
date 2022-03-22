@@ -9,5 +9,5 @@ func buildQueryFrom(tx *gorm.DB, publisherTeacherId string, tmpModel interface{}
     if publisherTeacherId != "" {
         filtered = filtered.Where("publisher_teacher_id LIKE ?", publisherTeacherId+"%")
     }
-    return filtered
+    return filtered.Order("id")
 }

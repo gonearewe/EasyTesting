@@ -31,7 +31,7 @@ func buildTeacherQueryFrom(tx *gorm.DB, teacherId string, name string) *gorm.DB 
     if name != "" {
         filtered = filtered.Where("name LIKE ?", "%"+name+"%")
     }
-    return filtered
+    return filtered.Order("id")
 }
 
 // GetTeacherByTeacherId gets a teacher by the teacher id including `password` and `salt` field.

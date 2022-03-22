@@ -1,6 +1,6 @@
 # 服务端软件的配置文件，应当与程序放在同一级目录下，不支持热重载，修改后需要重启程序才能生效
-disable_console_color: false # console 输出是否包含颜色，如果日志输出到文件，会出现乱码
+disable_console_color: true # console 输出是否禁用颜色，如果日志输出到文件，控制颜色的字符会变成乱码
 dsn: "root:12345@tcp(127.0.0.1:3306)/easy_testing?charset=utf8mb4&parseTime=True&loc=Local" # 数据库 DSN
 port: 9000 # 服务器监听的端口
-jwt_secret_key: "4xg8jlAh8s00KR1Fdc6mY" # JWT 使用的密钥
+jwt_secret_key: "4xg8jlAh8s00KR1Fdc6mY" # JWT 使用的密钥，建议正式部署时修改它
 rps_limit: 100 # 接口的最大 Request Per Second

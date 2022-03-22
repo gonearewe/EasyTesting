@@ -12,24 +12,16 @@ import (
 // When any error occurs, it panics.
 func GetMaqsBy(teacherId string, pageSize int, pageIndex int) (ret []*models.Maq, num int64) {
     err := db.Transaction(func(tx *gorm.DB) error {
-        err := buildMaqQueryFrom(tx, teacherId).
+        err := buildQueryFrom(tx, teacherId,&models.Maq{}).
             Limit(pageSize).Offset(pageSize * (pageIndex - 1)).
             Find(&ret).Error
         if err != nil {
             return err
         }
-        return buildMaqQueryFrom(tx, teacherId).Count(&num).Error
+        return buildQueryFrom(tx, teacherId,&models.Maq{}).Count(&num).Error
     })
     utils.PanicWhen(err)
     return
-}
-
-func buildMaqQueryFrom(tx *gorm.DB, teacherId string) *gorm.DB {
-    var filtered = tx.Model(&models.Maq{})
-    if teacherId != "" {
-        filtered = filtered.Where("publisher_teacher_id LIKE ?", teacherId+"%")
-    }
-    return filtered
 }
 
 // CreateMaqs stores given Multiple Answer Question (maq) into the database,
