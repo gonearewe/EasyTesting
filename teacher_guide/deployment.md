@@ -12,6 +12,8 @@
 ├── server-config.yaml   服务端主程序的配置文件
 ├── favicon.ico          软件图标
 ├── index.html           教师端主页面
+├── README.md            使用须知
+├── LICENSE              软件开源许可证
 ├── sql                  MySQL 脚本
 │   ├── setup.sql        创建数据库的脚本
 │   └── test.sql         插入测试数据的脚本
@@ -52,7 +54,7 @@ $ sudo chmod 755 your_path_to_folder/easy_testing/EasyTesting
 > #### info::正式使用时的操作
 >
 > 正式使用时，务必不要使用默认的数据库用户名与密码，并且要将 server-config.yaml 中的 jwt_secret_key 改成其他的随机字符。
-> 仅需执行数据库脚本 setup.sql，然后手动插入一个 root 用户。
+> 仅需执行数据库脚本 setup.sql，脚本最后会插入一个 root 用户，工号为 0，密码为 ET000，用它进入系统后即可修改自己身份信息。
 
 最后**进入文件夹根目录**启动服务端主程序（因为**程序会在当前工作目录下查找配置文件**），
 

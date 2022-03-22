@@ -26,6 +26,8 @@ go.mod 与 go.sum 记录着 Go 软件的依赖。
 ├── server-config.yaml   服务端主程序的配置文件
 ├── favicon.ico          软件图标
 ├── index.html           教师端主页面
+├── README.md            使用须知
+├── LICENSE              软件开源许可证
 ├── sql                  MySQL 脚本
 │   ├── setup.sql        创建数据库的脚本
 │   └── test.sql         插入测试数据的脚本
@@ -49,6 +51,8 @@ go.mod 与 go.sum 记录着 Go 软件的依赖。
         ├── chunk-019156c7.b0ca593f.js
         └── ...
 ```
+
+> README.md 和 LICENSE 都是从项目根目录拷贝来的，不影响软件的使用。
 
 ## 学生客户端
 
@@ -90,4 +94,3 @@ a = Analysis(['main.py'],
 
 这两项修改做好后，在 student_client/pyqt 目录下运行 `pipenv run pyinstaller main.spec` 即可在 student_client/pyqt/dist 中得到
 打包后的文件夹 main。
-
