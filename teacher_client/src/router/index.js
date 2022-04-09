@@ -131,9 +131,10 @@ export const constantRoutes = [
   {
     path: '/student',
     component: Layout,
+    redirect: '/student/index',
     children: [
       {
-        path: 'student',
+        path: 'index',
         component: () => import('@/views/student'),
         meta: {title: '学生管理', icon: 'student'}
       }
@@ -152,9 +153,10 @@ export const asyncRoutes = [
   {
     path: '/teacher',
     component: Layout,
+    redirect: '/teacher/index',
     children: [
       {
-        path: 'teacher',
+        path: 'index',
         component: () => import('@/views/teacher'),
         meta: {title: '教师管理', icon: 'teacher', roles: ['admin']}
       }

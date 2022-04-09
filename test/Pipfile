@@ -5,9 +5,8 @@ name = "pypi"
 
 [packages]
 "locust" = "2.8.2"
-mysql-connector-python = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.9"

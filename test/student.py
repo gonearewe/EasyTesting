@@ -6,8 +6,8 @@ from locust import FastHttpUser, task, between
 
 
 class Student(FastHttpUser):
-    # Every Student will wait for 100~200ms after each task completion
-    wait_time = between(60, 120)
+    # Every Student will wait for 500~1000ms after each task completion
+    wait_time = between(0.5, 1)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
