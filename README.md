@@ -29,7 +29,8 @@ Built with <code>PyQt5</code>, <code>Vue</code> and <code>Go</code>.
 <br>
 <br>
 
-EasyTesting aims to support the online examination process of a specific course (Python Programming Language) of my mentor, but with little modification, can serve other courses.  
+EasyTesting aims to support the online examination process of a specific course (Python Programming Language) of my 
+mentor, but with a little modification, can serve other courses.  
 
 ## Screenshots of Demo
 
