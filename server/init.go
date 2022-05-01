@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Viper, the config loader, must be initialized first.
 func initViper() {
 	viper.SetConfigName("server-config") // name of config file (without extension)
 	viper.SetConfigType("yaml")   // REQUIRED if the config file does not have the extension in the name

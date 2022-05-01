@@ -1,3 +1,5 @@
+# learn more about pipenv at https://pipenv.pypa.io/en/latest/
+# please run `pipenv install` at this directory
 [[source]]
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 verify_ssl = true

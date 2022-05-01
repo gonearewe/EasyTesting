@@ -4,13 +4,13 @@ import threading
 from flask import Flask
 
 from code_runner import CodeRunner
-from config import INDEX_HTML_PATH
+from config import INDEX_HTML_PATH, FLASK_PORT
 
 server = Flask(__name__)
 
 
 def start():
-    thr = threading.Thread(target=server.run, kwargs={'port': 2998})
+    thr = threading.Thread(target=server.run, kwargs={'port': FLASK_PORT})
     thr.daemon = True  # local server will exit automatically after main thread exits
     thr.start()
 

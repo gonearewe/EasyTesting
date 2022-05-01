@@ -112,10 +112,10 @@ export default {
   data() {
     return {
       loginForm: {
-        server_addr: 'http://localhost:9000',
-        student_id: '2020501880',
-        name: '小明',
-        exam_id: '4'
+        server_addr: '',
+        student_id: '',
+        name: '',
+        exam_id: ''
       },
       loading: false,
       redirect: undefined,

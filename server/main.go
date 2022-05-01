@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +27,9 @@ func main() {
 	r := gin.New()
 	teacherAuthRouter, adminAuthRouter, studentAuthRouter := middlewares.SetupMiddleWares(r)
 	SetupRoute(r, teacherAuthRouter, adminAuthRouter, studentAuthRouter)
-	if err := http.ListenAndServe(":"+viper.GetString("port"), r); err != nil {
+	port := viper.GetString("port")
+	fmt.Println("Server is Running at port "+port)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
 }

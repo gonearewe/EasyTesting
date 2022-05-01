@@ -1,4 +1,5 @@
 import sys, os
+import configparser
 
 # from https://stackoverflow.com/questions/404744/determining-application-path-in-a-python-exe-generated-by-pyinstaller
 
@@ -17,3 +18,7 @@ INDEX_HTML_PATH = os.path.join(APP_PATH,'index.html')
 
 __exe_name = 'python.exe' if os.name == 'nt' else 'python'
 PYTHON_RUNNER_EXE_PATH = os.path.join(APP_PATH,'runner',__exe_name)
+
+_config = configparser.ConfigParser()
+_config.read("config.ini")
+FLASK_PORT = int(_config["flask"]["port"])
