@@ -16,7 +16,7 @@ export function getMyQuestions() {
   })
 }
 
-const STATIC_URL = 'http://localhost:2998'
+const STATIC_URL = 'http://localhost:2998' // url to local code runner
 export function runCode(body) {
   return service(STATIC_URL, true)({
     url: '/code',

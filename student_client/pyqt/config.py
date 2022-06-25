@@ -2,7 +2,6 @@ import sys, os
 import configparser
 
 # from https://stackoverflow.com/questions/404744/determining-application-path-in-a-python-exe-generated-by-pyinstaller
-
 APP_PATH = ''
 # the PyInstaller bootloader extends the sys module by a flag frozen=True
 if getattr(sys, 'frozen', False):
@@ -14,11 +13,14 @@ if getattr(sys, 'frozen', False):
 else:
     APP_PATH = os.path.dirname(os.path.abspath(__file__))
 
-INDEX_HTML_PATH = os.path.join(APP_PATH,'index.html')
+INDEX_HTML_PATH = os.path.join(APP_PATH, 'index.html')
 
 __exe_name = 'python.exe' if os.name == 'nt' else 'python'
-PYTHON_RUNNER_EXE_PATH = os.path.join(APP_PATH,'runner',__exe_name)
+PYTHON_RUNNER_EXE_PATH = os.path.join(APP_PATH, 'runner', __exe_name)
 
-_config = configparser.ConfigParser()
-_config.read("config.ini")
-FLASK_PORT = int(_config["flask"]["port"])
+# TODO: The Python side can read the config file to get the configured port, but it's hard for
+# the Vue side to acquire it, so for now, we make FLASK_PORT a fixed value.
+# _config = configparser.ConfigParser()
+# _config.read("config.ini")
+# FLASK_PORT = int(_config["flask"]["port"])
+FLASK_PORT = 2998

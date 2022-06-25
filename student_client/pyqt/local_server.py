@@ -29,5 +29,6 @@ def index():
         return f.read()
 
 
+# run as __main__ only to debug
 if __name__ == '__main__':
     server.run(port=2998)
