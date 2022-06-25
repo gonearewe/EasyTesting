@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gonearewe/EasyTesting/dao"
+	"github.com/gonearewe/EasyTesting/handlers"
 	"github.com/gonearewe/EasyTesting/middlewares"
 	"github.com/google/logger"
 	"github.com/spf13/viper"
@@ -16,6 +17,7 @@ import (
 func init() {
 	initViper()
 	logger.Init("EasyTesting", true, false, os.Stdout)
+	handlers.InitTaskConsumers()
 	dao.InitDb()
 }
 

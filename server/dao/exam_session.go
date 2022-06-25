@@ -154,7 +154,7 @@ func EnterExam(studentId string, studentName string, examId int) {
 
         {
             var cqs []models.Cq
-            err = tx.Select("id").Order("RAND()").Limit(int(exam.CqNum)).Find(&cqs).Error
+            err = tx.Select("id", "output").Order("RAND()").Limit(int(exam.CqNum)).Find(&cqs).Error
             if err != nil {
                 return err
             }
@@ -162,6 +162,7 @@ func EnterExam(studentId string, studentName string, examId int) {
                 err = tx.Create(&models.CqAnswer{
                     CqID:          cq.ID,
                     ExamSessionID: session.ID,
+                    RightOutput: cq.Output,
                 }).Error
                 if err != nil {
                     return err
@@ -349,7 +350,7 @@ func SubmitMyAnswers(examSessionId int, mcqs []*models.McqAnswer, maqs []*models
             Where("exam_session_id = ?", examSessionId).Updates(
             map[string]interface{}{
                 "student_answer":  cq.StudentAnswer,
-                "is_answer_right": cq.IsAnswerRight,
+                "student_output": cq.StudentOutput,
             }).Error
         errOccurred = errOccurred || err != nil
     }

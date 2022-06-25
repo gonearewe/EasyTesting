@@ -291,15 +291,15 @@ VALUES ('2010301800', '编写程序计算一组整数的和。整数从当前路
         FALSE, TRUE, 'hello world !', 'hello world !', '# 请在此作答\n');
 
 TRUNCATE TABLE `cq_answer`;
-INSERT INTO cq_answer (cq_id, exam_session_id, student_answer, is_answer_right)
-VALUES (2, 11, 'print(input())', FALSE),
+INSERT INTO cq_answer (cq_id, exam_session_id, student_answer, right_output, student_output)
+VALUES (2, 11, 'print(input())', 'hello world !', ''),
        (1, 11, '# 请在此作答
 with open(\'./input.txt\') as f:
   s = f.read()
-  print(sum(int(c) for c in s.split(\' \')))', TRUE),
+  print(sum(int(c) for c in s.split(\' \')))', '300210', '300210'),
        (2, 12, '# 请在此作答
-', FALSE),
+', 'hello world !', ''),
        (1, 12, '# 请在此作答
-print("hello world !")', FALSE);
+print("hello world !")', '300210', 'hello world !');
 
 SET FOREIGN_KEY_CHECKS = 1;

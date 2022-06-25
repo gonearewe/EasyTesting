@@ -9,7 +9,6 @@ import (
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
-	"github.com/google/logger"
 )
 
 func GetExamineeHandler(c *gin.Context) {
@@ -102,7 +101,6 @@ func GetMyQuestionsHandler(c *gin.Context) {
 			"is_output_to_file":  cq.IsOutputToFile,
 			"template":           cq.Template,
 			"input":              cq.Input,
-			"output":             cq.Output,
 		}
 	}
 
@@ -119,19 +117,18 @@ func GetMyQuestionsHandler(c *gin.Context) {
 func PutMyAnswersHandler(c *gin.Context)  {
 	var myAnswers models.MyAnswers
 	utils.MustParseJsonTo(c,&myAnswers)
+	task := newTask()
 
-	var mcqs= make([]*models.McqAnswer, 0)
 	for _,m :=range myAnswers.Mcq{
 		if m["answer"] == nil{
 			continue
 		}
-		mcqs = append(mcqs, &models.McqAnswer{
+		task.mcqs = append(task.mcqs, &models.McqAnswer{
 			McqID: int(m["id"].(float64)),
 			StudentAnswer: strconv.Itoa(int(m["answer"].(float64)))})
 	}
 
 	// if maq answer is none(no choice selected), then it won't be recorded
-	var maqs= make([]*models.MaqAnswer, 0)
 	for _,m :=range myAnswers.Maq{
 		answer:=m["answer"].([]interface{})
 		if len(answer) == 0 {
@@ -141,13 +138,12 @@ func PutMyAnswersHandler(c *gin.Context)  {
 		for i,e:=range answer{
 			tmp[i] = strconv.Itoa(int(e.(float64)))
 		}
-		maqs = append(maqs, &models.MaqAnswer{
+		task.maqs = append(task.maqs, &models.MaqAnswer{
 			MaqID:         int(m["id"].(float64)),
 			StudentAnswer: strings.Join(tmp, ""),
 		})
 	}
 
-	var bfqs= make([]*models.BfqAnswer, 0)
 	for _,m :=range myAnswers.Bfq{
 		answer:=m["answer"].([]interface{})
 		tmp:= &models.BfqAnswer{
@@ -162,21 +158,19 @@ func PutMyAnswersHandler(c *gin.Context)  {
 		if len(answer) > 2 && answer[2]!=nil {
 			tmp.StudentAnswer3 = answer[2].(string)
 		}
-		bfqs = append(bfqs,tmp)
+		task.bfqs = append(task.bfqs,tmp)
 	}
 
-	var tfqs= make([]*models.TfqAnswer, 0)
 	for _,m :=range myAnswers.Tfq{
 		if m["answer"] == nil{
 			continue
 		}
-		tfqs = append(tfqs, &models.TfqAnswer{
+		task.tfqs = append(task.tfqs, &models.TfqAnswer{
 			TfqID: int(m["id"].(float64)),
 			StudentAnswer: m["answer"].(bool),
 		})
 	}
 
-	var crqs= make([]*models.CrqAnswer, 0)
 	for _,m :=range myAnswers.Crq{
 		answer:=m["answer"].([]interface{})
 		tmp:= &models.CrqAnswer{
@@ -200,27 +194,18 @@ func PutMyAnswersHandler(c *gin.Context)  {
 		if len(answer) > 5 && answer[5]!=nil{
 			tmp.StudentAnswer6 = answer[5].(string)
 		}
-		crqs = append(crqs,tmp)
+		task.crqs = append(task.crqs,tmp)
 	}
 
-	var cqs= make([]*models.CqAnswer, 0)
 	for _,m :=range myAnswers.Cq{
-		cqs = append(cqs, &models.CqAnswer{
+		task.cqs = append(task.cqs, &models.CqAnswer{
 			CqID: int(m["id"].(float64)),
 			StudentAnswer: m["answer"].(string),
-			IsAnswerRight: m["right"].(bool),
+			StudentOutput: m["output"].(string),
 		})
 	}
 
-	examSessionId:=int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
-	go func(){
-		defer func(){
-			if err:=recover();err != nil{
-				logger.Errorf("%v\n", err)
-			}
-		}()
-		dao.SubmitMyAnswers(examSessionId,mcqs,maqs,bfqs,tfqs,crqs,cqs)
-	}()
-
+	task.examSessionId = int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
+	taskQueue<-task
 }
 

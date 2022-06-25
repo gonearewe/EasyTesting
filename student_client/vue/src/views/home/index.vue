@@ -84,8 +84,8 @@
           <p>
             <i class="el-icon-warning-outline"></i>
             请根据题意编写代码，从文件或命令行中读取输入，向文件或命令行打印输出。
-            假如涉及文件，输入文件为工作目录下的 input.txt，输出文件则为 output.txt。
-            示例：f = open("output.txt", "rw")
+            假如涉及文件，输入文件为工作目录下的 input.txt，输出文件则为 output.txt（需要自行创建）。
+            示例：f = open("output.txt", "w+")
           </p>
           <p>
             <i class="el-icon-warning-outline"></i>
@@ -199,7 +199,7 @@ export default {
         this.answers[key].splice(arr.length)
       })
       this.answers.cq = this.questions.cq.map(e => {
-        return {code: e.template, console_output: '', right: false}
+        return {code: e.template, console_output: '', output: ''}
       })
 
       // try loading models, may not succeed if we're starting the client for the first time
@@ -239,7 +239,7 @@ export default {
         "tfq": new Array(60),
         "crq": Array.from(new Array(15), e => new Array(6)),
         "cq": Array.from(new Array(10), e => {
-          return {code: '', console_output: '', right: false}
+          return {code: '', console_output: '', output: ''}
         }),
       },
       deadline: this.$store.getters.exam_deadline || '2089-01-01 08:30:00'
@@ -259,7 +259,7 @@ export default {
       tmp.code = answer.code
       runCode(tmp).then(body => {
         answer.console_output = body.console_output
-        answer.right = body.pass
+        answer.output = body.output
       }).finally(() => {
         this.runningCode = false
       })
@@ -284,7 +284,7 @@ export default {
         return {id: e.id, answer: answers.crq[i].slice(0, e.blank_num).map(e => e || '')}
       })
       ret.cq = questions.cq.map((e, i) => {
-        return {id: e.id, answer: answers.cq[i].code || '', right: answers.cq[i].right}
+        return {id: e.id, answer: answers.cq[i].code || '', output: answers.cq[i].output || ''}
       })
       return ret
     },

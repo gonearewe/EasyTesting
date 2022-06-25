@@ -95,9 +95,9 @@ export default {
     }
     return {
       loginForm: {
-        server_addr: 'http://localhost:9000',
-        teacher_id: '0',
-        password: 'ET000'
+        server_addr: '',
+        teacher_id: '',
+        password: ''
       },
       loginRules: {
         teacher_id: [{required: true, trigger: 'blur', validator: validateTeacherId}],

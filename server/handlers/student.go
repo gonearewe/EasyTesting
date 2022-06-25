@@ -28,7 +28,6 @@ func PutStudentHandler(c *gin.Context) {
 }
 
 func DeleteStudentsHandler(c *gin.Context) {
-    
     li := strings.Split(c.Query("ids"), ",")
     ids := make([]int, len(li))
     for i, e := range li {

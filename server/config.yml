@@ -1,4 +1,4 @@
-#config file for gormt(https://github.com/xxjwxc/gormt), the mysql database to golang struct conversion tool.
+# config file for gormt(https://github.com/xxjwxc/gormt), the mysql database to golang struct conversion tool.
 out_dir: "./models"  # out dir
 url_tag: json # web url tag(json,db(https://github.com/google/go-querystring))
 language:  # language(English,中 文)
@@ -25,7 +25,7 @@ db_info:
   host: "127.0.0.1"
   port: 3306
   username: "root"
-  password: ""
+  password: "12345"
   database: "easy_testing"
   type: 0 # database type (0:mysql , 1:sqlite , 2:mssql)
 

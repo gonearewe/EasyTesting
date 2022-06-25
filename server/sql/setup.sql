@@ -12,6 +12,8 @@ CREATE TABLE `student`
     `student_id` varchar(10) UNIQUE NOT NULL COMMENT '学号',
     `name`       varchar(50)        NOT NULL COMMENT '姓名',
     `class_id`   varchar(10)        NOT NULL COMMENT '班号',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX (`student_id`, `class_id`, `name`),
     INDEX (`class_id`, `name`),
@@ -31,6 +33,8 @@ CREATE TABLE `teacher`
     `password`   varchar(100)       NOT NULL COMMENT '加盐后的密码',
     `salt`       varchar(50)        NOT NULL COMMENT '盐',
     `is_admin`   bool               NOT NULL DEFAULT FALSE COMMENT '是否为超级管理员',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX (`teacher_id`, `name`),
     INDEX (`name`)
@@ -61,6 +65,8 @@ CREATE TABLE `exam`
     `crq_num`              tinyint(2) unsigned NOT NULL COMMENT '代码阅读题题数',
     `cq_score`             tinyint(2) unsigned NOT NULL COMMENT '写代码题每题分数',
     `cq_num`               tinyint(2) unsigned NOT NULL COMMENT '写代码题题数',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -80,6 +86,8 @@ CREATE TABLE `exam_session`
     `time_allowed` tinyint(3)  NOT NULL COMMENT '考生答题时间，单位：分钟',
     `end_time`     datetime DEFAULT NULL COMMENT '交卷时刻',
     `score`        smallint    NOT NULL COMMENT '最终成绩*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`exam_id`) REFERENCES exam (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`student_id`) REFERENCES student (`student_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
@@ -103,6 +111,8 @@ CREATE TABLE `mcq`
     `right_answer`          char(1)     NOT NULL COMMENT '答案，正确选项的索引，如 "4"、"1"',
     `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
     `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -119,6 +129,8 @@ CREATE TABLE `mcq_answer`
     `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
     `right_answer`    char(1) NOT NULL COMMENT '正确答案，与 mcq 中同名字段保持一致',
     `student_answer`  char(1) DEFAULT NULL COMMENT '学生的答案',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`mcq_id`) REFERENCES mcq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
@@ -147,6 +159,8 @@ CREATE TABLE `maq`
     `right_answer`          char(7)     NOT NULL COMMENT '答案，按升序包含所有正确选项的索引，如 "5"、"124"、"67"',
     `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
     `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -163,6 +177,8 @@ CREATE TABLE `maq_answer`
     `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
     `right_answer`    char(7) NOT NULL COMMENT '正确答案，与 maq 中同名字段保持一致',
     `student_answer`  char(7) DEFAULT NULL COMMENT '学生的答案',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`maq_id`) REFERENCES maq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
@@ -185,6 +201,8 @@ CREATE TABLE `bfq`
     `answer_3`              text(50)             DEFAULT NULL COMMENT '填空的答案',
     `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
     `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -202,6 +220,8 @@ CREATE TABLE `bfq_answer`
     `student_answer_1` text(50) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_2` text(50) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_3` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`bfq_id`) REFERENCES bfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
@@ -221,6 +241,8 @@ CREATE TABLE `tfq`
     `answer`                bool        NOT NULL COMMENT '正确答案',
     `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
     `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -237,6 +259,8 @@ CREATE TABLE `tfq_answer`
     `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
     `right_answer`    bool    NOT NULL COMMENT '正确答案，与 tfq 中同名字段保持一致',
     `student_answer`  bool DEFAULT NULL COMMENT '学生的答案',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`tfq_id`) REFERENCES tfq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
@@ -262,6 +286,8 @@ CREATE TABLE `crq`
     `answer_6`              text(50)             DEFAULT NULL COMMENT '填空的答案',
     `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
     `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -282,6 +308,8 @@ CREATE TABLE `crq_answer`
     `student_answer_4` text(50) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_5` text(50) DEFAULT NULL COMMENT '学生的答案',
     `student_answer_6` text(50) DEFAULT NULL COMMENT '学生的答案',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`crq_id`) REFERENCES crq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
@@ -305,6 +333,8 @@ CREATE TABLE `cq`
     `template`              text(200)   NOT NULL COMMENT '题目的初始模板',
     `overall_correct_score` int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总得分数*10，即保存到小数点后一位',
     `overall_score`         int         NOT NULL DEFAULT 0 COMMENT '此题在所有出现中的总分数*10，即保存到小数点后一位',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`publisher_teacher_id`) REFERENCES teacher (`teacher_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -317,13 +347,27 @@ CREATE TABLE `cq_answer`
     `cq_id`           int(10) NOT NULL COMMENT '连接 cq',
     `exam_session_id` int(10) NOT NULL COMMENT '连接 exam_session',
     `student_answer`  text(200) DEFAULT NULL COMMENT '学生的答案，即代码',
-    `is_answer_right` bool      DEFAULT FALSE COMMENT '学生的代码是否正确',
+    `right_output`    text(200) NOT NULL COMMENT '程序的正确输出，与 cq 中 output 字段保持一致',
+    `student_output`  text(200) DEFAULT NULL COMMENT '学生代码的实际输出',
+    `is_answer_right` bool      DEFAULT FALSE COMMENT '学生的代码是否正确，即 right_output 是否等于 student_output，由触发器计算',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`cq_id`) REFERENCES cq (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`exam_session_id`) REFERENCES exam_session (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (`id`),
     UNIQUE INDEX (`cq_id`, `exam_session_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+-- Before INSERT and UPDATE on `cq_answer`, the triggers will calculate `is_answer_right` automatically.
+CREATE TRIGGER `cq_answer_trigger_insert`
+    BEFORE INSERT ON `cq_answer`
+    FOR EACH ROW
+    SET NEW.is_answer_right = NEW.student_output = NEW.right_output;
+CREATE TRIGGER `cq_answer_trigger_update`
+    BEFORE UPDATE ON `cq_answer`
+    FOR EACH ROW
+SET NEW.is_answer_right = NEW.student_output = NEW.right_output;
 
 SET FOREIGN_KEY_CHECKS = 1;
 

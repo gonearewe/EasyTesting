@@ -18,9 +18,13 @@ def start():
 @server.route('/code', methods=['PUT'])
 def run():
     from flask import request
-    res, ok = CodeRunner().run_code(request.json["is_input_from_file"], request.json["is_output_to_file"],
-                                    request.json["input"], request.json["output"], request.json["code"])
-    return {'console_output': res, 'pass': ok}
+    console_output, output = CodeRunner().run_code(
+        request.json["is_input_from_file"],
+        request.json["is_output_to_file"],
+        request.json["input"],
+        request.json["code"]
+    )
+    return {'console_output': console_output, 'output': output}
 
 
 @server.route('/', methods=['GET'])
