@@ -7,6 +7,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
@@ -16,19 +17,19 @@ func GetTfqHandler(c *gin.Context) {
 	teacherId := c.Query("publisher_teacher_id")
 	pageSize := utils.Int(c.Query("page_size"))
 	pageIndex := utils.Int(c.Query("page_index"))
-	tfqs,num := dao.GetTfqsBy(teacherId, pageSize, pageIndex)
+	tfqs, num := dao.GetTfqsBy(teacherId, pageSize, pageIndex)
 	res := make([]gin.H, len(tfqs))
 	for i, tfq := range tfqs {
 		res[i] = gin.H{
-			"id":                   tfq.ID,
-			"publisher_teacher_id": tfq.PublisherTeacherID,
-			"stem":                 tfq.Stem,
-			"right_answer":         tfq.Answer,
-			"overall_score":        tfq.OverallScore,
-			"overall_correct_score":        tfq.OverallCorrectScore,
+			"id": tfq.ID,
+			"publisher_teacher_id":  tfq.PublisherTeacherID,
+			"stem":                  tfq.Stem,
+			"right_answer":          tfq.Answer,
+			"overall_score":         tfq.OverallScore,
+			"overall_correct_score": tfq.OverallCorrectScore,
 		}
 	}
-    c.JSON(200, gin.H{"total":num,"data":res})
+	c.JSON(200, gin.H{"total": num, "data": res})
 }
 
 func PostTfqHandler(c *gin.Context) {
@@ -36,10 +37,10 @@ func PostTfqHandler(c *gin.Context) {
 	utils.MustParseJsonTo(c, &reqs)
 	var tfqs = make([]*models.Tfq, len(reqs))
 	for i, req := range reqs {
-		tfqs[i] = &models.Tfq {
+		tfqs[i] = &models.Tfq{
 			PublisherTeacherID: jwt.ExtractClaims(c)["teacher_id"].(string),
 			Stem:               req["stem"].(string),
-			Answer:              req["right_answer"].(bool),
+			Answer:             req["right_answer"].(bool),
 		}
 	}
 	dao.CreateTfqs(tfqs)
@@ -48,8 +49,8 @@ func PostTfqHandler(c *gin.Context) {
 func PutTfqHandler(c *gin.Context) {
 	req := utils.MustParseJson(c)
 	tfq := &models.Tfq{
-		ID:          int(req["id"].(float64)),
-		Stem:        req["stem"].(string),
+		ID:     int(req["id"].(float64)),
+		Stem:   req["stem"].(string),
 		Answer: req["right_answer"].(bool),
 	}
 	dao.UpdateTfqById(tfq)

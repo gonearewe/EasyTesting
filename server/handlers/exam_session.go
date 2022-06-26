@@ -6,6 +6,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
@@ -23,7 +24,7 @@ func GetExamineeHandler(c *gin.Context) {
 func GetExamSessionHandler(c *gin.Context) {
 	studentId := c.Query("student_id")
 	examId := utils.Int(c.Query("exam_id"))
-	err,sessions := dao.GetExamSessionBy(studentId, examId)
+	err, sessions := dao.GetExamSessionBy(studentId, examId)
 	utils.PanicWhen(err)
 	c.JSON(200, sessions)
 }
@@ -114,28 +115,28 @@ func GetMyQuestionsHandler(c *gin.Context) {
 	})
 }
 
-func PutMyAnswersHandler(c *gin.Context)  {
+func PutMyAnswersHandler(c *gin.Context) {
 	var myAnswers models.MyAnswers
-	utils.MustParseJsonTo(c,&myAnswers)
+	utils.MustParseJsonTo(c, &myAnswers)
 	task := newTask()
 
-	for _,m :=range myAnswers.Mcq{
-		if m["answer"] == nil{
+	for _, m := range myAnswers.Mcq {
+		if m["answer"] == nil {
 			continue
 		}
 		task.mcqs = append(task.mcqs, &models.McqAnswer{
-			McqID: int(m["id"].(float64)),
+			McqID:         int(m["id"].(float64)),
 			StudentAnswer: strconv.Itoa(int(m["answer"].(float64)))})
 	}
 
 	// if maq answer is none(no choice selected), then it won't be recorded
-	for _,m :=range myAnswers.Maq{
-		answer:=m["answer"].([]interface{})
+	for _, m := range myAnswers.Maq {
+		answer := m["answer"].([]interface{})
 		if len(answer) == 0 {
 			continue
 		}
-		var tmp = make([]string,len(answer))
-		for i,e:=range answer{
+		var tmp = make([]string, len(answer))
+		for i, e := range answer {
 			tmp[i] = strconv.Itoa(int(e.(float64)))
 		}
 		task.maqs = append(task.maqs, &models.MaqAnswer{
@@ -144,68 +145,67 @@ func PutMyAnswersHandler(c *gin.Context)  {
 		})
 	}
 
-	for _,m :=range myAnswers.Bfq{
-		answer:=m["answer"].([]interface{})
-		tmp:= &models.BfqAnswer{
-			BfqID:         int(m["id"].(float64)),
+	for _, m := range myAnswers.Bfq {
+		answer := m["answer"].([]interface{})
+		tmp := &models.BfqAnswer{
+			BfqID: int(m["id"].(float64)),
 		}
-		if answer[0]!=nil{
-			tmp.StudentAnswer1= answer[0].(string)
+		if answer[0] != nil {
+			tmp.StudentAnswer1 = answer[0].(string)
 		}
-		if len(answer) > 1 && answer[1]!=nil{
+		if len(answer) > 1 && answer[1] != nil {
 			tmp.StudentAnswer2 = answer[1].(string)
 		}
-		if len(answer) > 2 && answer[2]!=nil {
+		if len(answer) > 2 && answer[2] != nil {
 			tmp.StudentAnswer3 = answer[2].(string)
 		}
-		task.bfqs = append(task.bfqs,tmp)
+		task.bfqs = append(task.bfqs, tmp)
 	}
 
-	for _,m :=range myAnswers.Tfq{
-		if m["answer"] == nil{
+	for _, m := range myAnswers.Tfq {
+		if m["answer"] == nil {
 			continue
 		}
 		task.tfqs = append(task.tfqs, &models.TfqAnswer{
-			TfqID: int(m["id"].(float64)),
+			TfqID:         int(m["id"].(float64)),
 			StudentAnswer: m["answer"].(bool),
 		})
 	}
 
-	for _,m :=range myAnswers.Crq{
-		answer:=m["answer"].([]interface{})
-		tmp:= &models.CrqAnswer{
-			CrqID:         int(m["id"].(float64)),
+	for _, m := range myAnswers.Crq {
+		answer := m["answer"].([]interface{})
+		tmp := &models.CrqAnswer{
+			CrqID: int(m["id"].(float64)),
 		}
-		if answer[0]!=nil{
-			tmp.StudentAnswer1= answer[0].(string)
+		if answer[0] != nil {
+			tmp.StudentAnswer1 = answer[0].(string)
 		}
-		if len(answer) > 1 && answer[1]!=nil{
+		if len(answer) > 1 && answer[1] != nil {
 			tmp.StudentAnswer2 = answer[1].(string)
 		}
-		if len(answer) > 2 && answer[2]!=nil{
+		if len(answer) > 2 && answer[2] != nil {
 			tmp.StudentAnswer3 = answer[2].(string)
 		}
-		if len(answer) > 3 && answer[3]!=nil{
+		if len(answer) > 3 && answer[3] != nil {
 			tmp.StudentAnswer4 = answer[3].(string)
 		}
-		if len(answer) > 4 && answer[4]!=nil{
+		if len(answer) > 4 && answer[4] != nil {
 			tmp.StudentAnswer5 = answer[4].(string)
 		}
-		if len(answer) > 5 && answer[5]!=nil{
+		if len(answer) > 5 && answer[5] != nil {
 			tmp.StudentAnswer6 = answer[5].(string)
 		}
-		task.crqs = append(task.crqs,tmp)
+		task.crqs = append(task.crqs, tmp)
 	}
 
-	for _,m :=range myAnswers.Cq{
+	for _, m := range myAnswers.Cq {
 		task.cqs = append(task.cqs, &models.CqAnswer{
-			CqID: int(m["id"].(float64)),
+			CqID:          int(m["id"].(float64)),
 			StudentAnswer: m["answer"].(string),
 			StudentOutput: m["output"].(string),
 		})
 	}
 
 	task.examSessionId = int(jwt.ExtractClaims(c)["exam_session_id"].(float64))
-	taskQueue<-task
+	taskQueue <- task
 }
-

@@ -7,7 +7,7 @@ import (
 // ExamSession [...]
 type ExamSession struct {
 	ID            int       `gorm:"primaryKey;column:id;type:int(10);not null" json:"id"`                                               // 用作主键
-	ExamID        int       `gorm:"uniqueIndex:exam_id;column:exam_id;type:int(10);not null" json:"-"`                            // 连接 exam
+	ExamID        int       `gorm:"uniqueIndex:exam_id;column:exam_id;type:int(10);not null" json:"-"`                                  // 连接 exam
 	StudentID     string    `gorm:"uniqueIndex:exam_id;index:student_id;column:student_id;type:varchar(10);not null" json:"student_id"` // 连接 student
 	StudentName   string    `gorm:"column:student_name;type:varchar(50);not null" json:"student_name"`                                  // 考生的姓名
 	StartTime     time.Time `gorm:"column:start_time;type:datetime;not null" json:"start_time"`                                         // 作答开始时刻

@@ -8,7 +8,7 @@ import (
 type Exam struct {
 	ID                 int       `gorm:"primaryKey;column:id;type:int(10);not null" json:"id"`                                                         // 用作主键
 	PublisherTeacherID string    `gorm:"index:publisher_teacher_id;column:publisher_teacher_id;type:varchar(10);not null" json:"publisher_teacher_id"` // 发布考试的教师的工号
-	ScoresCalculated   bool      `gorm:"column:scores_calculated;type:tinyint(1);default:0" json:"-"`                                  // 参加这场考试的人的成绩是否已被计算过
+	ScoresCalculated   bool      `gorm:"column:scores_calculated;type:tinyint(1);default:0" json:"-"`                                                  // 参加这场考试的人的成绩是否已被计算过
 	StartTime          time.Time `gorm:"column:start_time;type:datetime;not null" json:"start_time"`                                                   // 考试开始时刻
 	EndTime            time.Time `gorm:"column:end_time;type:datetime;not null" json:"end_time"`                                                       // 考试结束时刻
 	TimeAllowed        int8      `gorm:"column:time_allowed;type:tinyint(3);not null" json:"time_allowed"`                                             // 考生答题时间，单位：分钟

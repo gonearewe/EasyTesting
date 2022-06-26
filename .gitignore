@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.exe
 
 # Distribution / packaging
 .Python
@@ -135,4 +136,5 @@ dmypy.json
 # dist built by bat file
 easy_testing_student_client_windows/
 easy_testing_server_windows/
+
 node_modules

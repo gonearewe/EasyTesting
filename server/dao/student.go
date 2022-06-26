@@ -1,10 +1,11 @@
 package dao
 
 import (
-	"github.com/gonearewe/EasyTesting/models"
-	"github.com/gonearewe/EasyTesting/utils"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+
+	"github.com/gonearewe/EasyTesting/models"
+	"github.com/gonearewe/EasyTesting/utils"
 )
 
 // GetStudentsBy searches the database for Student whose studentId or classId (string) starts
@@ -27,10 +28,10 @@ func GetStudentsBy(studentId string, name string, classId string,
 	return
 }
 
-func GetStudentBy(studentId string,name string) *models.Student {
+func GetStudentBy(studentId string, name string) *models.Student {
 	var ret models.Student
 	err := db.Select("student_id", "name", "class_id").
-		Where("student_id = ? AND name = ?", studentId,name).First(&ret).Error
+		Where("student_id = ? AND name = ?", studentId, name).First(&ret).Error
 	utils.PanicWhen(err)
 	return &ret
 }

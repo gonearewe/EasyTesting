@@ -7,11 +7,12 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/logger"
+	"github.com/spf13/viper"
+
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/handlers"
 	"github.com/gonearewe/EasyTesting/middlewares"
-	"github.com/google/logger"
-	"github.com/spf13/viper"
 )
 
 func init() {
@@ -30,7 +31,7 @@ func main() {
 	teacherAuthRouter, adminAuthRouter, studentAuthRouter := middlewares.SetupMiddleWares(r)
 	SetupRoute(r, teacherAuthRouter, adminAuthRouter, studentAuthRouter)
 	port := viper.GetString("port")
-	fmt.Println("Server is Running at port "+port)
+	fmt.Println("Server is Running at port " + port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}

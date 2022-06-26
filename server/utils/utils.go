@@ -49,8 +49,8 @@ func PanicWhen(err error) {
 	}
 }
 
-func IsAnagram(str1 string,str2 string)bool{
-	if len(str1) != len(str2){
+func IsAnagram(str1 string, str2 string) bool {
+	if len(str1) != len(str2) {
 		return false
 	}
 	array1 := []rune(str1)
@@ -69,8 +69,8 @@ func IsAnagram(str1 string,str2 string)bool{
 	return true
 }
 
-func Contains(str string,sub string)bool{
-	if len(str) < len(sub){
+func Contains(str string, sub string) bool {
+	if len(str) < len(sub) {
 		return false
 	}
 	array1 := []rune(str)

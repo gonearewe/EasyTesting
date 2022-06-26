@@ -6,11 +6,12 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/handlers"
 	"github.com/gonearewe/EasyTesting/models"
 	"github.com/gonearewe/EasyTesting/utils"
-	"github.com/spf13/viper"
 )
 
 func setupAuth(r *gin.Engine) (teacherAuthRouter *gin.RouterGroup,
@@ -84,15 +85,15 @@ func studentAuthenticator(c *gin.Context) (user interface{}, err error) {
 	studentId := c.Query("student_id")
 	name := c.Query("name")
 	examId := utils.Int(c.Query("exam_id"))
-	if !dao.IsExamActive(examId){
-		return nil,errors.New("exam not active")
+	if !dao.IsExamActive(examId) {
+		return nil, errors.New("exam not active")
 	}
-	student := dao.GetStudentBy(studentId,name)
+	student := dao.GetStudentBy(studentId, name)
 
 	var session *models.ExamSession
 	if err, session = dao.GetExamSessionBy(studentId, examId); err != nil {
 		// try entering exam first
-		dao.EnterExam(studentId,name, examId)
+		dao.EnterExam(studentId, name, examId)
 		if err, session = dao.GetExamSessionBy(studentId, examId); err != nil {
 			// still fail
 			utils.PanicWhen(err)
@@ -100,12 +101,12 @@ func studentAuthenticator(c *gin.Context) (user interface{}, err error) {
 		// first time get exam_session, we enter exam first and succeed
 	}
 	// else we've already entered the exam, and can get exam_session directly
- 
+
 	return jwt.MapClaims{
 		"student_id":      studentId,
 		"name":            student.Name,
 		"class_id":        student.ClassID,
-		"exam_id":		  examId,
+		"exam_id":         examId,
 		"exam_session_id": session.ID,
 		// This is the deadline calculated based on the student's start time,
 		// however, if the exam has ended (reaching global deadline),
@@ -120,10 +121,10 @@ func studentPayLoadFunc(data interface{}) jwt.MapClaims {
 
 func studentAuthorizator(data interface{}, c *gin.Context) bool {
 	examId := int(jwt.ExtractClaims(c)["exam_id"].(float64))
-	if !handlers.IsExamActive(examId){
+	if !handlers.IsExamActive(examId) {
 		return false
 	}
-	deadline,err:=time.Parse(time.RFC3339,jwt.ExtractClaims(c)["exam_deadline"].(string))
+	deadline, err := time.Parse(time.RFC3339, jwt.ExtractClaims(c)["exam_deadline"].(string))
 	utils.PanicWhen(err)
 	return time.Now().Before(deadline)
 }
