@@ -7,6 +7,7 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/google/logger"
+	"github.com/patrickmn/go-cache"
 
 	"github.com/gonearewe/EasyTesting/utils"
 )

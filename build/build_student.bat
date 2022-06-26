@@ -8,6 +8,8 @@ CD "%client_src_path%\vue"
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO NPM Building %client_src_path%\vue
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Delete Older Dist Folder
+IF EXIST "%client_src_path%\vue\dist" RMDIR /S /Q "%client_src_path%\vue\dist"
 CALL npm run build
 
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -22,6 +24,7 @@ CD "%client_src_path%\pyqt"
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO PyInstaller Packaging %client_src_path%\pyqt
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+CALL pipenv install
 CALL pipenv run pyinstaller main.spec
 
 ECHO ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

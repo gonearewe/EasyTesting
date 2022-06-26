@@ -10,6 +10,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/subchen/go-trylock/v2"
 	"gopkg.in/errgo.v2/errors"
 
 	"github.com/gonearewe/EasyTesting/dao"

@@ -2,6 +2,8 @@ package utils
 
 import (
 	"time"
+
+	"github.com/patrickmn/go-cache"
 )
 
 // MemoryStore is a cache with a default expiration time of 2 hours, and which
