@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/logger"
 	"github.com/spf13/viper"
 
 	"github.com/gonearewe/EasyTesting/dao"
@@ -17,16 +15,14 @@ import (
 
 func init() {
 	initViper()
-	logger.Init("EasyTesting", true, false, os.Stdout)
+	writer := initLogWriter()
+	initZeroLog(writer)
 	handlers.InitTaskConsumers()
-	dao.InitDb()
+	dao.InitDb(writer)
+	initGin(writer)
 }
 
 func main() {
-	if viper.GetBool("disable_console_color") {
-		gin.DisableConsoleColor()
-	}
-	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	teacherAuthRouter, adminAuthRouter, studentAuthRouter := middlewares.SetupMiddleWares(r)
 	SetupRoute(r, teacherAuthRouter, adminAuthRouter, studentAuthRouter)

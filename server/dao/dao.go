@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"io"
+	"log"
 	"time"
 
 	"github.com/spf13/viper"
@@ -12,10 +14,17 @@ import (
 
 var db *gorm.DB
 
-func InitDb() {
+func InitDb(logWriter io.Writer) {
 	var err error
 	db, err = gorm.Open(mysql.Open(viper.GetString("dsn")), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), // show basically all sql gorm generated for DEBUG
+		Logger: logger.New(
+			log.New(logWriter, "[GORM] ", log.LstdFlags|log.Llongfile|log.Lmicroseconds),
+			logger.Config{
+				SlowThreshold:             100 * time.Millisecond, // Slow SQL threshold
+				Colorful:                  viper.GetBool("enable_console_color"),
+				IgnoreRecordNotFoundError: false,       // Ignore ErrRecordNotFound error for logger
+				LogLevel:                  logger.Info, // show basically all sql gorm generated for DEBUG
+			}),
 	})
 	if err != nil {
 		panic(errors.Because(errors.New("initialization failed"), err, ""))

@@ -6,8 +6,8 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/google/logger"
 	"github.com/patrickmn/go-cache"
+	"github.com/rs/zerolog/log"
 
 	"github.com/gonearewe/EasyTesting/utils"
 )
@@ -17,7 +17,7 @@ func GetCacheHandler(c *gin.Context) {
 	if ret, found := utils.MemoryStore.Get(key); found {
 		c.String(200, ret.(string))
 	} else {
-		logger.Info("no cache found for exam_session_id: " + key)
+		log.Info().Str("exam_session_id", key).Msg("no cache found")
 	}
 }
 

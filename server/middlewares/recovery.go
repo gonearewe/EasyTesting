@@ -1,21 +1,18 @@
 package middlewares
 
 import (
-	"runtime"
-
 	"github.com/gin-gonic/gin"
-	"github.com/google/logger"
+	"github.com/rs/zerolog/log"
 )
 
 func recovery(c *gin.Context) {
 	defer func() {
-		if err := recover(); err != nil {
-			trace := make([]byte, 1<<16)
-			// get error stack info
-			n := runtime.Stack(trace, false)
-			logger.Errorf("%v\n%s", err, string(trace[:n]))
-			// logger.Error(err)
-			c.AbortWithStatus(400)
+		if e := recover(); e != nil {
+			if err, ok := e.(error); ok {
+				log.Error().Stack().Err(err).Msg("Gin recover")
+			} else {
+				log.Error().Stack().Interface("panic value", e).Msg("Gin recover")
+			}
 		}
 	}()
 	c.Next()

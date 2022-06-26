@@ -459,7 +459,7 @@ func CalculateScores(examId int) {
 			if utils.IsAnagram(e.StudentAnswer, e.RightAnswer) { // 全选对得满分
 				sessionId2ScoreMap[e.ExamSessionID] += int(exam.MaqScore) * 10
 				statistics.overallCorrectScore += int(exam.MaqScore) * 10
-			} else if utils.Contains(e.RightAnswer, e.StudentAnswer) { // 漏选得半分
+			} else if e.StudentAnswer != "" && utils.Contains(e.RightAnswer, e.StudentAnswer) { // 漏选得半分（留空不算漏选）
 				sessionId2ScoreMap[e.ExamSessionID] += int(exam.MaqScore) * 10 / 2
 				statistics.overallCorrectScore += int(exam.MaqScore) * 10 / 2
 			}

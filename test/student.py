@@ -1,4 +1,4 @@
-# Run this with `pipenv run locust -f .\student.py -H http://localhost:9000`,
+# Run this with `pipenv run locust -f .\student.py -H http://localhost:9345`,
 # and use Web UI at `http://localhost:8089/`
 import random
 

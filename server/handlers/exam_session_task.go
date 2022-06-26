@@ -1,20 +1,23 @@
 package handlers
 
 import (
-	"github.com/google/logger"
-
 	"github.com/gonearewe/EasyTesting/dao"
 	"github.com/gonearewe/EasyTesting/models"
+	"github.com/rs/zerolog/log"
 )
 
 func InitTaskConsumers() {
 	const consumerNum = 8
 	for i := 0; i < consumerNum; i++ {
 		go func(id int) {
-			logger.Infof("task consumer %d started\n", id)
+			log.Info().Msgf("task consumer %d started", id)
 			defer func() {
 				if e := recover(); e != nil {
-					logger.Fatalf("task consumer %d panicked: %v", id, e)
+					if err, ok := e.(error); ok {
+						log.Fatal().Stack().Err(err).Msgf("task consumer %d panicked", id)
+					} else {
+						log.Fatal().Stack().Interface("panic value", e).Msgf("task consumer %d panicked", id)
+					}
 				}
 			}()
 
