@@ -114,7 +114,7 @@ func IsExamActive(examId int) bool {
 
 func AnyExamActiveOrScoreNotCalculated() bool {
 	err := db.Select("id").
-		Where("scores_calculated = FALSE OR (CURTIME() >= start_time AND end_time > CURTIME())").
+		Where("(scores_calculated = FALSE AND end_time <= CURTIME()) OR (CURTIME() >= start_time AND end_time > CURTIME())").
 		Take(&models.Exam{}).Error
 	if err == nil {
 		return true
