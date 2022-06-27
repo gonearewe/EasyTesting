@@ -20,6 +20,8 @@ export default function () {
         // let each request carry token
         config.headers['AUTHORIZATION'] = 'Bearer ' + getToken()
       }
+      console.log('request config: ')
+      console.log(config)
       return config
     },
     error => {
@@ -37,6 +39,7 @@ export default function () {
      */
 
     response => {
+      console.log('response: ')
       console.log(response)
       if (response.status !== 200) {
         Message({
