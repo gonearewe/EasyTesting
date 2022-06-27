@@ -141,9 +141,9 @@
 import {createQuestions, deleteQuestions, getQuestions, updateQuestion} from '@/api/question'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import MarkdownEditor from "@/components/MarkdownEditor";
+import MarkdownEditor from "@/components/MarkdownEditor"
 import _ from "lodash"
-import {getDifficultyColor} from "@/views/question/common";
+import {getDifficultyColor} from "@/views/question/common"
 
 export default {
   name: 'McqList',

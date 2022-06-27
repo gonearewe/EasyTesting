@@ -3,6 +3,7 @@ package dao
 import (
 	"errors"
 	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -477,7 +478,7 @@ func CalculateScores(examId int) {
 				if i >= int(bfq.BlankNum) {
 					break
 				}
-				if ans[0] == ans[1] {
+				if strings.TrimSpace(ans[0]) == strings.TrimSpace(ans[1]) {
 					score := int(exam.BfqScore) * 10 / int(bfq.BlankNum)
 					sessionId2ScoreMap[e.ExamSessionID] += score
 					statistics.overallCorrectScore += score
@@ -507,7 +508,7 @@ func CalculateScores(examId int) {
 				if i >= int(crq.BlankNum) {
 					break
 				}
-				if ans[0] == ans[1] {
+				if strings.TrimSpace(ans[0]) == strings.TrimSpace(ans[1]) {
 					score := int(exam.CrqScore) * 10 / int(crq.BlankNum)
 					sessionId2ScoreMap[e.ExamSessionID] += score
 					statistics.overallCorrectScore += score

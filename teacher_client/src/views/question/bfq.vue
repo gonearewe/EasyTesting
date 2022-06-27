@@ -143,9 +143,10 @@
 import {createQuestions, deleteQuestions, getQuestions, updateQuestion} from '@/api/question'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import MarkdownEditor from "@/components/MarkdownEditor";
+import MarkdownEditor from "@/components/MarkdownEditor"
 import _ from "lodash"
-import {getDifficultyColor} from "@/views/question/common";
+import {getDifficultyColor} from "@/views/question/common"
+import {trimStringProperties} from "@/utils"
 
 export default {
   name: 'BfqList',
@@ -227,6 +228,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          trimStringProperties(this.temp)
           let req = _.merge({}, this.temp)
           delete req.blank_num
           createQuestions('bfq', [req]).then(() => {
@@ -254,6 +256,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          trimStringProperties(this.temp)
           const req = _.merge({}, this.temp)
           delete req.blank_num
           updateQuestion('bfq', req).then(() => {

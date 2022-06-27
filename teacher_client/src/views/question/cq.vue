@@ -175,9 +175,10 @@
 import {createQuestions, deleteQuestions, getQuestions, updateQuestion} from '@/api/question'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import MarkdownEditor from "@/components/MarkdownEditor";
+import MarkdownEditor from "@/components/MarkdownEditor"
 import _ from "lodash"
-import {getDifficultyColor} from "@/views/question/common";
+import {getDifficultyColor} from "@/views/question/common"
+import {trimStringProperties} from "@/utils"
 
 export default {
   name: 'CqList',
@@ -273,6 +274,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          trimStringProperties(this.temp)
           let req = _.merge({}, this.temp)
           if (!req.has_input) {
             req.input = ''
@@ -303,6 +305,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          trimStringProperties(this.temp)
           let req = _.merge({}, this.temp)
           if (!req.has_input) {
             req.input = ''

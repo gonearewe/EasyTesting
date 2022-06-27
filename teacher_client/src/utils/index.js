@@ -165,3 +165,17 @@ export function hashCode(s) {
     return Math.abs(a & a)
   }, 0)
 }
+
+export function trimStringProperties(obj) {
+  for (const k in obj) {
+    if (typeof obj[k] === 'string' || obj[k] instanceof String) {
+      obj[k] = obj[k].trim()
+    } else if (obj[k] && obj[k].constructor === Array) {
+      obj[k].forEach((item, index) => {
+        if (typeof item === 'string' || item instanceof String) {
+          obj[k][index] = obj[k][index].trim()
+        }
+      })
+    }
+  }
+}
