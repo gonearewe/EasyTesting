@@ -13,8 +13,8 @@ type CqAnswer struct {
 	RightOutput   string    `gorm:"column:right_output;type:text;not null" json:"right_output"`                                                  // 程序的正确输出，与 cq 中 output 字段保持一致
 	StudentOutput string    `gorm:"column:student_output;type:text" json:"student_output"`                                                       // 学生代码的实际输出
 	IsAnswerRight bool      `gorm:"column:is_answer_right;type:tinyint(1);default:0" json:"is_answer_right"`                                     // 学生的代码是否正确，即 right_output 是否等于 student_output，由触发器计算
-	CreatedAt     time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
-	LastUpdatedAt time.Time `gorm:"column:last_updated_at;type:datetime" json:"last_updated_at"`
+	CreatedAt     time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"-"`
+	LastUpdatedAt time.Time `gorm:"column:last_updated_at;type:datetime" json:"-"`
 }
 
 // TableName get sql table name.获取数据库表名

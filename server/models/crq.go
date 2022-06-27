@@ -18,8 +18,8 @@ type Crq struct {
 	Answer6             string    `gorm:"column:answer_6;type:tinytext" json:"answer_6"`                                                                // 填空的答案
 	OverallCorrectScore int       `gorm:"column:overall_correct_score;type:int(11);not null;default:0" json:"overall_correct_score"`                    // 此题在所有出现中的总得分数*10，即保存到小数点后一位
 	OverallScore        int       `gorm:"column:overall_score;type:int(11);not null;default:0" json:"overall_score"`                                    // 此题在所有出现中的总分数*10，即保存到小数点后一位
-	CreatedAt           time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
-	LastUpdatedAt       time.Time `gorm:"column:last_updated_at;type:datetime" json:"last_updated_at"`
+	CreatedAt           time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"-"`
+	LastUpdatedAt       time.Time `gorm:"column:last_updated_at;type:datetime" json:"-"`
 }
 
 // TableName get sql table name.获取数据库表名

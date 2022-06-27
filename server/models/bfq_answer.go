@@ -12,8 +12,8 @@ type BfqAnswer struct {
 	StudentAnswer1 string    `gorm:"column:student_answer_1;type:tinytext" json:"student_answer_1"`                                                // 学生的答案
 	StudentAnswer2 string    `gorm:"column:student_answer_2;type:tinytext" json:"student_answer_2"`                                                // 学生的答案
 	StudentAnswer3 string    `gorm:"column:student_answer_3;type:tinytext" json:"student_answer_3"`                                                // 学生的答案
-	CreatedAt      time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"created_at"`
-	LastUpdatedAt  time.Time `gorm:"column:last_updated_at;type:datetime" json:"last_updated_at"`
+	CreatedAt      time.Time `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP" json:"-"`
+	LastUpdatedAt  time.Time `gorm:"column:last_updated_at;type:datetime" json:"-"`
 }
 
 // TableName get sql table name.获取数据库表名
