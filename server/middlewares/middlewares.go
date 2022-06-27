@@ -6,6 +6,7 @@ import (
 
 func SetupMiddleWares(r *gin.Engine) (teacherAuthRoute *gin.RouterGroup,
 	adminAuthRoute *gin.RouterGroup, studentAuthRouter *gin.RouterGroup) {
+	r.Use(logMiddleware)
 	r.Use(gin.Logger())
 	r.Use(recovery)
 	r.Use(corsMiddleware())
