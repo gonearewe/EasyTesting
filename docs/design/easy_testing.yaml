@@ -2321,12 +2321,12 @@ paths:
                         type: integer
                       answer:
                         type: string
-                      right:
-                        type: boolean
+                      output:
+                        type: string
                     required:
                       - id
                       - answer
-                      - right
+                      - output
               required:
                 - mcq
                 - maq

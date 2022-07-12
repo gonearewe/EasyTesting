@@ -15,7 +15,7 @@
 服务端软件的构建同样简单。
 go.mod 与 go.sum 记录着 Go 软件的依赖。
 只要在 server 目录下执行 `go build` 即可自动下载依赖，完成构建。
-构建得到 EasyTesting 二进制文件（在 Windows 下是 EasyTesting.exe）。
+构建同时得到 EasyTesting（用于 Linux）和 EasyTesting.exe（用于 Windows）两个二进制文件。
 
 新建一个文件夹存放它们的构建成果。注意，还需要拷贝一份服务端软件的配置文件 server-config.yaml。
 为了方便用户部署服务端时顺便处理好数据库，我们还可拷贝一份 server 文件夹下的 sql 文件夹。

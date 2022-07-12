@@ -1,11 +1,7 @@
 首先介绍系统的后台数据库，
 这有助于我们了解系统的数据模型（Model）。
 
-数据库的 E-R 图如下所示，可以下载该 svg 图片放大查看。
-
-![er](../img/database-ER.svg)
-
-创建它的 sql 文件可在源代码中找到（参见 [introduction](./introduction.md) 中介绍的文件结构）。
+创建数据库的 sql 文件可在源代码中找到（参见 [introduction](./introduction.md) 中介绍的文件结构）。
 
 *student* 与 *teacher* 是为两种用户分别准备的表（Table）。
 它们各有几个复合索引（Composite Index），这用于加速教师客户端的列表查询。
@@ -26,7 +22,7 @@ SELECT * FROM `student` WHERE name LIKE '%小%'
 *exam* 与 *mcq*、*maq*、*bfq*、*tfq*、*crq*、*cq* 分别代表考试与各种题型。
 对应于每种题型都有记录考生作答的表：*mcq_answer*、*maq_answer*、*bfq_answer*、*tfq_answer*、*crq_answer* 和 *cq_answer*，
 它们都通过各自的外键连接不同 id 的题目，
-其中的一些（如 *tfq_answer*）还记录有对应 id 题目的正确答案以加速答案比对过程（避免了 join 表）。
+其中的一些（如 *tfq_answer*）还记录有对应 id 题目的正确答案以加速答案比对过程（避免了 join 表），而 *cq_answer* 还有专门的触发器来比对答案。
 因为一个考生可能参加过多场考试，所以 *answer* 系列的表不能仅靠 *student_id* 区分考生。
 我们引入了 *exam_session*（即考试会话） 的概念，它由 *exam_id* 与 *student_id* 联合确定，并用于连接 *answer* 系列的表，
 该表中的每一条记录都表示某学生参加了某考试。*exam_session* 中的 *time_allowed* 与对应 *exam* 中的同名字段一致，为冗余字段；
@@ -39,5 +35,9 @@ SELECT * FROM `student` WHERE name LIKE '%小%'
 *answer* 系列的表有存档（archive）性质，始装保存出题时刻的正确答案，事后修改的题目自然不会影响历史作答；
 *exam_session* 中的一条记录被创建就意味着对应考试已开始，而开始后的考试禁用修改。
 唯一需要服务器软件手动维护一致性的情景是，在修改 *student* 表时同步更新 *exam_session* 表中的冗余字段 *student_name*。
+
+另外，所有的表中都有 *created_at* 和 *last_updated_at* 两个字段，
+分别记录行的创建时刻和上次修改的时刻，而且由触发器自动维护，
+不需要在后续的 sql 语句中人为关注。不过，这两个字段目前还没有被服务端实际使用。
 
 

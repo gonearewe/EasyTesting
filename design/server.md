@@ -20,6 +20,7 @@
 │   ├── auth.go           认证与授权中间件
 │   ├── check_exam.go     考试检查中间件
 │   ├── cors.go           CORS 中间件
+│   ├── log.go            日志中间件
 │   ├── ratelimit.go      限流中间件
 │   └── recovery.go       异常恢复中间件
 ├── dao                 数据访问模块
@@ -59,6 +60,7 @@
 │   ├── crq_answer.go
 │   ├── exam.go
 │   ├── exam_session.go
+│   ├── exam_session_task.go
 │   ├── maq.go
 │   ├── maq_answer.go
 │   ├── mcq.go
@@ -80,6 +82,8 @@ main.go 中的 main 函数是程序的入口，它会初始化 Gin 的 Engine �
 最后进入 http.ListenAndServe 的无限循环。而在这之前，程序会依次初始化 Viper（读取配置参数），日志与 Gorm。
 中间件位于 middlewares 文件夹中，主要包括*日志*、*异常恢复*、*跨域*、*限流*、*鉴权*与*考试状态检查*。路由则全在 router.go 中。
 
+*日志*采用 [github.com/rs/zerolog](https://github.com/rs/zerolog)，
+它是一个高性能、低开销并且 API 简单易用的日志库；*日志*中间件主要打印 Gin 写请求的 request 与 response 的 body，方便调试；所有的日志（包括 Gorm 的）都会在终端上和程序目录下的日志文件（server-config.yaml 中配置的默认文件名为 debug.log）中同时输出，其中，日志文件的内容会在程序重启时自动清空以避免无节制地浪费空间，所以如果调试需要，应及时备份。
 *鉴权*方案采用 [github.com/appleboy/gin-jwt/v2](https://github.com/appleboy/gin-jwt)，
 它会对接口进行权限控制，*鉴权*工作流程具体参考 [API 文档](./api.md)。
 *限流*中间件采用 [github.com/ulule/limiter/v3](https://github.com/ulule/limiter)，
